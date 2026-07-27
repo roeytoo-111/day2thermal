@@ -1,0 +1,7 @@
+torch>=2.1
+numpy>=1.24
+opencv-python-headless>=4.8
+tqdm>=4.65
+# optional extras:
+# lpips>=0.1.4        # perceptual metric (downloads weights on first use)
+# flirpy              # radiometric FLIR SEQ/CSQ decoding to 16-bit frames

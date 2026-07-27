@@ -1,0 +1,54 @@
+# ---- imagery: never tracked ----------------------------------------------
+# The manifest (data/aligned/manifest.csv) carries SHA-256 per pair instead,
+# so an out-of-band copy of the pixels can still be verified.
+*.png
+*.jpg
+*.jpeg
+*.bmp
+*.tif
+*.tiff
+*.webp
+
+# ---- video ---------------------------------------------------------------
+*.mp4
+*.ts
+*.mkv
+*.avi
+*.mov
+*.seq
+*.csq
+
+# ---- model weights / checkpoints / runs ----------------------------------
+*.pt
+*.pth
+*.onnx
+*.engine
+*.ckpt
+runs/
+checkpoints/
+
+# ---- pixel data trees ----------------------------------------------------
+data/**/rgb/
+data/**/thermal/
+data/**/calib_preview/
+data/raw/
+data/unpaired/
+*.zip
+
+# ---- python --------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.ipynb_checkpoints/
+
+# ---- os / editor ---------------------------------------------------------
+*:Zone.Identifier
+.DS_Store
+.vscode/
+.idea/
+
+# ---- explicit keeps ------------------------------------------------------
+!data/aligned/manifest.csv
+!data/aligned/DATASET.md
