@@ -221,8 +221,200 @@ contrast needs ≈ 1 °C.
 train the UAV detector on the synthetic thermal set, evaluate it on a **real**
 thermal holdout. See section 6 of the research report.
 
-`day2thermal/check_thermalness.py` is a quick sanity check on whether generated
-frames have plausible thermal statistics before you spend a training run.
+`day2thermal/check_thermalness.py` catches the unpaired-training failure mode
+where the model learns a greyscale filter instead of a modality change — see
+[Stage 5](#stage-5--check-the-output).
+
+---
+
+# Reproducing the results
+
+The five steps above are the general API. This section is the **specific run**
+that produced the synthetic thermal output for this project — the actual
+commands, the actual hyperparameters, and what each stage emitted.
+
+## What was recorded
+
+One flight, two cameras running simultaneously:
+
+| Source | Content | Native size |
+|---|---|---|
+| `day.ts` | day RGB stream | 3840 × 2160 |
+| `thermal.ts` | LWIR stream, same scene, same time | 640 × 512 |
+| `csi_.mp4` | the large **RGB-only** dataset to be translated | 1920 × 1080 |
+
+`day.ts` + `thermal.ts` are the *supervision*. `csi_.mp4` is the *payload* —
+the dataset that has no thermal counterpart and is the whole reason the
+translator exists.
+
+## Stage 0 — environment
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+A CUDA GPU is required for training. The recorded run took **~15.5 h wall**
+for 97 epochs (checkpoint timestamps run 22 Jul 15:13 → 23 Jul 06:55).
+Inference runs fine on CPU with `--cpu`, just slowly.
+
+## Stage 1 — split the correlated streams into frame pairs
+
+```bash
+python -m day2thermal.extract_frames \
+    --rgb day.ts --thermal thermal.ts \
+    --out data/raw --drop-static-thermal \
+    --fps <RATE> --offset-ms <THERMAL_MINUS_RGB>
+```
+
+→ `data/raw/rgb/` and `data/raw/thermal/`, **4897 frames each**, named
+`000000.png` … `004896.png`. The shared filename *is* the pairing.
+
+The exact `--fps` and `--offset-ms` used for this run were not recorded.
+Re-derive `--offset-ms` per the hot-object procedure in step 1 above; it is
+rig-specific and must be recalibrated if the cameras are remounted anyway.
+
+## Stage 2 — two branches from the same raw frames
+
+The raw pairs feed two independent experiments. **The shipped results came
+from branch B.** Both are documented because the distinction matters when
+reading the output.
+
+### Branch A — paired / registered (the correlated-stream experiment)
+
+```bash
+python -m day2thermal.register --raw data/raw --out tmp --dump-pair 0
+# pick >=4 correspondences -> calib/points.json
+python -m day2thermal.register --raw data/raw --out data/aligned \
+    --mode manual --points calib/points.json --auto-crop --val-frac 0.1
+```
+
+→ `data/aligned/{train,val}/{rgb,thermal}/` — **316 pairs at 460 × 445**
+(116 train / 200 val). This is the set catalogued in
+[`data/aligned/manifest.csv`](data/aligned/manifest.csv).
+
+This branch is what unlocks `--mode pix2pix` and `--mode two_stage`, i.e. the
+actual ThermalGAN method. **No training run against it survives**, and its
+`registration.json` was not preserved — see
+[`data/aligned/DATASET.md`](data/aligned/DATASET.md).
+
+### Branch B — unpaired (what actually generated the output)
+
+Registration throws away all but 316 of the 4897 pairs (the auto-crop keeps
+only the region where both fields of view overlap). The unpaired route keeps
+nearly all of them, at the cost of pixel-accurate supervision:
+
+```bash
+python -m day2thermal.prep_unpaired --raw data/raw --out data/unpaired \
+    --width 640 --skip-first 900
+```
+
+→ `data/unpaired/rgb/` at **640 × 360** (downscaled once, so the loader stops
+decoding 4K PNGs it would immediately crop away) and `data/unpaired/thermal/`
+hard-linked unchanged at 640 × 512. **3997 frames each** — 4897 minus the 900
+skipped lead-in.
+
+## Stage 3 — train (CycleGAN, the recorded run)
+
+```bash
+python -m day2thermal.train --data-root data/unpaired --out runs/cyc \
+    --mode cyclegan --load-size 286 --crop-size 256 --batch-size 4 \
+    --lambda-cyc 10 --lambda-idt 5 --pool-size 50 \
+    --num-scales-d 2 --norm instance --gan-mode lsgan \
+    --thermal-mode rel8 --val-frac 0.1 --chunk 200 \
+    --n-epochs 70 --n-epochs-decay 30 --save-freq 10 --seed 0
+```
+
+Every value above is transcribed from the run's own `config.json`, which
+`train.py` writes into `--out` at startup. Resume an interrupted run with
+`--resume runs/cyc/checkpoints/latest.pt`.
+
+Emits `runs/cyc/checkpoints/epoch_0*.pt` (every 10 epochs, ~1.4 GB each) plus
+`latest.pt`, and `runs/cyc/samples/eNNN_iNNNNN.png` progress strips — 870 of
+them in the recorded run, which are the fastest way to see whether the model
+is converging or collapsing.
+
+## Stage 4 — translate the RGB-only dataset
+
+Dump frames from the payload video (every 10th, ~3 fps from 30 fps source):
+
+```bash
+ffmpeg -i csi_.mp4 -vf "select=not(mod(n\,10))" -vsync 0 csi__frames/csi__%06d.jpg
+```
+
+→ **2973 frames at 1920 × 1080.**
+
+```bash
+python -m day2thermal.infer \
+    --ckpt runs/cyc/checkpoints/latest.pt \
+    --input csi__frames --out thermal_out
+```
+
+→ **2973 synthetic thermal PNGs at 640 × 360.** Note the output geometry:
+CycleGAN preserves the *input* aspect, so these are 16:9 like the source RGB,
+not 5:4 like the real thermal core. Downstream consumers that assume a
+640 × 512 thermal frame need to letterbox.
+
+With a **two_stage** checkpoint you would add `--temps 0,15,30` here to emit
+one set per ambient temperature (`T0C/`, `T15C/`, …). `--temps` does nothing
+for a cyclegan checkpoint — there is no temperature conditioning in that mode.
+
+## Stage 5 — check the output
+
+```bash
+python -m day2thermal.check_thermalness \
+    --ckpt runs/cyc/checkpoints/latest.pt --data-root data/unpaired --n 24
+```
+
+**Run this before trusting any unpaired output.** An unpaired translator has a
+well-known shortcut: emit something close to the input's luminance. That
+satisfies cycle-consistency perfectly (the mapping stays trivially invertible)
+and partly fools the discriminator — but it is a greyscale filter, not a
+modality change. Real LWIR is nearly uncorrelated with visible brightness,
+because temperature is not albedo.
+
+The check measures `corr(G(RGB), luminance(RGB))` against
+`corr(real thermal, luminance(RGB))` over sampled frames. `r_gen` near `r_real`
+means a genuine modality change; `r_gen` near 1 means the model learned to
+desaturate. (`r_real` is computed on unregistered pairs, so treat it as a
+ballpark reference, not an exact target.)
+
+A real evaluation needs paired ground truth:
+
+```bash
+python -m day2thermal.eval --pred preds/ --gt data/aligned/val/thermal
+```
+
+which requires branch A, and is therefore **not available for the branch-B
+output** — the unpaired route has no aligned holdout to score against. That
+is the central limitation of the recorded run: nothing quantitative was
+measured on it. The only honest verdict on branch-B output is
+detector-in-the-loop (train on synthetic, evaluate on a **real** thermal
+holdout), per section 6 of the research report.
+
+## Pipeline at a glance
+
+| Stage | Command | Out | Count | Size |
+|---|---|---|---|---|
+| 1 | `extract_frames` | `data/raw/{rgb,thermal}` | 4897 pairs | 3840×2160 / 640×512 |
+| 2A | `register` | `data/aligned/{train,val}` | 316 pairs | 460×445 |
+| 2B | `prep_unpaired` | `data/unpaired/{rgb,thermal}` | 3997 each | 640×360 / 640×512 |
+| 3 | `train --mode cyclegan` | `runs/cyc/checkpoints` | 10 ckpts | ~1.4 GB each |
+| 4 | `ffmpeg` + `infer` | `thermal_out` | 2973 | 640×360 |
+
+**None of these artifacts are in git** — no frames, no checkpoints, no
+generated thermal. `.gitignore` blocks all of it; the repo carries the code
+that regenerates them plus the manifest that identifies the 316 aligned pairs.
+
+## If you are starting from scratch
+
+Run the [smoke test](#smoke-test-no-real-data-needed) first — it exercises
+extract → register → train → infer → eval end to end on dummy data in about a
+minute, and will surface a broken environment before you spend 15 h on a real
+run. Then prefer **branch A + `--mode two_stage`**: it is the method this
+repository is actually about, it gives you a scoreable val split, and it is
+the only route to temperature-controllable output. Branch B is the fallback
+for when registration cannot be made to work.
 
 ---
 
@@ -284,7 +476,7 @@ day2thermal/          the pipeline package
   train.py              pix2pix | two_stage | cyclegan training loops
   infer.py              batch translation, temperature sweep, 16-bit output
   eval.py               L1 / RMSE / PSNR / SSIM (°C in abs16 mode)
-  check_thermalness.py  quick plausibility check on generated frames
+  check_thermalness.py  luminance-shortcut detector for unpaired models
 research/             literature review, LWIR physics, design rationale
 data/aligned/         metadata for the correlated-stream experiment (no pixels)
 tests/                dummy-data generator for the end-to-end smoke test
