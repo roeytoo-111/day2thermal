@@ -1,0 +1,110 @@
+{
+  "_comment": "Correlated day-RGB + LWIR source streams behind data/aligned. Measured 2026-08-17 with ffprobe 4.x + a MISB ST 0601 KLV parser (commands in STREAMS.md). Regenerate rather than edit.",
+  "source_dir_at_measurement": "/home/me/shared/rec",
+  "streams": {
+    "day": {
+      "file": "arsuf_day.ts",
+      "role": "day RGB (network input A)",
+      "bytes": 2262554620,
+      "sha256": "a377e0a892e5579ca062eb1d93ffec475fbe3bf2d294126c4bdae722c71ad4b9",
+      "container": "mpegts (1 program, 2 elementary streams)",
+      "video": {
+        "codec": "h264",
+        "profile": "Main",
+        "pix_fmt": "yuv420p",
+        "width": 3840,
+        "height": 2160,
+        "nominal_fps": "30/1",
+        "measured_frames": 21348,
+        "measured_fps": 30.0012,
+        "pts_start_s": 3600.967611,
+        "pts_end_s": 4312.504978,
+        "pts_span_s": 711.537,
+        "pts_delta_ms": {
+          "min": 18.8,
+          "max": 41.5,
+          "mean": 33.33,
+          "note": "jittery but no gaps > 60 ms -> no dropped frames"
+        },
+        "bit_rate_bps": 25437299
+      },
+      "klv": {
+        "standard": "MISB ST 0601 UAS Datalink LS (UL 060e2b34020b01010e01030101000000)",
+        "packets": 21347,
+        "rate_hz": 30.0,
+        "precision_timestamp_us_first": 583255841,
+        "precision_timestamp_us_last": 1294760045,
+        "timestamp_span_s": 711.504,
+        "timestamp_epoch": "NOT unix epoch (values ~5.8e8 us); relative encoder clock shared with thermal.ts",
+        "sensor_first": {
+          "lat": 32.19743,
+          "lon": 34.81479,
+          "alt_m": 53.5
+        },
+        "sensor_last": {
+          "lat": 32.19731,
+          "lon": 34.81453,
+          "alt_m": 54.7
+        }
+      }
+    },
+    "thermal": {
+      "file": "arsuf_thermal.ts",
+      "role": "LWIR thermal (network target B); 8-bit AGC video, NOT radiometric -> ThermalNorm rel8",
+      "bytes": 544279740,
+      "sha256": "880471d93ed09f3fe85e38a63099d7b999ab0c0d9e86b695b887bde496c7c614",
+      "container": "mpegts (1 program, 2 elementary streams)",
+      "video": {
+        "codec": "h264",
+        "profile": "Main",
+        "level": 30,
+        "pix_fmt": "yuv420p",
+        "width": 640,
+        "height": 512,
+        "nominal_fps": "25/1",
+        "measured_frames": 17813,
+        "measured_fps": 25.0,
+        "pts_start_s": 3600.0,
+        "pts_end_s": 4312.48,
+        "pts_span_s": 712.48,
+        "pts_delta_ms": {
+          "min": 40.0,
+          "max": 40.0,
+          "mean": 40.0,
+          "note": "perfectly regular"
+        },
+        "bit_rate_bps": 6111039
+      },
+      "klv": {
+        "standard": "MISB ST 0601 UAS Datalink LS",
+        "packets": 17812,
+        "rate_hz": 25.0,
+        "precision_timestamp_us_first": 582362509,
+        "precision_timestamp_us_last": 1294769600,
+        "timestamp_span_s": 712.407,
+        "sensor_first": {
+          "lat": 32.19744,
+          "lon": 34.8148,
+          "alt_m": 0.0,
+          "note": "alt 0.0 m = raw 2964 = unpopulated default at stream start"
+        },
+        "sensor_last": {
+          "lat": 32.19731,
+          "lon": 34.81453,
+          "alt_m": 54.7
+        }
+      }
+    }
+  },
+  "sync": {
+    "evidence_shared_clock": "both KLV timestamp series end within 9.6 ms of the same value (1294.7696 vs 1294.7600 s) despite different start times and durations; identical tag layout; identical sensor position",
+    "extract_frames_offset_ms": {
+      "value": 893,
+      "at_end_of_recording": 897,
+      "drift_ms_over_recording": 4,
+      "definition": "thermal index-time (frame_idx/25) minus RGB index-time (frame_idx/30) for the same KLV instant = 583.255841 - 582.362509 s",
+      "meaning": "thermal recording started ~0.893 s BEFORE the day recording; RGB frame 0 corresponds to thermal frame ~22",
+      "status": "derived from telemetry, NOT yet validated by the hot-object procedure in README step 1 -- validate before relying on it"
+    }
+  }
+}

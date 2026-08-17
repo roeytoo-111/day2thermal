@@ -239,9 +239,15 @@ One flight, two cameras running simultaneously:
 
 | Source | Content | Native size |
 |---|---|---|
-| `day.ts` | day RGB stream | 3840 × 2160 |
-| `thermal.ts` | LWIR stream, same scene, same time | 640 × 512 |
+| `day.ts` (`arsuf_day.ts`) | day RGB stream, H.264 MPEG-TS, 30 fps, 711.5 s | 3840 × 2160 |
+| `thermal.ts` (`arsuf_thermal.ts`) | LWIR stream, same scene, same time, H.264 MPEG-TS, 25 fps, 8-bit AGC | 640 × 512 |
 | `csi_.mp4` | the large **RGB-only** dataset to be translated | 1920 × 1080 |
+
+Byte-exact identification of the two source streams (SHA-256, frame counts,
+PTS statistics, embedded MISB ST 0601 KLV telemetry) is recorded in
+[`data/streams/STREAMS.md`](data/streams/STREAMS.md) /
+[`manifest.json`](data/streams/manifest.json). The KLV timestamps also yield
+the inter-stream offset (`--offset-ms ≈ +893`) — see Stage 1 below.
 
 `day.ts` + `thermal.ts` are the *supervision*. `csi_.mp4` is the *payload* —
 the dataset that has no thermal counterpart and is the whole reason the
@@ -271,8 +277,12 @@ python -m day2thermal.extract_frames \
 `000000.png` … `004896.png`. The shared filename *is* the pairing.
 
 The exact `--fps` and `--offset-ms` used for this run were not recorded.
-Re-derive `--offset-ms` per the hot-object procedure in step 1 above; it is
-rig-specific and must be recalibrated if the cameras are remounted anyway.
+The streams' embedded KLV telemetry (one shared encoder clock) gives
+`--offset-ms ≈ +893` (thermal started ~0.9 s before day) — derivation in
+[`data/streams/STREAMS.md`](data/streams/STREAMS.md); confirm it with the
+hot-object procedure in step 1 above before trusting it to the frame. 4897
+pairs over 711.5 s is consistent with `--fps 7`. The offset is rig-specific
+and must be recalibrated if the cameras are remounted anyway.
 
 ## Stage 2 — two branches from the same raw frames
 
