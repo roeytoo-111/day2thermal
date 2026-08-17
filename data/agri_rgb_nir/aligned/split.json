@@ -1,0 +1,84 @@
+{
+  "root": "/home/me/shared/day2thermal/ir-rgb-dataset",
+  "sessions": {
+    "Lentwheat_27072018": {
+      "split": "train",
+      "pairs": 142
+    },
+    "Lentwheat_29082018": {
+      "split": "val",
+      "pairs": 228
+    },
+    "canola-26072019": {
+      "split": "train",
+      "pairs": 553
+    },
+    "canola_06082019": {
+      "split": "val",
+      "pairs": 73
+    },
+    "canola_30072018": {
+      "split": "train",
+      "pairs": 312
+    },
+    "canola_31082018": {
+      "split": "train",
+      "pairs": 371
+    },
+    "drybean-04072020": {
+      "split": "train",
+      "pairs": 433
+    },
+    "drybean-06082020": {
+      "split": "train",
+      "pairs": 736
+    },
+    "drybean-14062020": {
+      "split": "train",
+      "pairs": 649
+    },
+    "drybean-20082020": {
+      "split": "train",
+      "pairs": 727
+    },
+    "drybean-25062020": {
+      "split": "train",
+      "pairs": 415
+    },
+    "drybean-30072020": {
+      "split": "val",
+      "pairs": 390
+    },
+    "wheat_13082019": {
+      "split": "train",
+      "pairs": 977
+    },
+    "wheat_27072019": {
+      "split": "val",
+      "pairs": 941
+    },
+    "wheat_30082019": {
+      "split": "train",
+      "pairs": 2016
+    }
+  },
+  "val_sessions": [
+    "Lentwheat_29082018",
+    "canola_06082019",
+    "drybean-30072020",
+    "wheat_27072019"
+  ],
+  "skipped": [
+    "canola_30072018//216.png: size mismatch rgb(798, 1084) ir(799, 1099)",
+    "drybean-06082020/2/11.png: size mismatch rgb(781, 1098) ir(799, 1099)",
+    "drybean-06082020/2/342.png: size mismatch rgb(798, 1030) ir(799, 1099)",
+    "drybean-06082020/2/361.png: size mismatch rgb(637, 907) ir(799, 1097)",
+    "drybean-20082020/2/72.png: size mismatch rgb(781, 1096) ir(798, 1099)",
+    "drybean-25062020/1/329.png: size mismatch rgb(792, 1074) ir(799, 1099)",
+    "wheat_27072019//0.png: size mismatch rgb(781, 1091) ir(795, 1099)"
+  ],
+  "counts": {
+    "train": 7331,
+    "val": 1632
+  }
+}

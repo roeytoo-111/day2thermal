@@ -171,6 +171,30 @@ python -m day2thermal.register --raw data/flight01/raw \
 * Writes `registration.json` (homography, crop, ECC correlation, source sizes)
   next to the split — **keep this file**, it is the calibration record.
 
+### 2b. Already-registered pair folders (skip `register`)
+
+If a source dataset ships pixel-aligned pairs organised as
+`<session>/RGB[-k]/<i>.png` + `<session>/NIR[-k]/<i>.png` (same footprint,
+same instant), `prep_aligned` maps it straight onto the training layout:
+
+```bash
+python -m day2thermal.prep_aligned --root ir-rgb-dataset \
+    --rgb-prefix RGB --ir-prefix NIR --out data/agri_rgb_nir/aligned \
+    --val-sessions canola_06082019,drybean-30072020,Lentwheat_29082018,wheat_27072019
+```
+
+* Pairs by filename inside each `RGB*`/`NIR*` sub-folder pair; crops both to
+  their common size when they differ by a pixel or two (skips anything
+  larger — that is a mis-registration, not an off-by-one); writes IR as
+  single-channel 8-bit and hard-links RGB.
+* Splits **by session** (whole flights held out), never inside one —
+  `--val-sessions` explicit, or `--val-frac` picks evenly spaced sessions.
+* Writes `split.json` recording what went where.
+* The IR channel is whatever the source recorded — for a NIR (reflected,
+  0.7–1.5 µm) dataset the model learns RGB→NIR, **not** thermal; the
+  temperature conditioning of `two_stage` has no physical meaning there, so
+  use `--mode pix2pix`.
+
 ## 3. Train
 
 Baseline — strong and fast, start here:
@@ -479,6 +503,7 @@ day2thermal/          the pipeline package
   extract_frames.py     paired-video → synchronised frame pairs
   register.py           cross-modal homography, warp, temporal-chunk split
   pick_points.py        interactive correspondence picker
+  prep_aligned.py       already-registered pair folders → train/val layout (session split)
   prep_unpaired.py      dataset prep for the CycleGAN fallback
   dataset.py            paired/unpaired loaders, thermal normalisation
   networks.py           U-Net generator (+extra head), PatchGAN / multi-scale D
