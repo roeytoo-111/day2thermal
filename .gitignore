@@ -18,14 +18,6 @@
 *.seq
 *.csq
 
-# ---- model weights / checkpoints / runs ----------------------------------
-*.pt
-*.pth
-*.onnx
-*.engine
-*.ckpt
-runs/
-checkpoints/
 
 # ---- pixel data trees ----------------------------------------------------
 data/**/rgb/
@@ -52,3 +44,13 @@ venv/
 # ---- explicit keeps ------------------------------------------------------
 !data/aligned/manifest.csv
 !data/aligned/DATASET.md
+
+
+
+scratch
+thermal-1
+thermal-1-filtered
+events*
+rfdetr_medium_thermal_640
+last*
+detection/data

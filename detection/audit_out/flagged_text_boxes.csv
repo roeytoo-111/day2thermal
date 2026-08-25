@@ -1,0 +1,18 @@
+split,file_name,image_path,class_name,ocr_text
+train,002769_png.rf.b6f77e4b91ac2fb7b3d9307c2addf776.txt,data/thermal-1-filtered/train/images/002769_png.rf.b6f77e4b91ac2fb7b3d9307c2addf776.jpg,thermal-uav,41
+train,frame243_jpg.rf.c83d812e1ba97b310395e9f2501a88df.txt,data/thermal-1-filtered/train/images/frame243_jpg.rf.c83d812e1ba97b310395e9f2501a88df.jpg,thermal-uav,ونس تت
+train,002828_png.rf.de9a06506e72638400e3344e1a5587a7.txt,data/thermal-1-filtered/train/images/002828_png.rf.de9a06506e72638400e3344e1a5587a7.jpg,thermal-uav,اي ‎١‏ ‏ود  a
+train,frame430_jpg.rf.416ec25203a17103450eb749d451d2da.txt,data/thermal-1-filtered/train/images/frame430_jpg.rf.416ec25203a17103450eb749d451d2da.jpg,thermal-uav,2”
+train,002731_png.rf.cf065f92fb3299d0218d55a6490b7a53.txt,data/thermal-1-filtered/train/images/002731_png.rf.cf065f92fb3299d0218d55a6490b7a53.jpg,thermal-uav,ف -
+train,frame426_jpg.rf.f1ce4d54c2e7e76649b293569630f447.txt,data/thermal-1-filtered/train/images/frame426_jpg.rf.f1ce4d54c2e7e76649b293569630f447.jpg,thermal-uav,"مه"""
+train,frame388_jpg.rf.ade198a8ab5da4916fbed66dfb09aa03.txt,data/thermal-1-filtered/train/images/frame388_jpg.rf.ade198a8ab5da4916fbed66dfb09aa03.jpg,thermal-uav,‘a-
+train,frame100_jpg.rf.de4398241b248eb686bf026f35c1f7c4.txt,data/thermal-1-filtered/train/images/frame100_jpg.rf.de4398241b248eb686bf026f35c1f7c4.jpg,thermal-uav,‘eae
+train,002806_png.rf.e997dee4910b0ee7d984835a16b10357.txt,data/thermal-1-filtered/train/images/002806_png.rf.e997dee4910b0ee7d984835a16b10357.jpg,thermal-uav,ا“ سق
+test,frame460_jpg.rf.34906c96da94053cf08667930cd54a97.txt,data/thermal-1-filtered/test/images/frame460_jpg.rf.34906c96da94053cf08667930cd54a97.jpg,thermal-uav,i *
+train,002765_png.rf.a3a0eab9b342c9e15e197d49c0c5fa5f.txt,data/thermal-1-filtered/train/images/002765_png.rf.a3a0eab9b342c9e15e197d49c0c5fa5f.jpg,thermal-uav,3-2
+train,frame101_jpg.rf.9784303b94d306b380b6fc22d1984f62.txt,data/thermal-1-filtered/train/images/frame101_jpg.rf.9784303b94d306b380b6fc22d1984f62.jpg,thermal-uav,“=
+train,frame447_jpg.rf.1ef157ae6c15accee565614b29bc36eb.txt,data/thermal-1-filtered/train/images/frame447_jpg.rf.1ef157ae6c15accee565614b29bc36eb.jpg,thermal-uav,‘ann
+train,0_0_000252_jpg.rf.190d0eaa8a21a7ac6ea265cced16460b.txt,data/thermal-1-filtered/train/images/0_0_000252_jpg.rf.190d0eaa8a21a7ac6ea265cced16460b.jpg,thermal-uav,18
+train,frame408_jpg.rf.21342339098776887f6fb23e49ae7583.txt,data/thermal-1-filtered/train/images/frame408_jpg.rf.21342339098776887f6fb23e49ae7583.jpg,thermal-uav,‘ar
+train,frame387_jpg.rf.b52cd710f8b3135a26574a9e3a7e32a7.txt,data/thermal-1-filtered/train/images/frame387_jpg.rf.b52cd710f8b3135a26574a9e3a7e32a7.jpg,thermal-uav,~~
+train,002829_png.rf.6aa7969e6c99db4905c1c9388ad5132a.txt,data/thermal-1-filtered/train/images/002829_png.rf.6aa7969e6c99db4905c1c9388ad5132a.jpg,thermal-uav,Fs
