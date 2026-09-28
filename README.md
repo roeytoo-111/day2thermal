@@ -392,6 +392,38 @@ python -m day2thermal.prep_aligned --root ir-rgb-dataset \
   or `--val-frac` picks evenly spaced sessions); writes `split.json`.
 * `--dry-run` prints the plan without writing.
 
+### 2b'. Synced video pair, wide-angle thermal, non-rigid rig (`video_pairs`)
+
+For a day + thermal video pair where one homography does not hold — the
+thermal core has strong barrel distortion and the day camera's pose relative
+to it steps over time — `video_pairs` replaces `extract_frames` + `register`:
+
+```bash
+# 1) verify the time offset (ego-motion cross-correlation, 10 independent windows)
+python3 detection/src/data/verify_stream_sync.py --day day.mp4 --thermal thermal.mp4 \
+    --out detection/reports/stream_sync
+# 2) lens model + per-time-segment homographies, verified across ~100 frames
+python -m day2thermal.video_pairs calibrate --day day.mp4 --thermal thermal.mp4 \
+    --sync-report detection/reports/stream_sync/sync_report.json --out data/vid_pairs
+# 3) registered, scene-change-subsampled pairs, time-split train/val
+python -m day2thermal.video_pairs extract --day day.mp4 --thermal thermal.mp4 \
+    --registration data/vid_pairs/registration.json --out data/vid_pairs
+```
+
+* Thermal lens: division model, λ searched so temporally adjacent per-frame
+  solutions agree. RGB is warped *into* the distorted thermal geometry
+  (thermal pixels never resampled).
+* Pose steps: solutions are segmented in time; a segment is used only with
+  ≥ 3 agreeing frames, gaps between segments are excluded, lone disagreeing
+  frames (near-field parallax, e.g. a tent pole) are outliers. Each pair also
+  gets an edge-NCC alignment score; pairs with structure that score below the
+  calibration p05 are dropped.
+* `registration.json` records λ, every segment's H and span, the
+  per-cell residual map and a verdict; `extract` refuses a non-PASS
+  registration unless `--force` (recorded in `pairs_summary.json`).
+* Pairs are small (the day FOV spans ~445×248 thermal px): train with
+  `--load-size 0 --crop-size 128`.
+
 ### 2c. Unpaired fallback prep
 
 ```bash

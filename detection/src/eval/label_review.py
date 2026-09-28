@@ -12,6 +12,7 @@ Controls:
   'h' -> False Positive, SHADOW specifically (tracked separately for analysis)
   'g' -> False Positive, GROUND TRAIL specifically (tracked separately)
   's' -> skip / unsure
+  'b' -> back (go relabel the previous crop -- fixes mis-presses)
   'q' -> quit and save progress
 
 Ground-truth labeling guide:
@@ -32,9 +33,14 @@ from collections import defaultdict
 
 import cv2
 
-DISPLAY_SIZE = 480
+DISPLAY_SIZE = 512
 
 VALID_LABELS = ("TP", "TP_loose", "FP", "FP_shadow", "FP_ground_trail")
+
+LABEL_DIR_KEY = {
+    "TP": "tp_dir", "TP_loose": "tp_loose_dir",
+    "FP": "fp_dir", "FP_shadow": "fp_dir", "FP_ground_trail": "fp_dir",
+}
 
 
 def letterbox(img, size=DISPLAY_SIZE, bg=(40, 40, 40)):
@@ -63,69 +69,114 @@ def save_manifest(path, rows, fieldnames):
         w.writerows(rows)
 
 
+def resolve_img_path(audit_dir, row):
+    img_path = os.path.join(audit_dir, row["filename"])
+    if not os.path.exists(img_path) and row.get("video"):
+        candidate = os.path.join(audit_dir, row["video"], row["filename"])
+        if os.path.exists(candidate):
+            return candidate
+        for sub in os.listdir(audit_dir):
+            sub_path = os.path.join(audit_dir, sub)
+            if os.path.isdir(sub_path) and row["video"] in sub:
+                check_path = os.path.join(sub_path, row["filename"])
+                if os.path.exists(check_path):
+                    return check_path
+    return img_path
+
+
+def clear_previous_label_copy(row, dirs):
+    """If this row already had a label from earlier in the session (we're
+    relabeling after going back), remove its old copy so it doesn't linger
+    in the wrong folder once relabeled."""
+    old_label = row.get("label")
+    if old_label in LABEL_DIR_KEY:
+        old_dir = dirs[LABEL_DIR_KEY[old_label]]
+        old_path = os.path.join(old_dir, os.path.basename(row["filename"]))
+        if os.path.exists(old_path):
+            os.remove(old_path)
+
+
+def apply_label(row, key, img_path, dirs):
+    clear_previous_label_copy(row, dirs)
+    base_name = os.path.basename(row["filename"])
+    if key == ord('t'):
+        row["label"] = "TP"
+        shutil.copy(img_path, os.path.join(dirs["tp_dir"], base_name))
+        return True
+    elif key == ord('l'):
+        row["label"] = "TP_loose"
+        shutil.copy(img_path, os.path.join(dirs["tp_loose_dir"], base_name))
+        return True
+    elif key == ord('f'):
+        row["label"] = "FP"
+        shutil.copy(img_path, os.path.join(dirs["fp_dir"], base_name))
+        return True
+    elif key == ord('h'):
+        row["label"] = "FP_shadow"
+        shutil.copy(img_path, os.path.join(dirs["fp_dir"], base_name))
+        return True
+    elif key == ord('g'):
+        row["label"] = "FP_ground_trail"
+        shutil.copy(img_path, os.path.join(dirs["fp_dir"], base_name))
+        return True
+    return False
+
+
 def review(audit_dir, manifest_path=None):
     manifest_path = manifest_path or os.path.join(audit_dir, "manifest.csv")
     rows = load_manifest(manifest_path)
     fieldnames = list(rows[0].keys()) if rows else [
         "filename", "frame_id", "conf", "bbox", "gate_status", "label"]
 
-    tp_dir = os.path.join(audit_dir, "tp")
-    tp_loose_dir = os.path.join(audit_dir, "tp_loose")
-    fp_dir = os.path.join(audit_dir, "fp")
-    os.makedirs(tp_dir, exist_ok=True)
-    os.makedirs(tp_loose_dir, exist_ok=True)
-    os.makedirs(fp_dir, exist_ok=True)
+    dirs = {
+        "tp_dir": os.path.join(audit_dir, "tp"),
+        "tp_loose_dir": os.path.join(audit_dir, "tp_loose"),
+        "fp_dir": os.path.join(audit_dir, "fp"),
+    }
+    for d in dirs.values():
+        os.makedirs(d, exist_ok=True)
 
+    # Fixed list computed once at session start -- going "back" moves an index
+    # over THIS list, so already-labeled-this-session rows stay reachable for
+    # correction without disturbing rows labeled in earlier sessions.
     unlabeled = [r for r in rows if not r.get("label")]
     print(f"{len(rows)} total crops, {len(unlabeled)} unlabeled.")
     print("Controls: t=TP  l=TP-loose-box  f=FP  h=FP-shadow  g=FP-ground-trail  "
-          "s=skip  q=quit+save\n")
+          "s=skip  b=back  q=quit+save\n")
 
-    for i, row in enumerate(unlabeled):
-        # 1. Resolve path first before attempting cv2.imread
-        img_path = os.path.join(audit_dir, row["filename"])
-        if not os.path.exists(img_path) and row.get("video"):
-            candidate = os.path.join(audit_dir, row["video"], row["filename"])
-            if os.path.exists(candidate):
-                img_path = candidate
-            else:
-                for sub in os.listdir(audit_dir):
-                    sub_path = os.path.join(audit_dir, sub)
-                    if os.path.isdir(sub_path) and row["video"] in sub:
-                        check_path = os.path.join(sub_path, row["filename"])
-                        if os.path.exists(check_path):
-                            img_path = check_path
-                            break
+    i = 0
+    while i < len(unlabeled):
+        row = unlabeled[i]
+        img_path = resolve_img_path(audit_dir, row)
 
         img = cv2.imread(img_path)
         if img is None:
+            i += 1
             continue
 
         disp = letterbox(img)
-        label_text = f"[{i+1}/{len(unlabeled)}] conf={row['conf']} gate={row['gate_status']}"
+        current_label = row.get("label") or "unlabeled"
+        label_text = (f"[{i+1}/{len(unlabeled)}] conf={row['conf']} gate={row['gate_status']} "
+                       f"(current: {current_label})")
         cv2.putText(disp, label_text, (5, 20), cv2.FONT_HERSHEY_SIMPLEX,
                     0.5, (0, 0, 255), 1)
         cv2.imshow("Candidate Review", disp)
         key = cv2.waitKey(0) & 0xFF
 
-        base_name = os.path.basename(row["filename"])
-        if key == ord('t'):
-            row["label"] = "TP"
-            shutil.copy(img_path, os.path.join(tp_dir, base_name))
-        elif key == ord('l'):
-            row["label"] = "TP_loose"
-            shutil.copy(img_path, os.path.join(tp_loose_dir, base_name))
-        elif key == ord('f'):
-            row["label"] = "FP"
-            shutil.copy(img_path, os.path.join(fp_dir, base_name))
-        elif key == ord('h'):
-            row["label"] = "FP_shadow"
-            shutil.copy(img_path, os.path.join(fp_dir, base_name))
-        elif key == ord('g'):
-            row["label"] = "FP_ground_trail"
-            shutil.copy(img_path, os.path.join(fp_dir, base_name))
-        elif key == ord('q'):
+        if key == ord('q'):
             break
+        elif key == ord('b'):
+            if i > 0:
+                i -= 1
+            continue  # re-show the (now previous) row without advancing
+        elif key == ord('s'):
+            i += 1
+            continue
+        else:
+            labeled = apply_label(row, key, img_path, dirs)
+            if labeled:
+                i += 1
+            # unrecognized key: redisplay the same row, don't advance
 
     cv2.destroyAllWindows()
     save_manifest(manifest_path, rows, fieldnames)
@@ -169,12 +220,12 @@ def review(audit_dir, manifest_path=None):
     # Stage 2 Gate Performance Evaluation
     s2_confirmed = by_gate["confirmed"]
     s2_rejected = by_gate["rejected"]
-    
+
     s2_tp = s2_confirmed["TP"] + s2_confirmed["TP_loose"]
     s2_fp = s2_confirmed["FP"] + s2_confirmed["FP_shadow"] + s2_confirmed["FP_ground_trail"]
     s2_fn = s2_rejected["TP"] + s2_rejected["TP_loose"]
     s2_tn = s2_rejected["FP"] + s2_rejected["FP_shadow"] + s2_rejected["FP_ground_trail"]
-    
+
     print("\n" + "-" * 50)
     print("STAGE 2 CLASSIFIER / GATE ACCURACY")
     print("-" * 50)
@@ -203,7 +254,7 @@ def review(audit_dir, manifest_path=None):
         print(f"Loose/degenerate boxes are {loose_frac:.1%} of all true detections "
               f"({label_totals['TP_loose']}/{n_tp_total}).")
 
-    print(f"\nLabeled crops copied to:\n  {tp_dir}\n  {fp_dir}")
+    print(f"\nLabeled crops copied to:\n  {dirs['tp_dir']}\n  {dirs['fp_dir']}")
 
 
 if __name__ == "__main__":

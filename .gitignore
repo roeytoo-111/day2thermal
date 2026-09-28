@@ -54,3 +54,10 @@ events*
 rfdetr_medium_thermal_640
 last*
 detection/data
+*.txt
+*.pt
+best.pt
+nir_p2p_latest.pt
+nir_smoke_latest.pt*.pt
+*.engine
+*.onnx

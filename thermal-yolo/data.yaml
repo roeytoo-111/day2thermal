@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 2
+names: ['bird', 'thermal-uav']
+
+roboflow:
+  workspace: uavs-somnd
+  project: thermal-7eu6d
+  version: dataset
+  license: Private
+  url: https://app.roboflow.com/uavs-somnd/thermal-7eu6d/dataset
