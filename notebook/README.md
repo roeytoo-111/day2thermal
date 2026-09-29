@@ -23,4 +23,4 @@ Each entry uses the same sections so days can be compared:
 ## Index
 
 - [2026-09-28](2026-09-28.md): GAN review; leak found (45% of train is the eval video); leak-free dataset; synthetic copy-paste (option A); stream sync verified; segmented registration, 392 GAN pairs; first honest P2 numbers
-- [2026-09-29](2026-09-29.md): eval set fixed to the 613 frames (leak-free models only); tail test dropped; no-P2 run skipped; GAN pairs re-split 280/112; go/no-go tool with a linear baseline bar (L1 ≤ 0.070); synthA v1 decomposed, not a win; GT misses tiny objects
+- [2026-09-29](2026-09-29.md): eval set fixed to the 613 frames (leak-free models only); tail test dropped; no-P2 run skipped; GAN pairs re-split 280/112; go/no-go tool with a linear baseline bar (L1 ≤ 0.070); synthA v1 decomposed, not a win; GT misses tiny objects; repo reorganised; generator v2; model-free box-GT tool

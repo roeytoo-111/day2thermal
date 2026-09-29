@@ -16,6 +16,10 @@ Usage:
         --json results/detections/thermal_dets_rgb_transfer_noleak_p2_synthA.json:p2_noleak_synthA \
         --tolerance_frames 2 --conf_floor 0.1
 
+    # location-aware, with the gt_boxes.py review applied, over a threshold sweep
+    python3 src/eval/compute_recall_from_gt.py ... --boxes data/recall_ground_truth/boxes.csv \
+        --sweep 0.1,0.2,0.3,0.4,0.5,0.6,0.7
+
     # score only an unseen temporal holdout (frames the training set never covered)
     python3 src/eval/compute_recall_from_gt.py ... --min_frame 20100
 """
@@ -41,7 +45,73 @@ def parse_args():
                     help="Only score ground-truth frames with frame_id >= this (e.g. a temporal holdout).")
     p.add_argument("--max_frame", type=int, default=None,
                     help="Only score ground-truth frames with frame_id <= this.")
+    p.add_argument("--boxes", default=None,
+                    help="boxes.csv from gt_boxes.py review -> LOCATION-AWARE scoring: a positive frame is caught "
+                         "only if a detection lands on the drone box; the audit's corrections are applied.")
+    p.add_argument("--sweep", default=None,
+                    help="Comma-separated conf floors to report (with --boxes), e.g. 0.1,0.2,0.3,0.4,0.5,0.6,0.7")
     return p.parse_args()
+
+
+def load_dets(json_path):
+    with open(json_path) as f:
+        return {e["frame_id"]: e["detections"] for e in json.load(f)}
+
+
+def on_target(det_box, gt, min_px=8.0):
+    """Hit if the detection centre is within max(min_px, 0.75 * gt long side) of the GT centre, or IoU >= 0.1.
+    Tiny targets make IoU unstable, hence the centre-distance rule."""
+    dx = (det_box[0] + det_box[2]) / 2 - (gt[0] + gt[2]) / 2
+    dy = (det_box[1] + det_box[3]) / 2 - (gt[1] + gt[3]) / 2
+    if math.hypot(dx, dy) <= max(min_px, 0.75 * max(gt[2] - gt[0], gt[3] - gt[1])):
+        return True
+    ix = max(0, min(det_box[2], gt[2]) - max(det_box[0], gt[0]))
+    iy = max(0, min(det_box[3], gt[3]) - max(det_box[1], gt[1]))
+    inter = ix * iy
+    union = (det_box[2] - det_box[0]) * (det_box[3] - det_box[1]) + (gt[2] - gt[0]) * (gt[3] - gt[1]) - inter
+    return union > 0 and inter / union >= 0.1
+
+
+def located_report(args):
+    """Location-aware recall / false-fire with the gt_boxes.py review applied.
+    Positives: frames reviewed as 'drone' (incl. frames originally labelled empty that the audit found a drone in).
+    Negatives: frames reviewed as 'nothing' or 'bird_or_other' (a hit on a bird is a false fire).
+    Excluded: 'unsure', and 'no_drone_visible' on frames labelled positive (ambiguous; counted and reported)."""
+    b = pd.read_csv(args.boxes)
+    if args.min_frame is not None:
+        b = b[b.frame_id >= args.min_frame]
+    if args.max_frame is not None:
+        b = b[b.frame_id <= args.max_frame]
+    pos = b[b.verdict == "drone"]
+    neg = b[b.verdict.isin(["nothing", "bird_or_other"])]
+    moved = int(((b.verdict == "drone") & (b.orig_label == "FP")).sum())
+    print(f"Box GT ({args.boxes}): {len(pos)} positive frames ({moved} of them originally labelled empty), "
+          f"{len(neg)} negative frames ({int((neg.verdict == 'bird_or_other').sum())} with a bird/other object); "
+          f"excluded: {int((b.verdict == 'unsure').sum())} unsure, "
+          f"{int((b.verdict == 'no_drone_visible').sum())} labelled-positive with no drone visible.")
+    floors = [float(v) for v in args.sweep.split(",")] if args.sweep else [args.conf_floor]
+    print(f"\n{'model':<22}{'conf':>5}  {'located recall':>24}  {'frame recall':>13}  {'false-fire (neg frames)':>28}  "
+          f"{'off-target dets/pos frame':>26}")
+    for spec in args.json:
+        json_path, name = spec.rsplit(":", 1)
+        dets = load_dets(json_path)
+        for conf in floors:
+            hit = frame_hit = off = 0
+            for r in pos.itertuples():
+                ds = [d for d in dets.get(int(r.frame_id), []) if d["conf"] >= conf]
+                gt = (float(r.x0), float(r.y0), float(r.x1), float(r.y1))
+                on = [d for d in ds if on_target(d["bbox"], gt)]
+                hit += bool(on)
+                frame_hit += bool(ds)
+                off += len(ds) - len(on)
+            ff = sum(any(d["conf"] >= conf for d in dets.get(int(f), [])) for f in neg.frame_id)
+            lo, hi = wilson_ci(hit, len(pos))
+            flo, fhi = wilson_ci(ff, len(neg))
+            print(f"{name:<22}{conf:>5}  {hit:>4}/{len(pos):<4} {hit / len(pos):6.1%} [{lo:.0%}-{hi:.0%}]  "
+                  f"{frame_hit / len(pos):>12.1%}  {ff:>4}/{len(neg):<4} {ff / len(neg):6.1%} [{flo:.0%}-{fhi:.0%}]  "
+                  f"{off / len(pos):>26.2f}")
+    print("\nlocated recall: a detection on the drone box in that exact frame. frame recall: any detection in the "
+          "frame (the old metric, same frames, no latency window).")
 
 
 def wilson_ci(k, n, z=1.96):
@@ -68,6 +138,9 @@ def load_detected_frames(json_path, conf_floor):
 
 def main():
     args = parse_args()
+    if args.boxes:
+        located_report(args)
+        return
     manifest = pd.read_csv(args.manifest)
     if args.min_frame is not None:
         manifest = manifest[manifest["frame_id"] >= args.min_frame]

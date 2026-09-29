@@ -31,7 +31,8 @@ detection/
 | `thermal-1` | Roboflow export `thermal-7eu6d` | — | Classes `0`, `bird`, `thermal-uav`. Class `0` is GAN output (confirmed by its creator). |
 | `thermal-1-filtered` | `src/data/filter_dataset.py` | 5019 / 210 / 95 | Class `0` dropped. **Leaks:** 2260 train images (45%) are frames of the eval video. |
 | `thermal-1-noleak` | `src/data/remove_session_leak.py` | 2759 / 210 / 95 | The whole leaked session removed (`leak_report.json`). **Use this.** |
-| `thermal-1-noleak-synthA` | `src/data/synth_copy_paste.py` | 5508 / 210 / 95 | +2749 images with pasted small drones (v1). See the results below: not a win. |
+| `thermal-1-noleak-synthA` | `src/data/synth_copy_paste.py` v1 | 5508 / 210 / 95 | +2749 images with pasted small drones, pasted anywhere. Not a win (see Runs). |
+| `thermal-1-noleak-synthA2` | `src/data/synth_copy_paste.py` v2 (defaults) | 3675 / 210 / 95 | +916 images (25%), 1387 real-crop drones, pasted only on smooth, speck-free sky; terrain hot spots stay unlabelled as negatives. |
 
 Real UAV boxes in `thermal-1-noleak`: median 40 px, 9% < 16 px. Drones in the
 deployment video are ~13 px or smaller. That size gap is what the synthetic
@@ -48,12 +49,17 @@ data targets.
 - **Scoring:** `src/eval/compute_recall_from_gt.py --conf_floor 0.1`, plus a
   threshold sweep. Compare models at a matched false-fire rate, not at a
   single threshold.
-- **Known limits of the metric:**
-  - Recall is frame-level and doesn't check location: any detection within
-    ±2 frames counts. A model that fires everywhere gets recall for free.
-  - "Empty" labels miss some 1–3 px airborne objects (see notebook
-    2026-09-29 §7).
-  - Fixes in progress: box-level GT and an audit of the empty frames.
+- **Location-aware scoring** (use this once `boxes.csv` exists): `--boxes
+  data/recall_ground_truth/boxes.csv --sweep 0.1,...,0.7`. A positive frame
+  counts only if a detection lands on the drone box, and the audit's
+  corrections are applied.
+  - Built by `src/eval/gt_boxes.py`. Box proposals come from a **model-free**
+    small-target detector (motion-compensated temporal median plus top-hat,
+    normalised by local clutter), never from a model being scored.
+  - Every "empty" frame is audited, not only those where some model fired.
+- **Legacy frame-level metric** (no `--boxes`): any detection within ±2
+  frames counts, so a model that fires everywhere gets recall for free. The
+  "empty" labels also miss some 1–3 px airborne objects (notebook 2026-09-29 §7).
 
 ## Runs
 
@@ -63,6 +69,7 @@ data targets.
 | `rgb_transfer` | RGB drone detector | `thermal-1-filtered` (leaked) | 77.4% / 16.5% | Inflated by the leak; retired |
 | **`rgb_transfer_noleak_p2`** | RGB detector with P2 head | `thermal-1-noleak` | **67.7% / 23.2%** | **Current honest baseline** |
 | `rgb_transfer_noleak_p2_synthA` | same | `…-synthA` | 94.6% / 79.1% | Fires on any small bright point; at matched false-fire it's no better than the baseline |
+| `rgb_transfer_noleak_p2_synthA2` | same | `…-synthA2` | pending | Generator v2 |
 
 All training runs use imgsz 512, 150 epochs, patience 25, seed 0 (see each `models/<run>/args.yaml`).
 
