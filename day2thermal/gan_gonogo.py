@@ -63,7 +63,10 @@ def fit_linear_baseline(root, n_px=20000, seed=0):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--ckpt", required=True)
+    ap.add_argument("--ckpt", default=None, help="pix2pix/two_stage checkpoint (or use --pred-dir)")
+    ap.add_argument("--pred-dir", default=None,
+                    help="precomputed predictions (PNG, same names as the val pairs), e.g. from "
+                         "day2thermal.diffusion.infer -- scored with the same metrics and baseline")
     ap.add_argument("--pairs", required=True, help="dir with train/ and val/ {rgb,thermal}/")
     ap.add_argument("--out", required=True)
     ap.add_argument("--val-pairs", default=None,
@@ -79,8 +82,11 @@ def main():
     print(f"linear colour baseline (fit on train): thermal = {coef[0]:+.3f}B {coef[1]:+.3f}G "
           f"{coef[2]:+.3f}R {coef[3]:+.3f}")
 
+    if (a.ckpt is None) == (a.pred_dir is None):
+        raise SystemExit("give exactly one of --ckpt or --pred-dir")
     device = torch.device("cuda" if torch.cuda.is_available() and not a.cpu else "cpu")
-    nets, targs, tn, num_downs = load_model(a.ckpt, device)
+    if a.ckpt:
+        nets, targs, tn, num_downs = load_model(a.ckpt, device)
     vroot, vsplit = (a.val_pairs, a.val_split) if a.val_pairs else (a.pairs, "val")
     names = list_images(os.path.join(vroot, vsplit, "rgb"))
     rows, strips = [], []
@@ -88,11 +94,18 @@ def main():
     for i, name in enumerate(names):
         rgb, real = read_pair(vroot, vsplit, name)
         lum = cv2.cvtColor(rgb, cv2.COLOR_BGR2GRAY).astype(np.float64) / 255.0
-        A = torch.from_numpy(rgb_to_norm(rgb)).unsqueeze(0).to(device)
-        A, hw = pad_to_multiple(A, 2 ** num_downs)
-        with torch.no_grad():
-            gen = unpad(translate(nets, targs, A, 0.0), hw)[0, 0].cpu().numpy().astype(np.float64)
-        gen = (gen + 1) / 2
+        if a.pred_dir:
+            pp = os.path.join(a.pred_dir, os.path.splitext(name)[0] + ".png")
+            gen = cv2.imread(pp, cv2.IMREAD_GRAYSCALE)
+            if gen is None:
+                raise SystemExit(f"missing prediction {pp}")
+            gen = cv2.resize(gen, (real.shape[1], real.shape[0])).astype(np.float64) / 255.0
+        else:
+            A = torch.from_numpy(rgb_to_norm(rgb)).unsqueeze(0).to(device)
+            A, hw = pad_to_multiple(A, 2 ** num_downs)
+            with torch.no_grad():
+                gen = unpad(translate(nets, targs, A, 0.0), hw)[0, 0].cpu().numpy().astype(np.float64)
+            gen = (gen + 1) / 2
         base = np.clip(rgb.reshape(-1, 3).astype(np.float64) / 255.0 @ coef[:3] + coef[3], 0, 1).reshape(real.shape)
         rows.append({"name": name,
                      "l1_gen": float(np.abs(gen - real).mean()), "l1_base": float(np.abs(base - real).mean()),
@@ -122,7 +135,7 @@ def main():
     print(f"\nVERDICT: {verdict}")
     cv2.imwrite(os.path.join(out, "strips.png"), np.vstack(strips))
     with open(os.path.join(out, "gonogo.json"), "w") as f:
-        json.dump({"ckpt": a.ckpt, "pairs": a.pairs, "val_pairs": os.path.join(vroot, vsplit), "n_val": len(rows), "baseline_coef_bgr_bias": coef.tolist(),
+        json.dump({"ckpt": a.ckpt or a.pred_dir, "pairs": a.pairs, "val_pairs": os.path.join(vroot, vsplit), "n_val": len(rows), "baseline_coef_bgr_bias": coef.tolist(),
                    "means": m, "C1": c1, "C2": c2, "verdict": verdict, "per_pair": rows}, f, indent=2)
 
 
