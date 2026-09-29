@@ -321,6 +321,33 @@ def cmd_review(a):
         for r in csv.DictReader(open(a.out)):
             done[int(r["frame_id"])] = r
     todo = [int(f) for f in m.sort_values("frame_id").frame_id]
+    def is_capped(r):
+        try:
+            return (r["verdict"] in ("drone", "bird_or_other") and
+                    (float(r["x1"]) - float(r["x0"]) >= 50 or float(r["y1"]) - float(r["y0"]) >= 50))
+        except (TypeError, ValueError):
+            return False
+
+    # suspects: 'nothing' next to a drone frame in sampled order (click-then-Enter bug signature, or drone
+    # briefly out of view -- the reviewer decides)
+    order = sorted(done)
+    suspect = set()
+    for j, f in enumerate(order):
+        if done[f]["verdict"] == "nothing":
+            nb = [order[j - 1]] if j > 0 else []
+            nb += [order[j + 1]] if j + 1 < len(order) else []
+            if any(done[n]["verdict"] == "drone" for n in nb):
+                suspect.add(f)
+    if a.verify:
+        cats = set(a.only.split(","))
+        def want(f):
+            r = done.get(f)
+            if r is None:
+                return "unlabelled" in cats or "all" in cats
+            return ("all" in cats or (is_capped(r) and "capped" in cats) or r["verdict"] in cats
+                    or (f in suspect and "suspect" in cats))
+        todo = [f for f in todo if want(f)]
+        print(f"--verify: {len(todo)} frames ({a.only}); {len(suspect & set(todo))} flagged SUSPECT")
     if a.redo_capped:
         # frames whose drone box hit the old 51-px auto-fit cap: review them again, nothing else
         todo = [f for f in todo if f in done and done[f]["verdict"] in ("drone", "bird_or_other")
@@ -330,14 +357,14 @@ def cmd_review(a):
     lab = dict(zip(m.frame_id.astype(int), m.label))
     cap = cv2.VideoCapture(a.video)
     day = Day(a.registration, a.day) if a.registration and a.day else None
-    fields = ["frame_id", "orig_label", "verdict", "x0", "y0", "x1", "y1", "source"]
+    fields = ["frame_id", "orig_label", "verdict", "x0", "y0", "x1", "y1", "source", "verified"]
 
     def save():
         with open(a.out, "w", newline="") as f:
             wr = csv.DictWriter(f, fieldnames=fields)
             wr.writeheader()
             for k in sorted(done):
-                wr.writerow(done[k])
+                wr.writerow({f: done[k].get(f, "") for f in fields})
 
     def read(fi):
         cap.set(cv2.CAP_PROP_POS_FRAMES, fi)
@@ -385,13 +412,22 @@ def cmd_review(a):
 
     cv2.namedWindow("GT boxes")
     cv2.setMouseCallback("GT boxes", on_mouse)
-    i = 0 if a.redo_capped else next((k for k, f in enumerate(todo) if f not in done), len(todo))
+    i = 0 if (a.redo_capped or a.verify) else next((k for k, f in enumerate(todo) if f not in done), len(todo))
     while 0 <= i < len(todo):
         fi = todo[i]
         is_pos = lab[fi] in ("TP", "TP_loose")
         is_new = lab[fi] == ""
         im = read(fi)
         cands = props.get(str(fi), [])
+        prevrow = done.get(fi) if a.verify else None
+        prevbox = None
+        if prevrow is not None and prevrow.get("x0", "") not in ("", None):
+            try:
+                prevbox = [int(float(prevrow[k])) for k in ("x0", "y0", "x1", "y1")]
+            except ValueError:
+                prevbox = None
+        if a.verify:
+            cands = cands[:5]                              # tile 6 shows the previous box area
         g = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY).astype(np.float32)
         vis = im.copy()
         rgb, rgb_status = day.registered(fi) if day is not None else (None, "")
@@ -414,6 +450,19 @@ def cmd_review(a):
             tiles.append(z)
         while len(tiles) < K:
             tiles.append(np.zeros((192, 192, 3), np.uint8))
+        if prevbox is not None:
+            pcx, pcy = (prevbox[0] + prevbox[2]) // 2, (prevbox[1] + prevbox[3]) // 2
+            for v in (vis, rvis):
+                if v is not None:
+                    cv2.rectangle(v, (prevbox[0] - 1, prevbox[1] - 1), (prevbox[2], prevbox[3]), (255, 255, 255), 2)
+            z = day.zoom_tile(fi, pcx, pcy) if (tiles_from["src"] == "RGB" and day is not None) else None
+            if z is None:
+                z, (zx0, zy0) = zoom(im, pcx, pcy)
+                s6 = 192 / 32
+                cv2.rectangle(z, (int((prevbox[0] - zx0) * s6), int((prevbox[1] - zy0) * s6)),
+                              (int((prevbox[2] - zx0) * s6), int((prevbox[3] - zy0) * s6)), (255, 255, 255), 1)
+            cv2.putText(z, "prev box", (4, 14), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1)
+            tiles[5] = z
         panel = np.vstack([np.hstack(tiles[0:2]), np.hstack(tiles[2:4]), np.hstack(tiles[4:6])])  # 576 x 384
         left = 640 * n_panels
         canvas = np.zeros((max(512, 576), left + 384, 3), np.uint8)
@@ -427,8 +476,15 @@ def cmd_review(a):
                             (0, 255, 255) if rgb_status.startswith("seg") else (0, 128, 255), 1)
         canvas[:576, left:] = panel
         prev = done.get(fi, {}).get("verdict", "")
+        if a.verify and prevrow is not None:
+            flag = ("  CAPPED box: tighten it (drag)" if is_capped(prevrow) else "") + \
+                   ("  SUSPECT: next to a drone frame, look carefully" if fi in suspect else "")
+            cv2.putText(canvas, f"PREVIOUS: {prevrow['verdict']}{flag}   Enter=keep  n=nothing  1-5/click/drag=drone  w=bird",
+                        (6, 556), cv2.FONT_HERSHEY_SIMPLEX, 0.45,
+                        (0, 128, 255) if flag else (255, 255, 255), 1)
         head = (f"[{i + 1}/{len(todo)}] frame {fi}  label {lab[fi]}  "
-                + ("1-6/click/drag=drone  n=no drone" if is_pos else "1-6/click/drag=drone  Enter=nothing  w=bird")
+                + ("VERIFY: see line below" if a.verify else
+                   "1-6/click/drag=drone  n=no drone" if is_pos else "1-6/click/drag=drone  Enter=nothing  w=bird")
                 + "  p=play v=4K t=tiles IR/RGB s=skip b=back q=quit" + (f"   (was: {prev})" if prev else ""))
         cv2.putText(canvas, head, (6, 534), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (255, 255, 255), 1)
         cv2.imshow("GT boxes", canvas)
@@ -453,7 +509,7 @@ def cmd_review(a):
                 if k == MOUSE:
                     kind, val = mouse["event"]
                     box, src = (val, "drag") if kind == "drag" else (fit_click(g, *val), "click")
-                elif k == 27:
+                elif k in (27, ord("q")):
                     return None, None
                 elif k in (13, 10) and box is not None:
                     return box, src
@@ -518,7 +574,19 @@ def cmd_review(a):
                 cv2.destroyWindow("day camera")
             continue
         verdict, box, src = None, None, None
-        if key == MOUSE or ord("1") <= key <= ord("6") or key == ord("d"):
+        if a.verify and prevrow is not None and key in (13, 10):
+            if is_capped(prevrow):
+                box, src = confirm(prevbox, "prev_adjusted")      # capped: must be looked at and tightened
+                verdict = prevrow["verdict"] if box else None
+            else:
+                done[fi] = {**prevrow, "verified": "v2"}
+                if len(done) % 10 == 0:
+                    save()
+                i += 1
+                continue
+        elif a.verify and key == ord("n"):
+            verdict = "no_drone_visible" if is_pos else "nothing"
+        elif key == MOUSE or ord("1") <= key <= ord("6") or key == ord("d"):
             box, src = pick_box(key)
             verdict = "drone" if box else None
         elif key == ord("w"):
@@ -532,14 +600,19 @@ def cmd_review(a):
             continue
         b = box or ["", "", "", ""]
         done[fi] = {"frame_id": fi, "orig_label": lab[fi], "verdict": verdict,
-                    "x0": b[0], "y0": b[1], "x1": b[2], "y1": b[3], "source": src or ""}
+                    "x0": b[0], "y0": b[1], "x1": b[2], "y1": b[3], "source": src or "",
+                    "verified": "v2" if (a.verify or a.redo_capped) else ""}
         if len(done) % 10 == 0:
             save()
         i += 1
     save()
     cv2.destroyAllWindows()
     v = pd.Series([r["verdict"] for r in done.values()]).value_counts().to_dict()
-    print(f"saved {a.out}: {len(done)}/{len(todo)} frames reviewed {v}")
+    if a.verify or a.redo_capped:
+        nv = sum(1 for f in todo if done.get(f, {}).get("verified") == "v2")
+        print(f"saved {a.out}: {nv}/{len(todo)} selected frames verified; all labels now {v}")
+    else:
+        print(f"saved {a.out}: {len(done)}/{len(todo)} frames reviewed {v}")
 
 
 # ------------------------------------------------------------------ sample / export (new sessions)
@@ -618,6 +691,10 @@ def main():
     r.add_argument("--registration", default=None,
                    help="video_pairs registration.json of this session (enables the RGB panel, 't' and 'v')")
     r.add_argument("--day", default=None, help="the synced day video of this session")
+    r.add_argument("--verify", action="store_true",
+                   help="re-verify existing labels with the previous box pre-filled (Enter keeps it)")
+    r.add_argument("--only", default="capped,nothing,unsure",
+                   help="with --verify: comma list of capped,nothing,unsure,drone,suspect,unlabelled,all")
     r.add_argument("--redo-capped", action="store_true",
                    help="revisit only frames whose box hit the old 51-px auto-fit cap (fixed 2026-09-30)")
     sm = sub.add_parser("sample", help="sample frames of a new session for labelling (train/val split)")
