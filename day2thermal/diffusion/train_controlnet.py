@@ -120,13 +120,17 @@ def generate(controlnet, vae, unet, emb, cond, steps, seed, pretrained):
     g = torch.Generator(device="cpu").manual_seed(seed)
     lat = torch.randn((B, unet.config.in_channels, H // f, W // f), generator=g).to(dev, dt) * sch.init_noise_sigma
     e = emb.expand(B, -1, -1)
-    for t in sch.timesteps:
-        inp = sch.scale_model_input(lat, t)
-        down, mid = controlnet(inp, t, encoder_hidden_states=e, controlnet_cond=cond.to(dt), return_dict=False)
-        eps = unet(inp, t, encoder_hidden_states=e, down_block_additional_residuals=down,
-                   mid_block_additional_residual=mid).sample
-        lat = sch.step(eps, t, lat).prev_sample
-    img = vae.decode(lat / vae.config.scaling_factor).sample.float()
+    # same mixed precision as the training step: the trainable ControlNet keeps fp32 weights while the
+    # frozen UNet / VAE and the inputs are bf16/fp16 -- without autocast the matmuls see mixed dtypes
+    amp = torch.autocast(dev.type, dtype=dt, enabled=dt != torch.float32)
+    with amp:
+        for t in sch.timesteps:
+            inp = sch.scale_model_input(lat, t)
+            down, mid = controlnet(inp, t, encoder_hidden_states=e, controlnet_cond=cond.to(dt), return_dict=False)
+            eps = unet(inp, t, encoder_hidden_states=e, down_block_additional_residuals=[d.to(dt) for d in down],
+                       mid_block_additional_residual=mid.to(dt)).sample
+            lat = sch.step(eps.to(lat.dtype), t, lat).prev_sample
+        img = vae.decode((lat / vae.config.scaling_factor).to(dt)).sample.float()
     return ((img.mean(1) + 1) / 2).clamp(0, 1)
 
 
@@ -241,13 +245,13 @@ def main():
         if step % 50 == 0:
             print(f"step {step}/{a.steps}  loss {tot:.4f}  {(time.time() - t0) / step:.2f} s/step", flush=True)
         if step % a.val_every == 0 or step == a.steps:
+            controlnet.save_pretrained(os.path.join(out, "last"))       # before validating: never lose training
             m = validate(controlnet, vae, unet, emb, a.data, "val", (a.width, a.height), a.val_steps, device,
                          a.pretrained, a.val_max, strips_to=os.path.join(out, f"val_{step:06d}.jpg"))
             m.update({"step": step, "loss": tot})
             log.write(json.dumps(m) + "\n")
             log.flush()
             print(f"  VAL step {step}: L1 {m['l1']:.4f}  SSIM {m['ssim']:.4f}  r(lum) {m['r_lum']:+.3f}", flush=True)
-            controlnet.save_pretrained(os.path.join(out, "last"))
             if m["l1"] < best:
                 best, bad = m["l1"], 0
                 controlnet.save_pretrained(os.path.join(out, "best"))
