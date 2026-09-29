@@ -34,8 +34,12 @@ Review keys (window "GT boxes"):
   unlabelled frames (new sessions):
     1-6 / click  drone     Enter  nothing     w  bird / other airborne object
   all:
+    With --registration/--day, the synced day frame is shown next to the IR, WARPED INTO THE IR GEOMETRY
+    (same pixel coordinates: candidate boxes are drawn on both; clicking either panel works). Frames outside
+    a verified registration segment use the nearest segment and are marked "approx".
+    t      switch the zoom tiles between IR and full-resolution RGB (same area, ~7x more day pixels)
     p      play the zoomed region over +-12 frames (motion tells drone from speck)
-    v      show the matching 4K day-camera crop (when inside a verified registration segment)
+    v      show the matching 4K day-camera crop (full resolution)
     s      skip / unsure     b  back     q  save and quit
 
     python3 src/eval/gt_boxes.py propose --video data/videos/thermal.mp4 \
@@ -171,10 +175,68 @@ class Day:
 
     def __init__(self, registration, day_video):
         sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..")))
-        from day2thermal.video_pairs import und_from_dist, day_index
-        self.und, self.day_index = und_from_dist, day_index
+        from day2thermal.video_pairs import und_from_dist, day_index, build_rgb_maps
+        self.und, self.day_index, self.build_maps = und_from_dist, day_index, build_rgb_maps
         self.reg = json.load(open(registration))
         self.cap = cv2.VideoCapture(day_video)
+        self.segs = [g for g in self.reg["segments"] if g["verified"]]
+        self.maps = {}
+
+    def _day_frame(self, ti):
+        if getattr(self, "_cache", (None, None))[0] == ti:
+            return self._cache[1]
+        di = self.day_index(ti, self.reg["fps_thermal"], self.reg["fps_day"], self.reg["offset_ms"] / 1000,
+                            self.reg.get("drift_ms_per_s", 0.0) / 1000)
+        self.cap.set(cv2.CAP_PROP_POS_FRAMES, di)
+        ok, im = self.cap.read()
+        self._cache = (ti, im if ok else None)
+        return self._cache[1]
+
+    def _segment(self, ti):
+        inside = [g for g in self.segs if g["span"][0] <= ti <= g["span"][1]]
+        if inside:
+            return inside[0], True
+        return min(self.segs, key=lambda g: min(abs(ti - g["span"][0]), abs(ti - g["span"][1]))), False
+
+    def zoom_tile(self, ti, x, y, thermal_half=16, size=192):
+        """Full-resolution day crop covering the same area as the IR zoom tile around thermal (x, y)."""
+        if not self.segs:
+            return None
+        g, _ = self._segment(ti)
+        H = np.array(g["H_day_to_undistorted_thermal"])
+        xu, yu = self.und(np.array([float(x)]), np.array([float(y)]), self.reg["lens"]["lambda"],
+                          tuple(self.reg["thermal_size"]))
+        p = np.linalg.inv(H) @ np.array([xu[0], yu[0], 1.0])
+        px, py = p[0] / p[2], p[1] / p[2]
+        half = int(round(thermal_half / np.sqrt(abs(np.linalg.det(H[:2, :2])))))   # thermal px -> day px
+        im = self._day_frame(ti)
+        W, Hh = self.reg["rgb_size"]
+        if im is None or not (0 <= px < W and 0 <= py < Hh):
+            return None
+        pad = cv2.copyMakeBorder(im, half, half, half, half, cv2.BORDER_CONSTANT, value=(40, 40, 40))
+        c = pad[int(py):int(py) + 2 * half, int(px):int(px) + 2 * half]
+        return cv2.resize(c, (size, size), interpolation=cv2.INTER_AREA)
+
+    def registered(self, ti):
+        """The synced day frame warped into the thermal frame's geometry (same pixel coordinates as the IR).
+        Uses the verified segment containing ti; otherwise the nearest one (status 'approx')."""
+        if not self.segs:
+            return None, "no verified registration segment"
+        g, inside = self._segment(ti)
+        status = f"seg {g['id']}" if inside else f"approx (nearest seg {g['id']})"
+        if g["id"] not in self.maps:
+            ds = self.reg["day_decode_downscale"]
+            mx, my, _ = self.build_maps(np.array(g["H_day_to_undistorted_thermal"]), self.reg["lens"]["lambda"],
+                                        tuple(self.reg["thermal_size"]), tuple(self.reg["rgb_size"]), ds)
+            self.maps[g["id"]] = (mx, my, ds)
+        mx, my, ds = self.maps[g["id"]]
+        im = self._day_frame(ti)
+        if im is None:
+            return None, "day frame unreadable"
+        W, H = self.reg["rgb_size"]
+        small = cv2.resize(im, (W // ds, H // ds), interpolation=cv2.INTER_AREA)
+        out = cv2.remap(small, mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=(40, 40, 40))
+        return out, status
 
     def crop(self, ti, x, y, half=160):
         segs = [g for g in self.reg["segments"] if g["verified"] and g["span"][0] <= ti <= g["span"][1]]
@@ -188,11 +250,8 @@ class Day:
         W, H = self.reg["rgb_size"]
         if not (0 <= px < W and 0 <= py < H):
             return None, "point outside the day camera's field of view"
-        di = self.day_index(ti, self.reg["fps_thermal"], self.reg["fps_day"], self.reg["offset_ms"] / 1000,
-                            self.reg.get("drift_ms_per_s", 0.0) / 1000)
-        self.cap.set(cv2.CAP_PROP_POS_FRAMES, di)
-        ok, im = self.cap.read()
-        if not ok:
+        im = self._day_frame(ti)
+        if im is None:
             return None, "day frame unreadable"
         c = im[max(py - half, 0):py + half, max(px - half, 0):px + half].copy()
         cv2.circle(c, (min(half, px), min(half, py)), 40, (0, 0, 255), 1)
@@ -239,10 +298,12 @@ def cmd_review(a):
         return im
 
     click = {"pt": None}
+    n_panels = 2 if day is not None else 1          # IR | registered RGB
+    tiles_from = {"src": "IR"}
 
     def on_mouse(ev, x, y, flags, param):
-        if ev == cv2.EVENT_LBUTTONDOWN and x < 640 and y < 512:
-            click["pt"] = (x, y)
+        if ev == cv2.EVENT_LBUTTONDOWN and x < 640 * n_panels and y < 512:
+            click["pt"] = (x % 640, y)                  # same pixel grid in both panels
 
     cv2.namedWindow("GT boxes")
     cv2.setMouseCallback("GT boxes", on_mouse)
@@ -255,26 +316,43 @@ def cmd_review(a):
         cands = props.get(str(fi), [])
         g = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY).astype(np.float32)
         vis = im.copy()
+        rgb, rgb_status = day.registered(fi) if day is not None else (None, "")
+        rvis = rgb.copy() if rgb is not None else None
         tiles = []
         for n, c in enumerate(cands):
             x0, y0, x1, y1 = c["box"]
-            cv2.rectangle(vis, (x0 - 3, y0 - 3), (x1 + 3, y1 + 3), COLORS[n], 1)
-            cv2.putText(vis, str(n + 1), (x1 + 4, y0 + 8), cv2.FONT_HERSHEY_SIMPLEX, 0.45, COLORS[n], 1)
-            z, _ = zoom(im, c["x"], c["y"])
-            cv2.putText(z, f"{n + 1}  t{c['z_temporal']:.0f} s{c['z_spatial']:.0f}", (4, 14),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.45, COLORS[n], 1)
+            for v in (vis, rvis):
+                if v is None:
+                    continue
+                cv2.rectangle(v, (x0 - 3, y0 - 3), (x1 + 3, y1 + 3), COLORS[n], 1)
+                cv2.putText(v, str(n + 1), (x1 + 4, y0 + 8), cv2.FONT_HERSHEY_SIMPLEX, 0.45, COLORS[n], 1)
+            z = None
+            if tiles_from["src"] == "RGB" and day is not None:
+                z = day.zoom_tile(fi, c["x"], c["y"])        # full-res day pixels, same area as the IR tile
+            if z is None:
+                z, _ = zoom(im, c["x"], c["y"])
+            cv2.putText(z, f"{n + 1} {tiles_from['src'] if day is not None else 'IR'}  t{c['z_temporal']:.0f} "
+                           f"s{c['z_spatial']:.0f}", (4, 14), cv2.FONT_HERSHEY_SIMPLEX, 0.45, COLORS[n], 1)
             tiles.append(z)
         while len(tiles) < K:
             tiles.append(np.zeros((192, 192, 3), np.uint8))
         panel = np.vstack([np.hstack(tiles[0:2]), np.hstack(tiles[2:4]), np.hstack(tiles[4:6])])  # 576 x 384
-        canvas = np.zeros((max(512, 576), 640 + 384, 3), np.uint8)
+        left = 640 * n_panels
+        canvas = np.zeros((max(512, 576), left + 384, 3), np.uint8)
         canvas[:512, :640] = vis
-        canvas[:576, 640:] = panel
+        if n_panels == 2:
+            if rvis is None:
+                cv2.putText(canvas, f"RGB: {rgb_status}", (650, 250), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 1)
+            else:
+                canvas[:512, 640:1280] = rvis
+                cv2.putText(canvas, f"RGB registered: {rgb_status}", (646, 16), cv2.FONT_HERSHEY_SIMPLEX, 0.45,
+                            (0, 255, 255) if rgb_status.startswith("seg") else (0, 128, 255), 1)
+        canvas[:576, left:] = panel
         prev = done.get(fi, {}).get("verdict", "")
         head = (f"[{i + 1}/{len(todo)}] frame {fi}  label {lab[fi]}  "
                 + ("1-6/click=drone  n=no drone" if is_pos else
                    "1-6/click=drone  Enter=nothing  w=bird" if is_new else "Enter=nothing  d=drone  w=bird")
-                + "  p=play v=day s=skip b=back q=quit" + (f"   (was: {prev})" if prev else ""))
+                + "  p=play v=4K t=tiles IR/RGB s=skip b=back q=quit" + (f"   (was: {prev})" if prev else ""))
         cv2.putText(canvas, head, (6, 534), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (255, 255, 255), 1)
         cv2.imshow("GT boxes", canvas)
         click["pt"] = None
@@ -315,6 +393,9 @@ def cmd_review(a):
             done[fi] = {"frame_id": fi, "orig_label": lab[fi], "verdict": "unsure", "x0": "", "y0": "", "x1": "",
                         "y1": "", "source": ""}
             i += 1
+            continue
+        if key == ord("t"):
+            tiles_from["src"] = "RGB" if tiles_from["src"] == "IR" else "IR"
             continue
         if key == ord("p"):
             cx, cy = (cands[0]["x"], cands[0]["y"]) if cands else (320, 256)
@@ -458,8 +539,9 @@ def main():
     r.add_argument("--manifest", required=True)
     r.add_argument("--proposals", required=True)
     r.add_argument("--out", required=True)
-    r.add_argument("--registration", default=None, help="../data/vid_pairs/registration.json (enables 'v')")
-    r.add_argument("--day", default=None, help="data/videos/day.mp4 (enables 'v')")
+    r.add_argument("--registration", default=None,
+                   help="video_pairs registration.json of this session (enables the RGB panel, 't' and 'v')")
+    r.add_argument("--day", default=None, help="the synced day video of this session")
     sm = sub.add_parser("sample", help="sample frames of a new session for labelling (train/val split)")
     sm.add_argument("--video", required=True)
     sm.add_argument("--out", required=True, help="manifest.csv to write")
