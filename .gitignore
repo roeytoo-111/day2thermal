@@ -1,6 +1,8 @@
-# ---- imagery: never tracked ----------------------------------------------
-# The manifest (data/aligned/manifest.csv) carries SHA-256 per pair instead,
-# so an out-of-band copy of the pixels can still be verified.
+# Code, configs, manifests, results tables and reports are tracked.
+# Pixels, video, datasets, weights and bulky run outputs are not: they live
+# out-of-band, identified by the manifests / hashes that ARE tracked.
+
+# ---- imagery -------------------------------------------------------------
 *.png
 *.jpg
 *.jpeg
@@ -18,16 +20,43 @@
 *.seq
 *.csq
 
+# ---- archives (dataset / run transfers) ------------------------------------
+*.zip
+*.tar
+*.tar.gz
+*.tgz
 
-# ---- pixel data trees ----------------------------------------------------
+# ---- model weights and run outputs ------------------------------------------
+*.pt
+*.pth
+*.ckpt
+*.engine
+*.onnx
+events.out.tfevents*
+runs/
+rfdetr_medium_thermal_640/
+
+# ---- pixel data trees ------------------------------------------------------
 data/**/rgb/
 data/**/thermal/
 data/**/calib_preview/
 data/raw/
 data/unpaired/
-*.zip
+data/vid_pairs/solutions_cache.json
+detection/data/
+thermal-yolo/
+thermal-1/
+thermal-1-filtered/
+track_review/
 
-# ---- python --------------------------------------------------------------
+# YOLO label files live inside the (ignored) dataset trees; stray .txt too
+*.txt
+!requirements*.txt
+
+# ---- local scratch ---------------------------------------------------------
+scratch/
+
+# ---- python ----------------------------------------------------------------
 __pycache__/
 *.py[cod]
 .venv/
@@ -35,29 +64,16 @@ venv/
 *.egg-info/
 .ipynb_checkpoints/
 
-# ---- os / editor ---------------------------------------------------------
+# ---- os / editor -----------------------------------------------------------
 *:Zone.Identifier
 .DS_Store
 .vscode/
 .idea/
+.~lock.*#
 
-# ---- explicit keeps ------------------------------------------------------
+# ---- explicit keeps --------------------------------------------------------
 !data/aligned/manifest.csv
 !data/aligned/DATASET.md
-
-
-
-scratch
-thermal-1
-thermal-1-filtered
-events*
-rfdetr_medium_thermal_640
-last*
-detection/data
-*.txt
-*.pt
-best.pt
-nir_p2p_latest.pt
-nir_smoke_latest.pt*.pt
-*.engine
-*.onnx
+# the two original baselines' weights are small and were tracked from the start
+!detection/models/coco_baseline/weights/best.pt
+!detection/models/rgb_transfer/weights/best.pt

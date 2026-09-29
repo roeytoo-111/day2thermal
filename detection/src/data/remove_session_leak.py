@@ -20,7 +20,7 @@ dataset's models.
 Usage:
     python3 src/data/remove_session_leak.py \
         --dataset_dir data/thermal-1-filtered --output_dir data/thermal-1-noleak \
-        --leakage_csv leakage_verified.csv --video data/videos/thermal.mp4
+        --leakage_csv analysis/leakage/leakage_verified.csv --video data/videos/thermal.mp4
 """
 
 import os

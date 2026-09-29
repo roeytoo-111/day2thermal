@@ -8,11 +8,14 @@ stage1_conf/stage2_prob split), so "final" is just "detected" for anything
 above --conf, there's no separate accept/reject gate to log.
 
 Usage:
-    python3 run_yolo_video_inference.py \
-        --model runs/thermal_uav/coco_baseline/weights/best.pt \
+    python3 src/deploy/run_yolo_inference.py \
+        --model models/<run>/weights/best.pt \
         --video data/videos/thermal.mp4 \
-        --out_json thermal_detections.json \
-        --conf 0.25
+        --out_json results/detections/thermal_dets_<run>.json
+
+Log at the default conf 0.05 and score downstream with
+compute_recall_from_gt.py --conf_floor 0.1 (plus a sweep): runs logged at
+different floors are not comparable.
 """
 
 import json
@@ -27,7 +30,7 @@ def parse_args():
     p.add_argument("--model", required=True, help="Path to trained .pt checkpoint.")
     p.add_argument("--video", required=True)
     p.add_argument("--out_json", required=True)
-    p.add_argument("--conf", type=float, default=0.25, help="Confidence threshold to LOG (default: 0.25). "
+    p.add_argument("--conf", type=float, default=0.05, help="Confidence threshold to LOG (default: 0.05). "
                     "Kept low deliberately -- filter harder downstream if needed, but you can't recover "
                     "detections you never logged.")
     p.add_argument("--imgsz", type=int, default=512, help="Must match training imgsz (default: 512).")

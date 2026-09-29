@@ -8,6 +8,20 @@ A supervised image-translation pipeline that learns to turn colour frames into
 synthetic infrared frames, so that a large RGB-only dataset can be converted
 into IR training data without re-flying every mission with an IR core.
 
+## Repository map
+
+| Path | What |
+|---|---|
+| [`day2thermal/`](day2thermal/) | RGB → thermal translation package: pix2pix / ThermalGAN two-stage / CycleGAN, training, inference, evaluation, video-pair registration (`video_pairs.py`), GAN go/no-go (`gan_gonogo.py`). Documented in this README. |
+| [`detection/`](detection/README.md) | Thermal UAV detector (YOLO11): datasets, leak checks, synthetic data, eval protocol, runs and results. |
+| [`notebook/`](notebook/README.md) | Daily lab notebook: every experiment, the data it used, results with CIs, and decisions. **Start here for the current state.** |
+| [`data/`](data/) | Tracked manifests and registration records for the GAN pair sets (pixels are not tracked). |
+| [`docs/project_plan.md`](docs/project_plan.md) | Roadmap and candidate generation approaches. |
+| [`research/`](research/) | Literature report and the explanatory PDF. |
+
+Pixels, video, datasets and weights are never committed (see `.gitignore`).
+They are identified by the manifests and hashes that are.
+
 The method implements **ThermalGAN** (Kniaz et al., ECCV Workshops 2018) —
 see [Paper implemented](#paper-implemented) — adapted for the practical case of
 having a *synchronised RGB + IR video pair* (or a folder of pre-registered

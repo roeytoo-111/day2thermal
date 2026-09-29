@@ -1,0 +1,57 @@
+nohup: ignoring input
+WARNING ⚠️ Ultralytics settings updated to the latest schema. Existing values were preserved where possible. 
+View Ultralytics Settings with 'yolo settings' or at '/home/daniel/.config/Ultralytics/settings.json'
+Update Settings with 'yolo settings key=value', i.e. 'yolo settings runs_dir=path/to/dir'. For help see https://docs.ultralytics.com/usage/settings.
+  frame 500  (6.7 fps)  234/500 frames with >=1 detection so far
+  frame 1000  (6.9 fps)  448/1000 frames with >=1 detection so far
+  frame 1500  (7.0 fps)  715/1500 frames with >=1 detection so far
+  frame 2000  (7.0 fps)  919/2000 frames with >=1 detection so far
+  frame 2500  (7.1 fps)  1115/2500 frames with >=1 detection so far
+  frame 3000  (7.1 fps)  1212/3000 frames with >=1 detection so far
+  frame 3500  (7.2 fps)  1265/3500 frames with >=1 detection so far
+  frame 4000  (7.2 fps)  1392/4000 frames with >=1 detection so far
+  frame 4500  (7.1 fps)  1465/4500 frames with >=1 detection so far
+  frame 5000  (7.0 fps)  1465/5000 frames with >=1 detection so far
+  frame 5500  (7.0 fps)  1570/5500 frames with >=1 detection so far
+  frame 6000  (7.1 fps)  1625/6000 frames with >=1 detection so far
+  frame 6500  (7.1 fps)  1761/6500 frames with >=1 detection so far
+  frame 7000  (7.1 fps)  1990/7000 frames with >=1 detection so far
+  frame 7500  (7.1 fps)  2179/7500 frames with >=1 detection so far
+  frame 8000  (7.1 fps)  2563/8000 frames with >=1 detection so far
+  frame 8500  (7.1 fps)  3033/8500 frames with >=1 detection so far
+  frame 9000  (7.1 fps)  3434/9000 frames with >=1 detection so far
+  frame 9500  (7.0 fps)  3850/9500 frames with >=1 detection so far
+  frame 10000  (7.0 fps)  4326/10000 frames with >=1 detection so far
+  frame 10500  (7.0 fps)  4811/10500 frames with >=1 detection so far
+  frame 11000  (7.0 fps)  5053/11000 frames with >=1 detection so far
+  frame 11500  (7.0 fps)  5443/11500 frames with >=1 detection so far
+  frame 12000  (7.0 fps)  5896/12000 frames with >=1 detection so far
+  frame 12500  (7.0 fps)  6319/12500 frames with >=1 detection so far
+  frame 13000  (7.0 fps)  6809/13000 frames with >=1 detection so far
+  frame 13500  (7.0 fps)  6978/13500 frames with >=1 detection so far
+  frame 14000  (7.0 fps)  7306/14000 frames with >=1 detection so far
+  frame 14500  (7.0 fps)  7355/14500 frames with >=1 detection so far
+  frame 15000  (7.0 fps)  7396/15000 frames with >=1 detection so far
+  frame 15500  (7.0 fps)  7810/15500 frames with >=1 detection so far
+  frame 16000  (7.0 fps)  8154/16000 frames with >=1 detection so far
+  frame 16500  (7.0 fps)  8397/16500 frames with >=1 detection so far
+  frame 17000  (7.0 fps)  8447/17000 frames with >=1 detection so far
+  frame 17500  (7.0 fps)  8499/17500 frames with >=1 detection so far
+  frame 18000  (7.0 fps)  8572/18000 frames with >=1 detection so far
+  frame 18500  (7.0 fps)  8657/18500 frames with >=1 detection so far
+  frame 19000  (7.0 fps)  9116/19000 frames with >=1 detection so far
+  frame 19500  (7.0 fps)  9352/19500 frames with >=1 detection so far
+  frame 20000  (7.0 fps)  9617/20000 frames with >=1 detection so far
+  frame 20500  (7.0 fps)  9953/20500 frames with >=1 detection so far
+  frame 21000  (7.0 fps)  10066/21000 frames with >=1 detection so far
+  frame 21500  (7.0 fps)  10206/21500 frames with >=1 detection so far
+  frame 22000  (7.0 fps)  10686/22000 frames with >=1 detection so far
+  frame 22500  (7.0 fps)  11041/22500 frames with >=1 detection so far
+  frame 23000  (7.0 fps)  11281/23000 frames with >=1 detection so far
+  frame 23500  (7.0 fps)  11457/23500 frames with >=1 detection so far
+  frame 24000  (7.0 fps)  11761/24000 frames with >=1 detection so far
+  frame 24500  (7.0 fps)  11771/24500 frames with >=1 detection so far
+
+Done. 24524 frames in 3488.4s (7.0 fps).
+11772/24524 frames had >=1 detection, 17198 total boxes logged.
+Saved: thermal_dets_p2_noleak.json

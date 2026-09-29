@@ -10,14 +10,14 @@ fired within +/- --tolerance_frames of it (small tolerance for detection
 latency / off-by-one frame alignment, not for genuinely different events).
 
 Usage:
-    python3 compute_recall_from_ground_truth.py \
-        --manifest recall_ground_truth/manifest.csv \
-        --json thermal_dets_coco.json:coco \
-        --json thermal_dets_transfer.json:rgb_transfer \
-        --tolerance_frames 2
+    python3 src/eval/compute_recall_from_gt.py \
+        --manifest data/recall_ground_truth/manifest.csv \
+        --json results/detections/thermal_dets_rgb_transfer_noleak_p2.json:p2_noleak \
+        --json results/detections/thermal_dets_rgb_transfer_noleak_p2_synthA.json:p2_noleak_synthA \
+        --tolerance_frames 2 --conf_floor 0.1
 
     # score only an unseen temporal holdout (frames the training set never covered)
-    python3 compute_recall_from_ground_truth.py ... --min_frame 20100
+    python3 src/eval/compute_recall_from_gt.py ... --min_frame 20100
 """
 
 import json

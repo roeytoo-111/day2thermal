@@ -673,6 +673,32 @@ def cmd_extract(a):
     print(f"done: {counts} -> {out}  (pairs are {w}x{h})")
 
 
+def cmd_resplit(a):
+    """Move already-extracted pairs between train/ and val/ by thermal frame index (no re-extraction)."""
+    path = os.path.join(a.out, "pairs_manifest.csv")
+    with open(path) as f:
+        rows = list(csv.DictReader(f))
+    moved = 0
+    for r in rows:
+        new = "val" if int(r["thermal_idx"]) >= a.val_min_frame else "train"
+        if new != r["split"]:
+            for sub in ("rgb", "thermal"):
+                os.replace(os.path.join(a.out, r["split"], sub, r["name"]), os.path.join(a.out, new, sub, r["name"]))
+            r["split"] = new
+            moved += 1
+    with open(path, "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+        w.writeheader()
+        w.writerows(rows)
+    summ_path = os.path.join(a.out, "pairs_summary.json")
+    summ = json.load(open(summ_path)) if os.path.exists(summ_path) else {}
+    summ.setdefault("resplits", []).append({"val_min_frame": a.val_min_frame, "moved": moved})
+    summ["counts"]["train"] = sum(r["split"] == "train" for r in rows)
+    summ["counts"]["val"] = sum(r["split"] == "val" for r in rows)
+    save_json(summ, summ_path)
+    print(f"moved {moved}; now train {summ['counts']['train']} / val {summ['counts']['val']}")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -718,8 +744,11 @@ def main():
     e.add_argument("--train-max-frame", type=int, default=19900)
     e.add_argument("--val-min-frame", type=int, default=20100)
     e.add_argument("--force", action="store_true")
+    r = sub.add_parser("resplit", help="move extracted pairs between train/val by thermal frame index")
+    r.add_argument("--out", required=True, help="pairs dir (with pairs_manifest.csv)")
+    r.add_argument("--val-min-frame", type=int, required=True)
     a = ap.parse_args()
-    sys.exit(cmd_calibrate(a) if a.cmd == "calibrate" else cmd_extract(a))
+    sys.exit({"calibrate": cmd_calibrate, "extract": cmd_extract, "resplit": cmd_resplit}[a.cmd](a))
 
 
 if __name__ == "__main__":
