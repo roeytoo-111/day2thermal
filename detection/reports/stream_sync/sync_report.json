@@ -97,6 +97,11 @@
     }
   ],
   "drift_ms_per_1000s": 3.8196681880763186,
+  "lag_model": {
+    "type": "constant",
+    "intercept_ms": 919.0814068887856,
+    "slope_ms_per_s": 0.0
+  },
   "thermal_per_day_px_scale_at_decode": [
     0.5792948293185741,
     0.5801483204314827

@@ -22,6 +22,9 @@ Pass criteria (all must hold):
 Also reports the thermal/day pixel-scale ratio from the motion regression,
 i.e. how many day pixels one thermal pixel spans -- needed for registration.
 
+The lag may drift linearly when the two recorders' clocks differ slightly; then
+lag_model in the report is linear and consumers must use lag(t).
+
 Positive lag = thermal event happens LATER in thermal time than in day time,
 i.e. thermal_time = day_time + lag   (same sign as extract_frames --offset-ms
 with offset = thermal clock - RGB clock for the same event).
@@ -183,14 +186,32 @@ def main():
 
     good = [x for x in windows if x["margin"] > 0.1]
     wl = np.array([x["lag_ms"] for x in good])
-    frame_ms = 1000 / fps_th
-    consistent = len(good) >= max(3, a.n_windows // 2) and np.all(np.abs(wl - np.median(wl)) <= frame_ms)
-    if len(good) >= 2:
-        tc = np.array([(x["t_start_s"] + x["t_end_s"]) / 2 for x in good])
-        drift = float(np.polyfit(tc, wl, 1)[0] * 1000)   # ms of lag change per 1000 s
+    # tolerance = one frame of the SLOWER stream: pairing cannot be finer than that stream's frame period
+    frame_ms = 1000 / min(fps_th, fps_day)
+    tc = np.array([(x["t_start_s"] + x["t_end_s"]) / 2 for x in good])
+    # Lag model: constant, or linear if the two clocks run at slightly different rates
+    # (seen on 2026-06-23 / 2026-07-15: ~0.5-0.8 ms of lag per second). Either way every window must
+    # sit within one thermal frame of the model -- a single lucky match cannot do that.
+    if len(good) >= 3:
+        slope, intercept = np.polyfit(tc, wl, 1)
+        resid_lin = np.abs(wl - (slope * tc + intercept))
+        resid_const = np.abs(wl - np.median(wl))
     else:
-        drift = float("nan")
+        slope, intercept, resid_lin, resid_const = 0.0, float(np.median(wl)) if len(wl) else 0.0, np.array([np.inf]), np.array([np.inf])
+    enough = len(good) >= max(3, a.n_windows // 2)
+    if enough and resid_const.max() <= frame_ms:
+        model = {"type": "constant", "intercept_ms": float(np.median(wl)), "slope_ms_per_s": 0.0}
+        consistent = True
+    elif enough and resid_lin.max() <= frame_ms:
+        model = {"type": "linear", "intercept_ms": float(intercept), "slope_ms_per_s": float(slope)}
+        consistent = True
+    else:
+        model = {"type": "none", "intercept_ms": float(intercept), "slope_ms_per_s": float(slope)}
+        consistent = False
+    drift = float(slope * 1000)
     verdict = "PASS" if (peak - side > 0.1 and consistent) else "FAIL"
+    print(f"lag model: {model['type']}  lag(t) = {model['intercept_ms']:+.0f} ms {model['slope_ms_per_s']:+.3f} ms/s * t;  "
+          f"max window residual {min(resid_const.max(), resid_lin.max()):.1f} ms (tolerance = one frame of the slower stream = {frame_ms:.0f} ms)")
     print(f"\nwindows with a clear peak: {len(good)}/{a.n_windows}; lags {np.round(wl).astype(int).tolist()} ms; "
           f"drift {drift:+.1f} ms per 1000 s")
     print(f"thermal/day pixel scale at decode sizes: x {scale[0]:.3f}, y {scale[1]:.3f}")
@@ -199,7 +220,7 @@ def main():
     report = {"day": a.day, "thermal": a.thermal, "fps_day": fps_day, "fps_thermal": fps_th,
               "n_day": n_day, "n_thermal": n_th, "decode_sizes": {"day": a.day_size, "thermal": a.thermal_size},
               "global": {"lag_ms": lag / GRID_HZ * 1000, "peak_r": peak, "sidelobe_r": side},
-              "windows": windows, "drift_ms_per_1000s": drift,
+              "windows": windows, "drift_ms_per_1000s": drift, "lag_model": model,
               "thermal_per_day_px_scale_at_decode": scale, "verdict": verdict,
               "convention": "thermal_time = day_time + lag  (== extract_frames --offset-ms)"}
     with open(os.path.join(a.out, "sync_report.json"), "w") as f:

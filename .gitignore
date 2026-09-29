@@ -42,7 +42,7 @@ data/**/thermal/
 data/**/calib_preview/
 data/raw/
 data/unpaired/
-data/vid_pairs/solutions_cache.json
+data/**/solutions_cache.json
 detection/data/
 thermal-yolo/
 thermal-1/
@@ -77,3 +77,4 @@ venv/
 # the two original baselines' weights are small and were tracked from the start
 !detection/models/coco_baseline/weights/best.pt
 !detection/models/rgb_transfer/weights/best.pt
+zenodo/

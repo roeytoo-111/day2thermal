@@ -102,9 +102,11 @@ def grab(cap, idx):
     return f if ok else None
 
 
-def day_index(th_idx, fps_th, fps_day, offset_s):
-    """thermal_time = day_time + offset  (verify_stream_sync.py convention)."""
-    return int(round((th_idx / fps_th - offset_s) * fps_day))
+def day_index(th_idx, fps_th, fps_day, offset_s, drift_s_per_s=0.0):
+    """thermal_time = day_time + offset(t), offset(t) = offset_s + drift_s_per_s * t
+    (verify_stream_sync.py convention; drift is non-zero when the two recorders' clocks differ)."""
+    t = th_idx / fps_th
+    return int(round((t - (offset_s + drift_s_per_s * t)) * fps_day))
 
 
 # --------------------------------------------------------------- geometry
@@ -407,11 +409,16 @@ def cmd_calibrate(a):
     prev_dir = ensure_dir(os.path.join(out, "calib_preview"))
     md, mt = probe(a.day), probe(a.thermal)
     offset = a.offset_ms / 1000 if a.offset_ms is not None else None
+    drift = 0.0
     s0 = a.scale
     if a.sync_report:
         rep = json.load(open(a.sync_report))
         if offset is None:
-            offset = rep["global"]["lag_ms"] / 1000
+            lm = rep.get("lag_model")
+            if lm and lm["type"] in ("constant", "linear"):
+                offset, drift = lm["intercept_ms"] / 1000, lm["slope_ms_per_s"] / 1000
+            else:
+                offset = rep["global"]["lag_ms"] / 1000
         if s0 is None:
             dsz = [int(v) for v in rep["decode_sizes"]["day"].split("x")]
             tsz = [int(v) for v in rep["decode_sizes"]["thermal"].split("x")]
@@ -420,14 +427,14 @@ def cmd_calibrate(a):
             s0 = float(sc * (dsz[0] / md["w"]) / (tsz[0] / mt["w"]))
     if offset is None or s0 is None:
         sys.exit("need --sync-report or both --offset-ms and --scale")
-    print(f"offset {offset * 1000:+.0f} ms | seed scale {s0:.4f} thermal px per day px")
+    print(f"offset {offset * 1000:+.0f} ms, drift {drift * 1000:+.3f} ms/s | seed scale {s0:.4f} thermal px per day px")
 
     idxs = pick_still_frames(a.sync_report, mt["n"], mt["fps"], a.n_frames)
     cap_d, cap_t = cv2.VideoCapture(a.day), cv2.VideoCapture(a.thermal)
     frames = []
     for ti in idxs:
         th = grab(cap_t, ti)
-        dy = grab(cap_d, day_index(ti, mt["fps"], md["fps"], offset))
+        dy = grab(cap_d, day_index(ti, mt["fps"], md["fps"], offset, drift))
         if th is not None and dy is not None:
             frames.append((ti, to_gray(th), to_gray(dy)))
     th_size = (frames[0][1].shape[1], frames[0][1].shape[0])
@@ -550,7 +557,8 @@ def cmd_calibrate(a):
                "segments": [{**{k: v for k, v in g.items() if k != "H"},
                              "H_day_to_undistorted_thermal": g["H"].tolist()} for g in segs],
                "crop": crop, "thermal_size": list(th_size), "rgb_size": list(day_size), "day_decode_downscale": ds,
-               "offset_ms": offset * 1000, "fps_day": md["fps"], "fps_thermal": mt["fps"],
+               "offset_ms": offset * 1000, "drift_ms_per_s": drift * 1000,
+               "fps_day": md["fps"], "fps_thermal": mt["fps"],
                "day": a.day, "thermal": a.thermal, "motion": a.motion, "seed_scale": s0,
                "lambda_search": search, "coverage": covered, "align_ncc_p05": align_min,
                "cell_residual": cell_summary, "verdict": verdict,
@@ -589,6 +597,7 @@ def cmd_extract(a):
     min_align = a.min_align if a.min_align is not None else reg["align_ncc_p05"]
     md, mt = probe(a.day), probe(a.thermal)
     offset = reg["offset_ms"] / 1000
+    drift = reg.get("drift_ms_per_s", 0.0) / 1000
     out = a.out
     for sp in ("train", "val"):
         ensure_dir(os.path.join(out, sp, "rgb"))
@@ -623,7 +632,7 @@ def cmd_extract(a):
         if freeze:
             counts["freeze"] += 1
             continue
-        di = day_index(ti, mt["fps"], md["fps"], offset)
+        di = day_index(ti, mt["fps"], md["fps"], offset, drift)
         if di < 0:
             continue
         while day_pos < di:

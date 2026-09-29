@@ -15,6 +15,9 @@ Criteria (all must hold for GO):
 
 python -m day2thermal.gan_gonogo --ckpt runs/vid_p2p/checkpoints/latest.pt \
     --pairs data/vid_pairs --out runs/vid_p2p/gonogo
+# generalisation to another recording day (the stronger test):
+python -m day2thermal.gan_gonogo --ckpt runs/vid_p2p/checkpoints/latest.pt \
+    --pairs data/vid_pairs --val-pairs data/vid_pairs_0715 --val-split train --out runs/vid_p2p/gonogo_0715
 """
 import argparse
 import json
@@ -63,6 +66,10 @@ def main():
     ap.add_argument("--ckpt", required=True)
     ap.add_argument("--pairs", required=True, help="dir with train/ and val/ {rgb,thermal}/")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--val-pairs", default=None,
+                    help="evaluate on <val-pairs>/{val-split}/ instead of <pairs>/val/ -- e.g. another session's "
+                         "pairs, to test generalisation beyond the training day (baseline still fit on --pairs)")
+    ap.add_argument("--val-split", default="val", help="split dir inside --val-pairs (train/val); default val")
     ap.add_argument("--n-strips", type=int, default=8)
     ap.add_argument("--cpu", action="store_true")
     a = ap.parse_args()
@@ -74,11 +81,12 @@ def main():
 
     device = torch.device("cuda" if torch.cuda.is_available() and not a.cpu else "cpu")
     nets, targs, tn, num_downs = load_model(a.ckpt, device)
-    names = list_images(os.path.join(a.pairs, "val", "rgb"))
+    vroot, vsplit = (a.val_pairs, a.val_split) if a.val_pairs else (a.pairs, "val")
+    names = list_images(os.path.join(vroot, vsplit, "rgb"))
     rows, strips = [], []
     strip_idx = set(np.linspace(0, len(names) - 1, min(a.n_strips, len(names))).astype(int))
     for i, name in enumerate(names):
-        rgb, real = read_pair(a.pairs, "val", name)
+        rgb, real = read_pair(vroot, vsplit, name)
         lum = cv2.cvtColor(rgb, cv2.COLOR_BGR2GRAY).astype(np.float64) / 255.0
         A = torch.from_numpy(rgb_to_norm(rgb)).unsqueeze(0).to(device)
         A, hw = pad_to_multiple(A, 2 ** num_downs)
@@ -114,7 +122,7 @@ def main():
     print(f"\nVERDICT: {verdict}")
     cv2.imwrite(os.path.join(out, "strips.png"), np.vstack(strips))
     with open(os.path.join(out, "gonogo.json"), "w") as f:
-        json.dump({"ckpt": a.ckpt, "pairs": a.pairs, "n_val": len(rows), "baseline_coef_bgr_bias": coef.tolist(),
+        json.dump({"ckpt": a.ckpt, "pairs": a.pairs, "val_pairs": os.path.join(vroot, vsplit), "n_val": len(rows), "baseline_coef_bgr_bias": coef.tolist(),
                    "means": m, "C1": c1, "C2": c2, "verdict": verdict, "per_pair": rows}, f, indent=2)
 
 

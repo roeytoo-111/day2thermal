@@ -17,8 +17,10 @@ The same tool audits EVERY frame labelled empty (not only frames where some mode
 fired): tiny airborne objects were found in "empty" frames (notebook 2026-09-29).
 
 Stages:
-  propose  one sequential pass over the video -> proposals.json (top candidates per GT frame)
-  review   keypress UI, writes boxes.csv (resumable)
+  sample       (new sessions) every N-th frame -> unlabelled manifest with a contiguous train/val split
+  propose      one sequential pass over the video -> proposals.json (top candidates per frame)
+  review       keypress UI, writes boxes.csv (resumable)
+  export-yolo  reviewed frames -> YOLO images/labels at native resolution
 
 Review keys (window "GT boxes"):
   positive frames (labelled TP):
@@ -29,7 +31,9 @@ Review keys (window "GT boxes"):
     Enter  nothing airborne (stays empty)          -- the common case
     d      a DRONE is present: then 1-6 or click to give its box
     w      a BIRD / other airborne object: then 1-6 or click
-  both:
+  unlabelled frames (new sessions):
+    1-6 / click  drone     Enter  nothing     w  bird / other airborne object
+  all:
     p      play the zoomed region over +-12 frames (motion tells drone from speck)
     v      show the matching 4K day-camera crop (when inside a verified registration segment)
     s      skip / unsure     b  back     q  save and quit
@@ -184,7 +188,8 @@ class Day:
         W, H = self.reg["rgb_size"]
         if not (0 <= px < W and 0 <= py < H):
             return None, "point outside the day camera's field of view"
-        di = self.day_index(ti, self.reg["fps_thermal"], self.reg["fps_day"], self.reg["offset_ms"] / 1000)
+        di = self.day_index(ti, self.reg["fps_thermal"], self.reg["fps_day"], self.reg["offset_ms"] / 1000,
+                            self.reg.get("drift_ms_per_s", 0.0) / 1000)
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, di)
         ok, im = self.cap.read()
         if not ok:
@@ -206,7 +211,10 @@ COLORS = [(0, 0, 255), (0, 200, 255), (0, 255, 0), (255, 128, 0), (255, 0, 255),
 
 def cmd_review(a):
     m = pd.read_csv(a.manifest)
-    m = m[m.label.isin(["TP", "TP_loose", "FP"])]
+    if "label" not in m.columns:
+        m["label"] = ""
+    m["label"] = m["label"].fillna("")
+    m = m[m.label.isin(["TP", "TP_loose", "FP", ""])]          # "" = unlabelled (new sessions)
     props = json.load(open(a.proposals))["proposals"]
     done = {}
     if os.path.exists(a.out):
@@ -242,6 +250,7 @@ def cmd_review(a):
     while 0 <= i < len(todo):
         fi = todo[i]
         is_pos = lab[fi] in ("TP", "TP_loose")
+        is_new = lab[fi] == ""
         im = read(fi)
         cands = props.get(str(fi), [])
         g = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY).astype(np.float32)
@@ -263,7 +272,8 @@ def cmd_review(a):
         canvas[:576, 640:] = panel
         prev = done.get(fi, {}).get("verdict", "")
         head = (f"[{i + 1}/{len(todo)}] frame {fi}  label {lab[fi]}  "
-                + ("1-6/click=drone  n=no drone" if is_pos else "Enter=nothing  d=drone  w=bird")
+                + ("1-6/click=drone  n=no drone" if is_pos else
+                   "1-6/click=drone  Enter=nothing  w=bird" if is_new else "Enter=nothing  d=drone  w=bird")
                 + "  p=play v=day s=skip b=back q=quit" + (f"   (was: {prev})" if prev else ""))
         cv2.putText(canvas, head, (6, 534), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (255, 255, 255), 1)
         cv2.imshow("GT boxes", canvas)
@@ -337,7 +347,16 @@ def cmd_review(a):
                 cv2.destroyWindow("day camera")
             continue
         verdict, box, src = None, None, None
-        if is_pos:
+        if is_new:
+            if key in (13, 10):
+                verdict = "nothing"
+            elif key == ord("w"):
+                box, src = pick_box(0xFF)
+                verdict = "bird_or_other" if box else None
+            elif ord("1") <= key <= ord("6") or key == 0xFF or click["pt"] is not None:
+                box, src = pick_box(key)
+                verdict = "drone" if box else None
+        elif is_pos:
             if key == ord("n"):
                 verdict = "no_drone_visible"
             elif ord("1") <= key <= ord("6") or key == 0xFF or click["pt"] is not None:
@@ -366,6 +385,67 @@ def cmd_review(a):
     print(f"saved {a.out}: {len(done)}/{len(todo)} frames reviewed {v}")
 
 
+# ------------------------------------------------------------------ sample / export (new sessions)
+def cmd_sample(a):
+    """Every --every-th frame of [--start-s, --end-s); the last --val-frac of the range (contiguous,
+    after a --gap-s buffer) is the val split. Frames are unlabelled; review them with `review`."""
+    cap = cv2.VideoCapture(a.video)
+    n, fps = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)), cap.get(cv2.CAP_PROP_FPS)
+    f0 = int(a.start_s * fps)
+    f1 = min(n, int(a.end_s * fps)) if a.end_s else n
+    frames = list(range(f0 + a.every // 2, f1, a.every))
+    cut = f0 + int((1 - a.val_frac) * (f1 - f0))
+    gap = int(a.gap_s * fps)
+    rows = []
+    for f in frames:
+        if not a.all_split and a.val_frac > 0 and cut - gap <= f < cut + gap:
+            continue                                    # buffer between splits (adjacent frames ~identical)
+        rows.append({"filename": f"frame_{f:06d}.png", "frame_id": f, "label": "",
+                     "split": a.all_split or ("val" if (a.val_frac > 0 and f >= cut + gap) else "train")})
+    pd.DataFrame(rows).to_csv(a.out, index=False)
+    sp = pd.Series([r["split"] for r in rows]).value_counts().to_dict()
+    print(f"{a.video}: {n} frames @ {fps:.2f} fps -> {len(rows)} frames every {a.every} ({sp}) -> {a.out}")
+
+
+def cmd_export_yolo(a):
+    """boxes.csv (+ the sample manifest's split) -> YOLO dataset at native resolution.
+    drone -> --drone_class, bird_or_other -> --bird_class (or dropped if < 0); 'nothing' frames are
+    exported as background images; 'unsure' frames are skipped."""
+    b = pd.read_csv(a.boxes)
+    m = pd.read_csv(a.manifest)[["frame_id", "split"]]
+    b = b.merge(m, on="frame_id", how="left")
+    cap = cv2.VideoCapture(a.video)
+    W, H = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    counts = {}
+    for fid, g in b.groupby("frame_id"):
+        if (g.verdict == "unsure").all():
+            continue
+        split = g.split.iloc[0] if isinstance(g.split.iloc[0], str) else "train"
+        cap.set(cv2.CAP_PROP_POS_FRAMES, int(fid))
+        ok, im = cap.read()
+        if not ok:
+            continue
+        stem = f"{a.prefix}_{int(fid):06d}"
+        for sub in ("images", "labels"):
+            os.makedirs(os.path.join(a.out, split, sub), exist_ok=True)
+        cv2.imwrite(os.path.join(a.out, split, "images", stem + ".jpg"), im, [cv2.IMWRITE_JPEG_QUALITY, 95])
+        lines = []
+        for r in g.itertuples():
+            if r.verdict == "drone":
+                c = a.drone_class
+            elif r.verdict == "bird_or_other" and a.bird_class >= 0:
+                c = a.bird_class
+            else:
+                continue
+            x0, y0, x1, y1 = float(r.x0), float(r.y0), float(r.x1), float(r.y1)
+            lines.append(f"{c} {(x0 + x1) / 2 / W:.6f} {(y0 + y1) / 2 / H:.6f} {(x1 - x0) / W:.6f} {(y1 - y0) / H:.6f}")
+        with open(os.path.join(a.out, split, "labels", stem + ".txt"), "w") as f:
+            f.write("\n".join(lines) + ("\n" if lines else ""))
+        key = (split, "with_drone" if any(l.startswith(f"{a.drone_class} ") for l in lines) else "no_drone")
+        counts[key] = counts.get(key, 0) + 1
+    print(f"exported to {a.out}: {counts}")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -380,8 +460,25 @@ def main():
     r.add_argument("--out", required=True)
     r.add_argument("--registration", default=None, help="../data/vid_pairs/registration.json (enables 'v')")
     r.add_argument("--day", default=None, help="data/videos/day.mp4 (enables 'v')")
+    sm = sub.add_parser("sample", help="sample frames of a new session for labelling (train/val split)")
+    sm.add_argument("--video", required=True)
+    sm.add_argument("--out", required=True, help="manifest.csv to write")
+    sm.add_argument("--every", type=int, default=25, help="take every N-th frame (25 = 1/s at 25 fps)")
+    sm.add_argument("--start-s", type=float, default=0.0)
+    sm.add_argument("--end-s", type=float, default=None)
+    sm.add_argument("--val-frac", type=float, default=0.2, help="last fraction of the range -> val (contiguous)")
+    sm.add_argument("--gap-s", type=float, default=5.0, help="frames within this of the split point are dropped")
+    sm.add_argument("--all-split", default=None, help="put every frame in this split (e.g. 'test' for a held-out session)")
+    ex = sub.add_parser("export-yolo", help="reviewed boxes -> YOLO dataset")
+    ex.add_argument("--video", required=True)
+    ex.add_argument("--boxes", required=True)
+    ex.add_argument("--manifest", required=True, help="sample manifest (for the split column)")
+    ex.add_argument("--out", required=True)
+    ex.add_argument("--prefix", required=True, help="filename prefix, e.g. the session date")
+    ex.add_argument("--drone_class", type=int, default=1, help="thermal-uav id in thermal-1-noleak (1)")
+    ex.add_argument("--bird_class", type=int, default=0, help="bird id (0); -1 drops bird boxes")
     a = ap.parse_args()
-    {"propose": cmd_propose, "review": cmd_review}[a.cmd](a)
+    {"propose": cmd_propose, "review": cmd_review, "sample": cmd_sample, "export-yolo": cmd_export_yolo}[a.cmd](a)
 
 
 if __name__ == "__main__":
