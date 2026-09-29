@@ -48,14 +48,20 @@ def parse_args():
     p.add_argument("--boxes", default=None,
                     help="boxes.csv from gt_boxes.py review -> LOCATION-AWARE scoring: a positive frame is caught "
                          "only if a detection lands on the drone box; the audit's corrections are applied.")
+    p.add_argument("--det_index_base", type=int, default=1,
+                    help="frame_id of the first frame in the detection JSON (run_yolo_inference.py: 1)")
     p.add_argument("--sweep", default=None,
                     help="Comma-separated conf floors to report (with --boxes), e.g. 0.1,0.2,0.3,0.4,0.5,0.6,0.7")
     return p.parse_args()
 
 
+DET_INDEX_BASE = 1   # run_yolo_inference.py numbers frames from 1; GT frame_ids are 0-based video indices
+
+
 def load_dets(json_path):
+    """Detections keyed by 0-based video frame index (the GT convention)."""
     with open(json_path) as f:
-        return {e["frame_id"]: e["detections"] for e in json.load(f)}
+        return {e["frame_id"] - DET_INDEX_BASE: e["detections"] for e in json.load(f)}
 
 
 def on_target(det_box, gt, min_px=8.0):
@@ -73,6 +79,8 @@ def on_target(det_box, gt, min_px=8.0):
 
 
 def located_report(args):
+    global DET_INDEX_BASE
+    DET_INDEX_BASE = args.det_index_base
     """Location-aware recall / false-fire with the gt_boxes.py review applied.
     Positives: frames reviewed as 'drone' (incl. frames originally labelled empty that the audit found a drone in).
     Negatives: frames reviewed as 'nothing' or 'bird_or_other' (a hit on a bird is a false fire).

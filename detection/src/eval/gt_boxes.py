@@ -210,6 +210,38 @@ def cmd_propose(a):
     print(f"wrote {a.out}: {len(props)} frames")
 
 
+# ------------------------------------------------------------------ frame access
+class FrameReader:
+    """Frames by SEQUENTIAL index (the convention of run_yolo_inference.py and `propose`).
+    cv2 seeking (CAP_PROP_POS_FRAMES) is not frame-exact on every file: on the variable-frame-rate
+    2026-07-30 recording it lands tens of frames away, and on 2026-06-23 it is off by one at some frames
+    (a probe of a few frames does not catch that). So the needed frames are always decoded sequentially
+    once and cached; any other frame (e.g. the +-12 frames of 'p') falls back to seeking (approximate)."""
+
+    def __init__(self, video, needed=()):
+        self.video = video
+        self.cap = cv2.VideoCapture(video)
+        self.cache = {}
+        want = set(int(f) for f in needed)
+        if want:
+            print(f"  decoding {len(want)} frames of {os.path.basename(video)} sequentially ...", flush=True)
+            cap, i, last = cv2.VideoCapture(video), 0, max(want)
+            while i <= last:
+                ok, im = cap.read()
+                if not ok:
+                    break
+                if i in want:
+                    self.cache[i] = im
+                i += 1
+
+    def read(self, fi):
+        if fi in self.cache:
+            return self.cache[fi]
+        self.cap.set(cv2.CAP_PROP_POS_FRAMES, int(fi))
+        ok, im = self.cap.read()
+        return im if ok else None
+
+
 # ------------------------------------------------------------------ review
 class Day:
     """Optional 4K day-camera crop for a thermal point, via video_pairs registration."""
@@ -355,7 +387,7 @@ def cmd_review(a):
                      or int(float(done[f]["y1"])) - int(float(done[f]["y0"])) >= 50)]
         print(f"--redo-capped: {len(todo)} frames with a capped box to redo")
     lab = dict(zip(m.frame_id.astype(int), m.label))
-    cap = cv2.VideoCapture(a.video)
+    frames = FrameReader(a.video, needed=todo)
     day = Day(a.registration, a.day) if a.registration and a.day else None
     fields = ["frame_id", "orig_label", "verdict", "x0", "y0", "x1", "y1", "source", "verified"]
 
@@ -367,9 +399,7 @@ def cmd_review(a):
                 wr.writerow({f: done[k].get(f, "") for f in fields})
 
     def read(fi):
-        cap.set(cv2.CAP_PROP_POS_FRAMES, fi)
-        ok, im = cap.read()
-        return im
+        return frames.read(fi)
 
     # mouse: press-release without moving = click (auto-fit), press-drag-release = drawn box.
     # Both panels share one pixel grid, so coordinates are taken modulo 640.
@@ -644,16 +674,15 @@ def cmd_export_yolo(a):
     b = pd.read_csv(a.boxes)
     m = pd.read_csv(a.manifest)[["frame_id", "split"]]
     b = b.merge(m, on="frame_id", how="left")
-    cap = cv2.VideoCapture(a.video)
-    W, H = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    frames = FrameReader(a.video, needed=b.frame_id.unique())
+    W, H = int(frames.cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(frames.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     counts = {}
     for fid, g in b.groupby("frame_id"):
         if (g.verdict == "unsure").all():
             continue
         split = g.split.iloc[0] if isinstance(g.split.iloc[0], str) else "train"
-        cap.set(cv2.CAP_PROP_POS_FRAMES, int(fid))
-        ok, im = cap.read()
-        if not ok:
+        im = frames.read(int(fid))
+        if im is None:
             continue
         stem = f"{a.prefix}_{int(fid):06d}"
         for sub in ("images", "labels"):
