@@ -25,7 +25,9 @@ Stages:
 Review keys (window "GT boxes"):
   positive frames (labelled TP):
     1-6    the numbered candidate is the drone
-    click  on the full frame at the drone -> box auto-fitted there (then Enter to accept, Esc to cancel)
+    click  on the drone (either panel) -> polarity-aware auto-fit; if it cannot fit, it asks for a drag
+    drag   press-drag-release around the drone -> exactly that box
+           (after click/drag: Enter accept, +/- grow/shrink, drag again to redraw, Esc cancel)
     n      no drone visible in this frame (label error)
   empty frames (labelled FP), all of them:
     Enter  nothing airborne (stays empty)          -- the common case
@@ -114,6 +116,45 @@ def fit_box(score, x, y, win=24):
     if y1 - y0 < 3:
         y0, y1 = y - 1, y + 2
     return [int(max(x0, 0)), int(max(y0, 0)), int(min(x1, w)), int(min(y1, h))]
+
+
+def fit_click(g, x, y, max_half=24):
+    """Box for a clicked target, polarity-aware (dark drone over hot terrain OR bright drone on sky).
+    Snap to the strongest local-contrast pixel within 6 px, estimate the local background from a ring,
+    then grow the >= 45%-of-peak component in windows of increasing size. Returns None when the component
+    still touches the window edge at the largest size (target bleeds into clutter): the caller asks for a
+    drawn box instead of saving a capped one (the old fit silently saved 51x51 boxes there)."""
+    h, w = g.shape
+    loc = cv2.medianBlur(g.astype(np.uint8), 15).astype(np.float32)
+    c = g - loc
+    X0, Y0, X1, Y1 = max(x - 6, 0), max(y - 6, 0), min(x + 7, w), min(y + 7, h)
+    sub = np.abs(c[Y0:Y1, X0:X1])
+    dy, dx = np.unravel_index(np.argmax(sub), sub.shape)
+    sx, sy = X0 + dx, Y0 + dy
+    pol = 1.0 if c[sy, sx] >= 0 else -1.0
+    ring_in, ring_out = 10, 18
+    yy, xx = np.mgrid[max(sy - ring_out, 0):min(sy + ring_out + 1, h), max(sx - ring_out, 0):min(sx + ring_out + 1, w)]
+    rr = np.hypot(yy - sy, xx - sx)
+    bg = float(np.median(g[yy[(rr >= ring_in) & (rr <= ring_out)], xx[(rr >= ring_in) & (rr <= ring_out)]]))
+    contrast = cv2.GaussianBlur(pol * (g - bg), (0, 0), 0.7)
+    for half in (6, 10, 16, max_half):
+        X0, Y0, X1, Y1 = max(sx - half, 0), max(sy - half, 0), min(sx + half + 1, w), min(sy + half + 1, h)
+        win = contrast[Y0:Y1, X0:X1]
+        py0, px0 = sy - Y0, sx - X0
+        near = win[max(py0 - 2, 0):py0 + 3, max(px0 - 2, 0):px0 + 3]
+        peak = float(near.max())
+        if peak <= 0:
+            return None
+        mask = (win >= 0.45 * peak).astype(np.uint8)
+        n, lab = cv2.connectedComponents(mask, connectivity=8)
+        ny, nx = np.unravel_index(np.argmax(near), near.shape)
+        comp = lab == lab[max(py0 - 2, 0) + ny, max(px0 - 2, 0) + nx]
+        ys, xs = np.nonzero(comp)
+        touches = xs.min() == 0 or ys.min() == 0 or xs.max() == win.shape[1] - 1 or ys.max() == win.shape[0] - 1
+        if not touches:
+            return [int(max(X0 + xs.min() - 1, 0)), int(max(Y0 + ys.min() - 1, 0)),
+                    int(min(X0 + xs.max() + 2, w)), int(min(Y0 + ys.max() + 2, h))]
+    return None
 
 
 def candidates(frame, neighbours, border=4):
@@ -280,6 +321,12 @@ def cmd_review(a):
         for r in csv.DictReader(open(a.out)):
             done[int(r["frame_id"])] = r
     todo = [int(f) for f in m.sort_values("frame_id").frame_id]
+    if a.redo_capped:
+        # frames whose drone box hit the old 51-px auto-fit cap: review them again, nothing else
+        todo = [f for f in todo if f in done and done[f]["verdict"] in ("drone", "bird_or_other")
+                and (int(float(done[f]["x1"])) - int(float(done[f]["x0"])) >= 50
+                     or int(float(done[f]["y1"])) - int(float(done[f]["y0"])) >= 50)]
+        print(f"--redo-capped: {len(todo)} frames with a capped box to redo")
     lab = dict(zip(m.frame_id.astype(int), m.label))
     cap = cv2.VideoCapture(a.video)
     day = Day(a.registration, a.day) if a.registration and a.day else None
@@ -297,17 +344,48 @@ def cmd_review(a):
         ok, im = cap.read()
         return im
 
-    click = {"pt": None}
+    # mouse: press-release without moving = click (auto-fit), press-drag-release = drawn box.
+    # Both panels share one pixel grid, so coordinates are taken modulo 640.
+    mouse = {"down": None, "cur": None, "event": None, "last": None}
     n_panels = 2 if day is not None else 1          # IR | registered RGB
     tiles_from = {"src": "IR"}
+    MOUSE = 256
 
     def on_mouse(ev, x, y, flags, param):
-        if ev == cv2.EVENT_LBUTTONDOWN and x < 640 * n_panels and y < 512:
-            click["pt"] = (x % 640, y)                  # same pixel grid in both panels
+        if x >= 640 * n_panels or y >= 512:
+            return
+        p = (x % 640, min(y, 511))
+        if ev == cv2.EVENT_LBUTTONDOWN:
+            mouse["down"], mouse["cur"], mouse["panel"] = p, p, x // 640
+        elif ev == cv2.EVENT_MOUSEMOVE and mouse["down"] is not None:
+            mouse["cur"] = p
+        elif ev == cv2.EVENT_LBUTTONUP and mouse["down"] is not None:
+            (x0, y0), (x1, y1) = mouse["down"], p
+            if abs(x1 - x0) > 3 or abs(y1 - y0) > 3:
+                mouse["event"] = ("drag", [min(x0, x1), min(y0, y1), max(x0, x1) + 1, max(y0, y1) + 1])
+            else:
+                mouse["event"] = ("click", p)
+            mouse["last"] = p
+            mouse["down"] = mouse["cur"] = None
+
+    def wait_input(base):
+        """Wait for a key or a completed mouse gesture; draws the rubber band while dragging."""
+        while True:
+            k = cv2.waitKey(30) & 0xFF
+            if k != 255:
+                return k
+            if mouse["event"] is not None:
+                return MOUSE
+            if mouse["down"] is not None:
+                show = base.copy()
+                (x0, y0), (x1, y1) = mouse["down"], mouse["cur"]
+                for off in range(n_panels):
+                    cv2.rectangle(show, (x0 + 640 * off, y0), (x1 + 640 * off, y1), (255, 255, 255), 1)
+                cv2.imshow("GT boxes", show)
 
     cv2.namedWindow("GT boxes")
     cv2.setMouseCallback("GT boxes", on_mouse)
-    i = next((k for k, f in enumerate(todo) if f not in done), len(todo))
+    i = 0 if a.redo_capped else next((k for k, f in enumerate(todo) if f not in done), len(todo))
     while 0 <= i < len(todo):
         fi = todo[i]
         is_pos = lab[fi] in ("TP", "TP_loose")
@@ -350,39 +428,55 @@ def cmd_review(a):
         canvas[:576, left:] = panel
         prev = done.get(fi, {}).get("verdict", "")
         head = (f"[{i + 1}/{len(todo)}] frame {fi}  label {lab[fi]}  "
-                + ("1-6/click=drone  n=no drone" if is_pos else
-                   "1-6/click=drone  Enter=nothing  w=bird" if is_new else "Enter=nothing  d=drone  w=bird")
+                + ("1-6/click/drag=drone  n=no drone" if is_pos else "1-6/click/drag=drone  Enter=nothing  w=bird")
                 + "  p=play v=4K t=tiles IR/RGB s=skip b=back q=quit" + (f"   (was: {prev})" if prev else ""))
         cv2.putText(canvas, head, (6, 534), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (255, 255, 255), 1)
         cv2.imshow("GT boxes", canvas)
-        click["pt"] = None
-        key = cv2.waitKey(0) & 0xFF
+        mouse["event"] = None
+        key = wait_input(canvas)
+
+        def confirm(box, src):
+            """Show the box on both panels; Enter accept, Esc cancel, +/- grow/shrink, drag again to redraw."""
+            while True:
+                show = canvas.copy()
+                if box is None:
+                    msg = "auto-fit failed (target bleeds into clutter): DRAG a box around it   Esc=cancel"
+                else:
+                    for off in range(n_panels):
+                        cv2.rectangle(show, (box[0] - 1 + 640 * off, box[1] - 1), (box[2] + 640 * off, box[3]),
+                                      (255, 255, 255), 1)
+                    msg = f"{box[2] - box[0]}x{box[3] - box[1]} px   Enter=accept  +/-=grow/shrink  drag=redraw  Esc=cancel"
+                cv2.putText(show, msg, (6, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+                cv2.imshow("GT boxes", show)
+                mouse["event"] = None
+                k = wait_input(show)
+                if k == MOUSE:
+                    kind, val = mouse["event"]
+                    box, src = (val, "drag") if kind == "drag" else (fit_click(g, *val), "click")
+                elif k == 27:
+                    return None, None
+                elif k in (13, 10) and box is not None:
+                    return box, src
+                elif k in (ord("+"), ord("=")) and box is not None:
+                    box = [max(box[0] - 1, 0), max(box[1] - 1, 0), min(box[2] + 1, 640), min(box[3] + 1, 512)]
+                elif k == ord("-") and box is not None and box[2] - box[0] > 3 and box[3] - box[1] > 3:
+                    box = [box[0] + 1, box[1] + 1, box[2] - 1, box[3] - 1]
 
         def pick_box(key):
-            """Return (box, source) from a candidate number key or a click (waits if needed)."""
+            """(box, source) from a candidate number key, or a mouse click/drag (waits for one if needed)."""
             if ord("1") <= key <= ord("6") and key - ord("1") < len(cands):
                 return cands[key - ord("1")]["box"], f"proposal{key - ord('0')}"
-            while click["pt"] is None:
-                k2 = cv2.waitKey(50) & 0xFF
-                if k2 == 27:
-                    return None, None
+            if key != MOUSE:
+                mouse["event"] = None
+                k2 = wait_input(canvas)
                 if ord("1") <= k2 <= ord("6") and k2 - ord("1") < len(cands):
                     return cands[k2 - ord("1")]["box"], f"proposal{k2 - ord('0')}"
-            x, y = click["pt"]
-            # snap to the strongest small-blob response within 6 px of the click
-            win = g[max(y - 6, 0):y + 7, max(x - 6, 0):x + 7]
-            k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9))
-            th = np.maximum(win - cv2.morphologyEx(win, cv2.MORPH_OPEN, k), cv2.morphologyEx(win, cv2.MORPH_CLOSE, k) - win)
-            dy, dx = np.unravel_index(np.argmax(th), th.shape)
-            sx, sy = max(x - 6, 0) + dx, max(y - 6, 0) + dy
-            full = np.maximum(g - cv2.morphologyEx(g, cv2.MORPH_OPEN, k), cv2.morphologyEx(g, cv2.MORPH_CLOSE, k) - g)
-            box = fit_box(cv2.GaussianBlur(full, (0, 0), 1.0), sx, sy)
-            show = canvas.copy()
-            cv2.rectangle(show, (box[0] - 2, box[1] - 2), (box[2] + 2, box[3] + 2), (255, 255, 255), 1)
-            cv2.putText(show, "Enter=accept  Esc=cancel", (6, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-            cv2.imshow("GT boxes", show)
-            k3 = cv2.waitKey(0) & 0xFF
-            return (box, "click") if k3 in (13, 10) else (None, None)
+                if k2 != MOUSE:
+                    return None, None
+            kind, val = mouse["event"]
+            if kind == "drag":
+                return confirm(val, "drag")
+            return confirm(fit_click(g, *val), "click")
 
         if key == ord("q"):
             break
@@ -398,9 +492,7 @@ def cmd_review(a):
             tiles_from["src"] = "RGB" if tiles_from["src"] == "IR" else "IR"
             continue
         if key == ord("p"):
-            cx, cy = (cands[0]["x"], cands[0]["y"]) if cands else (320, 256)
-            if click["pt"]:
-                cx, cy = click["pt"]
+            cx, cy = mouse["last"] or ((cands[0]["x"], cands[0]["y"]) if cands else (320, 256))
             for _ in range(3):
                 for d in range(-12, 13):
                     fr = read(fi + d)
@@ -416,9 +508,7 @@ def cmd_review(a):
             if day is None:
                 print("  (pass --registration and --day to enable the day-camera view)")
                 continue
-            cx, cy = (cands[0]["x"], cands[0]["y"]) if cands else (320, 256)
-            if click["pt"]:
-                cx, cy = click["pt"]
+            cx, cy = mouse["last"] or ((cands[0]["x"], cands[0]["y"]) if cands else (320, 256))
             c, msg = day.crop(fi, cx, cy)
             if c is None:
                 print(f"  day view: {msg}")
@@ -428,30 +518,16 @@ def cmd_review(a):
                 cv2.destroyWindow("day camera")
             continue
         verdict, box, src = None, None, None
-        if is_new:
-            if key in (13, 10):
-                verdict = "nothing"
-            elif key == ord("w"):
-                box, src = pick_box(0xFF)
-                verdict = "bird_or_other" if box else None
-            elif ord("1") <= key <= ord("6") or key == 0xFF or click["pt"] is not None:
-                box, src = pick_box(key)
-                verdict = "drone" if box else None
-        elif is_pos:
-            if key == ord("n"):
-                verdict = "no_drone_visible"
-            elif ord("1") <= key <= ord("6") or key == 0xFF or click["pt"] is not None:
-                box, src = pick_box(key)
-                verdict = "drone" if box else None
-            else:
-                box, src = pick_box(key) if key not in (13, 10) else (None, None)
-                verdict = "drone" if box else None
-        else:
-            if key in (13, 10):
-                verdict = "nothing"
-            elif key in (ord("d"), ord("w")):
-                box, src = pick_box(0xFF)
-                verdict = ("drone" if key == ord("d") else "bird_or_other") if box else None
+        if key == MOUSE or ord("1") <= key <= ord("6") or key == ord("d"):
+            box, src = pick_box(key)
+            verdict = "drone" if box else None
+        elif key == ord("w"):
+            box, src = pick_box(0)
+            verdict = "bird_or_other" if box else None
+        elif key == ord("n") and is_pos:
+            verdict = "no_drone_visible"
+        elif key in (13, 10) and not is_pos:
+            verdict = "nothing"
         if verdict is None:
             continue
         b = box or ["", "", "", ""]
@@ -542,6 +618,8 @@ def main():
     r.add_argument("--registration", default=None,
                    help="video_pairs registration.json of this session (enables the RGB panel, 't' and 'v')")
     r.add_argument("--day", default=None, help="the synced day video of this session")
+    r.add_argument("--redo-capped", action="store_true",
+                   help="revisit only frames whose box hit the old 51-px auto-fit cap (fixed 2026-09-30)")
     sm = sub.add_parser("sample", help="sample frames of a new session for labelling (train/val split)")
     sm.add_argument("--video", required=True)
     sm.add_argument("--out", required=True, help="manifest.csv to write")
