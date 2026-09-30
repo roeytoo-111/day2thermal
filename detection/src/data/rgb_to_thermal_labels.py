@@ -1,4 +1,4 @@
-"""
+r"""
 Thermal drone labels from the production RGB detector, via the synced + registered day camera.
 
 Every paired session has a verified time offset (verify_stream_sync.py, incl. clock drift) and per-segment
@@ -11,8 +11,14 @@ day camera's field of view. Frames where the RGB detector found nothing are writ
 --negatives is given (the day camera sees a smaller area than the thermal one: a drone outside it is
 invisible to the RGB detector, so "nothing" is weak evidence).
 
-Input: RGB detections as written by run_yolo_inference.py (frame_id 1-based, bbox xyxy in day pixels) for
-the SAME clipped day video the registration was computed on.
+Input: RGB detections for the SAME clipped day video the registration was computed on (frame_id 1-based,
+bbox xyxy in day pixels), either
+  * run_yolo_inference.py format: {"bbox", "conf"}, or
+  * ANN-Detection src/deploy/run_pipeline_tiled.py format: {"bbox", "stage1_conf", "stage2_prob", "final"}
+    -> only final == "confirmed" is used, conf = stage2_prob.
+--rgb-frame-stride N: the JSON was made on a clip keeping every N-th frame (to save Jetson time:
+    ffmpeg -i day_clipped.mp4 -vf "select=not(mod(n\,N))" -vsync 0 -c:v libx264 -crf 18 day_everyN.mp4),
+    so JSON frame k (0-based) = day frame k*N.
 
     python3 src/data/rgb_to_thermal_labels.py --registration ../data/vid_pairs_0715/registration.json \\
         --rgb-json rgb_dets_0715.json --every 25 --min-conf 0.4 \\
@@ -37,6 +43,7 @@ def parse_args():
     p.add_argument("--registration", required=True)
     p.add_argument("--rgb-json", required=True)
     p.add_argument("--rgb-index-base", type=int, default=1, help="frame_id of the first frame in the RGB JSON")
+    p.add_argument("--rgb-frame-stride", type=int, default=1, help="JSON made on a clip keeping every N-th day frame")
     p.add_argument("--every", type=int, default=25, help="label every N-th thermal frame")
     p.add_argument("--min-conf", type=float, default=0.4)
     p.add_argument("--negatives", action="store_true", help="also write 'nothing' for frames without RGB detections")
@@ -64,12 +71,23 @@ def main():
     fps_t, fps_d = reg["fps_thermal"], reg["fps_day"]
     off, drift = reg["offset_ms"] / 1000, reg.get("drift_ms_per_s", 0.0) / 1000
     segs = [g for g in reg["segments"] if g["verified"]]
-    rgb = {e["frame_id"] - a.rgb_index_base: e["detections"] for e in json.load(open(a.rgb_json))}
+    def norm(d):
+        if "conf" in d:
+            return d
+        if d.get("final") != "confirmed":                       # run_pipeline_tiled.py cascade output
+            return None
+        return {"bbox": d["bbox"], "conf": float(d.get("stage2_prob", d.get("stage1_conf", 0.0)))}
+    rgb = {}
+    for e in json.load(open(a.rgb_json)):
+        dets = [x for x in (norm(d) for d in e["detections"]) if x is not None]
+        rgb[(e["frame_id"] - a.rgb_index_base) * a.rgb_frame_stride] = dets
     rows, man = [], []
     for g in segs:
         H = np.array(g["H_day_to_undistorted_thermal"])
         for ti in range(g["span"][0], g["span"][1] + 1, a.every):
             di = day_index(ti, fps_t, fps_d, off, drift)
+            if a.rgb_frame_stride > 1:                              # nearest day frame that was processed
+                di = int(round(di / a.rgb_frame_stride)) * a.rgb_frame_stride
             dets = [d for d in rgb.get(di, []) if d["conf"] >= a.min_conf]
             boxes = []
             for d in dets:
