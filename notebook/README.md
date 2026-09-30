@@ -19,8 +19,10 @@ Each entry uses the same sections so days can be compared:
 - **Change one thing per run.** Bundled changes (leak fix + P2 head) can't be attributed.
 - **No pairing or alignment claim from one visual match.** Verify across independent windows (`verify_stream_sync.py`) and multiple frames (`video_pairs calibrate`).
 - **Set exit criteria before a run, not after seeing it.**
+- **Pin the YOLO optimizer** (`optimizer=AdamW lr0=0.001667`); `auto` switches optimizer with dataset size (since 2026-09-30).
 
 ## Index
 
 - [2026-09-28](2026-09-28.md): GAN review; leak found (45% of train is the eval video); leak-free dataset; synthetic copy-paste (option A); stream sync verified; segmented registration, 392 GAN pairs; first honest P2 numbers
 - [2026-09-29](2026-09-29.md): location-aware GT + scoring (p2: 42% @ 25% FF on 07-08; ≈0% on dark drones over terrain; 22% on the new 07-30 session); synthA v1 not a win; pix2pix NO-GO on an unseen day; 3 new sessions synced + registered (1,005 pairs); label bugs found and fixed; size/polarity mismatch → augmented YOLO datasets
+- [2026-09-30](2026-09-30.md): diffusion trained (val L1 0.120, no drones in output; test pending); YOLO sessions/aug trained; `optimizer=auto` confound found; `score_models.py` (recall at matched FF)
