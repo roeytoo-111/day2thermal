@@ -133,7 +133,10 @@ def main():
           f"(dark cold sky, bright clouds/ground, BRIGHT drones)")
     verdict = "NO-GO" if not (c1 and c2) else "GO pending C3"
     print(f"\nVERDICT: {verdict}")
-    cv2.imwrite(os.path.join(out, "strips.png"), np.vstack(strips))
+    if strips:                                  # pairs from different sessions differ slightly in size
+        w0 = strips[0].shape[1]
+        strips = [cv2.resize(x, (w0, int(round(x.shape[0] * w0 / x.shape[1])))) for x in strips]
+        cv2.imwrite(os.path.join(out, "strips.png"), np.vstack(strips))
     with open(os.path.join(out, "gonogo.json"), "w") as f:
         json.dump({"ckpt": a.ckpt or a.pred_dir, "pairs": a.pairs, "val_pairs": os.path.join(vroot, vsplit), "n_val": len(rows), "baseline_coef_bgr_bias": coef.tolist(),
                    "means": m, "C1": c1, "C2": c2, "verdict": verdict, "per_pair": rows}, f, indent=2)
