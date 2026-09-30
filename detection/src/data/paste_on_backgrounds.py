@@ -200,6 +200,9 @@ def cmd_build(a):
     rng = np.random.default_rng(a.seed)
     if os.path.exists(a.out):
         raise SystemExit(f"{a.out} already exists; remove it first.")
+    for need in (os.path.join(a.base, "data.yaml"), os.path.join(a.sprites_from, "train", "labels")):
+        if not os.path.exists(need):
+            raise SystemExit(f"missing {need} (--base / --sprites_from)")
     bg_dir = a.bg_dir or os.path.join(a.work, "real")
     rows = list(csv.DictReader(open(os.path.join(a.work, "backgrounds.csv"))))
     missing = [r["name"] for r in rows if not os.path.exists(os.path.join(bg_dir, r["name"]))]
@@ -213,6 +216,8 @@ def cmd_build(a):
     print(f"backgrounds: {len(rows)} of {n_all} (dropped: a real detection on textured ground)")
     sprites = extract_crops(a.sprites_from, a.uav_class, 24.0)
     print(f"real drone sprites: {len(sprites)}")
+    if not sprites:
+        raise SystemExit(f"no usable drone sprites in {a.sprites_from}/train")
 
     for split in SPLITS:
         for sub in ("images", "labels"):
