@@ -185,6 +185,9 @@ def main():
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--cpu", action="store_true")
+    ap.add_argument("--init-controlnet", default=None,
+                    help="start from a saved ControlNet (e.g. runs/diff_cn_all/best) instead of the SD UNet copy; "
+                         "the optimizer restarts, so consider a lower --lr")
     a = ap.parse_args()
 
     torch.manual_seed(a.seed)
@@ -201,7 +204,11 @@ def main():
     # ControlNet's condition encoder must downsample like the VAE (SD1.5: 8x -> the default 4 stages)
     f = 2 ** (len(vae.config.block_out_channels) - 1)
     ch = (16, 32, 96, 256)[:int(math.log2(f)) + 1]
-    controlnet = ControlNetModel.from_unet(unet.float(), conditioning_embedding_out_channels=ch).to(device)  # fp32 master
+    if a.init_controlnet:                    # continue from a saved ControlNet (fresh optimizer and lr)
+        controlnet = ControlNetModel.from_pretrained(a.init_controlnet, torch_dtype=torch.float32).to(device)
+        print(f"initialised ControlNet from {a.init_controlnet}")
+    else:
+        controlnet = ControlNetModel.from_unet(unet.float(), conditioning_embedding_out_channels=ch).to(device)  # fp32 master
     unet.to(frozen_dtype)
     controlnet.train()
     if device.type == "cuda":
