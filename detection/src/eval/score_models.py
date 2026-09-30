@@ -51,9 +51,9 @@ def load_set(boxes, rng, manifest):
     return pos, neg
 
 
-def curve(dets, pos, neg):
+def curve(dets, pos, neg, confs):
     rows = []
-    for c in CONFS:
+    for c in confs:
         hit = sum(any(d["conf"] >= c and on_target(d["bbox"], (r.x0, r.y0, r.x1, r.y1))
                       for d in dets.get(int(r.frame_id), [])) for r in pos.itertuples())
         ff = sum(any(d["conf"] >= c for d in dets.get(int(f), [])) for f in neg.frame_id)
@@ -65,12 +65,28 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--model", nargs=2, action="append", metavar=("NAME", "DIR"), required=True)
     ap.add_argument("--out", default=None, help="also write the tables as markdown here")
+    ap.add_argument("--floor", type=float, default=None,
+                    help="lowest conf threshold used for EVERY model (default: the highest logging floor among the "
+                         "models' JSONs -- a threshold below a model's logging floor is not recoverable)")
     a = ap.parse_args()
+    import json as _json
+    floors = []
+    for _, d in a.model:
+        for f in os.listdir(d):
+            if f.endswith(".json"):
+                c = [x["conf"] for e in _json.load(open(os.path.join(d, f))) for x in e["detections"]]
+                if c:
+                    floors.append(min(c))
+    floor = a.floor if a.floor is not None else round(max(floors), 2)
+    confs = [c for c in CONFS if c >= floor - 1e-9] or [floor]
+    if floor not in confs:
+        confs = [floor] + confs
+    print(f"common confidence floor: {floor} (thresholds used: {confs})\n")
     lines = []
     for sname, (key, boxes, rng, manifest) in SETS.items():
         pos, neg = load_set(boxes, rng, manifest)
         head = f"### {sname}: {len(pos)} positive / {len(neg)} negative frames"
-        tab = ["| model | recall @0.1 | FF @0.1 | " + " | ".join(f"recall @FF≤{int(t*100)}%" for t in FF_TARGETS) + " |",
+        tab = [f"| model | recall @{confs[0]} | FF @{confs[0]} | " + " | ".join(f"recall @FF≤{int(t*100)}%" for t in FF_TARGETS) + " |",
                "|---|---|---|" + "---|" * len(FF_TARGETS)]
         any_model = False
         for name, d in a.model:
@@ -78,9 +94,9 @@ def main():
             if not os.path.exists(p):
                 continue
             any_model = True
-            rows = curve(load_dets(p), pos, neg)
+            rows = curve(load_dets(p), pos, neg, confs)
             n, m = max(len(pos), 1), max(len(neg), 1)
-            r01 = next(r for r in rows if r[0] == 0.1)
+            r01 = rows[0]
             lo, hi = wilson_ci(r01[1], n)
             cells = [f"{r01[1] / n:.1%} [{lo:.0%}–{hi:.0%}]", f"{r01[2] / m:.1%}"]
             for t in FF_TARGETS:

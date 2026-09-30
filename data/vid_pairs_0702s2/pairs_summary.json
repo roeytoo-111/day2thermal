@@ -1,0 +1,33 @@
+{
+  "registration": "data/vid_pairs_0702s2/registration.json",
+  "crop": [
+    94,
+    160,
+    466,
+    260
+  ],
+  "pair_size": [
+    466,
+    260
+  ],
+  "step_s": 0.2,
+  "min_gap_s": 1.0,
+  "max_gap_s": 5.0,
+  "scene_thresh": 0.15,
+  "min_align": 0.3715999275445938,
+  "min_structure": 0.02,
+  "registration_verdict": "FAIL",
+  "forced": true,
+  "train_max_frame": 99999999,
+  "val_min_frame": 99999999,
+  "counts": {
+    "train": 55,
+    "val": 0,
+    "gap_dropped": 0,
+    "unregistered": 389,
+    "freeze": 3,
+    "static": 57,
+    "misaligned": 85
+  },
+  "leak_note": "Pairs come from the detector's evaluation video. A translator trained on train/ (< train_max_frame) must not be used to make detector training data that is then evaluated on thermal frames < train_max_frame of this video."
+}

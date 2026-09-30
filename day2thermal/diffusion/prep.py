@@ -39,7 +39,12 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--out", required=True)
     ap.add_argument("--source", action="append", required=True, help="day:dir, repeatable")
-    ap.add_argument("--test-day", required=True)
+    ap.add_argument("--test-day", default=None, help="hold out this whole day/source as test (unseen-day test)")
+    ap.add_argument("--test-tail-frac", type=float, default=0.0,
+                    help="instead: the last fraction of EVERY source is test (contiguous, after --gap); covers all "
+                         "content types, but is not an unseen-day test")
+    ap.add_argument("--oversample", default="",
+                    help="train oversampling by RGB content, e.g. 'terrain:3,mixed:2' (hard-linked copies)")
     ap.add_argument("--val-per-day", type=int, default=20, help="contiguous pairs at the end of each train day")
     ap.add_argument("--gap", type=int, default=5, help="pairs dropped between a day's train and val parts")
     a = ap.parse_args()
@@ -55,9 +60,14 @@ def main():
                 items += [(frame_of(n), os.path.join(d, sub, "rgb", n), os.path.join(d, sub, "thermal", n), n)
                           for n in list_images(rd)]
         items.sort()
-        if day == a.test_day:
+        if a.test_day is not None and day == a.test_day:
             split["test"] += [(day,) + it for it in items]
             continue
+        if a.test_tail_frac > 0:
+            n_test = max(int(round(a.test_tail_frac * len(items))), 1)
+            split["test"] += [(day,) + it for it in items[len(items) - n_test:]]
+            split["dropped_gap"] += [(day,) + it for it in items[max(len(items) - n_test - a.gap, 0):len(items) - n_test]]
+            items = items[:max(len(items) - n_test - a.gap, 0)]
         n_val = min(a.val_per_day, max(len(items) // 5, 1))
         cut = len(items) - n_val
         split["train"] += [(day,) + it for it in items[:max(cut - a.gap, 0)]]
@@ -69,6 +79,20 @@ def main():
         for day, _, rgb, th, name in split[sp]:
             link_or_copy(rgb, os.path.join(a.out, sp, "rgb", name))
             link_or_copy(th, os.path.join(a.out, sp, "thermal", name))
+    if a.oversample:
+        import cv2
+        from .diagnose import sky_fraction
+        mult = {k: int(v) for k, v in (x.split(":") for x in a.oversample.split(","))}
+        added = {k: 0 for k in mult}
+        for day, _, rgb, th, name in split["train"]:
+            sf = sky_fraction(cv2.imread(rgb))
+            kind = "terrain" if sf < 0.2 else ("mixed" if sf <= 0.5 else "sky")
+            for k in range(1, mult.get(kind, 1)):
+                stem, ext = os.path.splitext(name)
+                link_or_copy(rgb, os.path.join(a.out, "train", "rgb", f"{stem}__os{k}{ext}"))
+                link_or_copy(th, os.path.join(a.out, "train", "thermal", f"{stem}__os{k}{ext}"))
+                added[kind] += 1
+        print("oversampling copies added:", added)
     summary = {sp: {"n": len(v), "by_day": {d: sum(1 for x in v if x[0] == d) for d in sorted({x[0] for x in v})}}
                for sp, v in split.items()}
     summary["args"] = vars(a)
