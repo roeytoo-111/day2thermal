@@ -14,7 +14,8 @@ detection/
   src/deploy/      run a checkpoint over a video -> detection JSON
   models/<run>/    args.yaml, results.csv, readme.md per training run (weights are local only)
   results/
-    detections/        thermal_dets_<run>.json, one per model, over data/videos/thermal.mp4
+    detections/        thermal_dets_<run>.json (07-08 video); <model>/{0708,0730,0715,0623}.json = per-model inputs of score_models.py
+  experiments/         raw inference JSONs on the new sessions (linked from results/detections/<model>/)
     precision_review/  confidence-bucket precision review manifests
   analysis/
     leakage/       pHash/SSIM train-vs-eval-video matches, hash tables
@@ -74,6 +75,14 @@ data targets.
 All training runs use imgsz 512, 150 epochs, patience 25, seed 0 (see each `models/<run>/args.yaml`).
 
 ## Typical commands (run from `detection/`)
+
+```bash
+# all models, all test sets, recall at matched false-fire
+python3 src/eval/score_models.py --model p2_noleak results/detections/p2_noleak --model <name> results/detections/<name>
+# labelling (any directory): status / review / --verify
+python3 src/eval/label_sets.py status
+```
+
 
 ```bash
 # leak-free dataset

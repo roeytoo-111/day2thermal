@@ -1,3 +1,5 @@
+> **Status (2026-09-30):** superseded for day-to-day work by [`notebook/`](../notebook/README.md) (current state and plan: `notebook/2026-09-30.md` §9). Kept for the roadmap and approach comparison below.
+
 # Thermal Detection — Generation & Detection Plan
 
 Working plan for the day2thermal / drone-thermal-detection effort. Goal: generate usable synthetic thermal training data, then train/benchmark a detector on it.

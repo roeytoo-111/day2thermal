@@ -1,0 +1,24 @@
+=== Testing imgsz: 512 | Video: 2026-07-15_thermal_clipped ===
+[0;93m2026-09-29 11:43:06.344425022 [W:onnxruntime:Default, device_discovery.cc:164 DiscoverDevicesForPlatform] GPU device discovery failed: device_discovery.cc:89 ReadFileContents Failed to open file: "/sys/class/drm/card1/device/vendor"[m
+
+Done. 12000 frames in 330.8s (36.3 fps).
+306/12000 frames had >=1 detection, 319 total boxes logged.
+Saved: p2_512_2026-07-15_thermal_clipped.json
+=== Testing imgsz: 512 | Video: 2026-07-30T09_27_04_thermal_clipped ===
+[0;93m2026-09-29 11:48:41.633921027 [W:onnxruntime:Default, device_discovery.cc:164 DiscoverDevicesForPlatform] GPU device discovery failed: device_discovery.cc:89 ReadFileContents Failed to open file: "/sys/class/drm/card1/device/vendor"[m
+
+Done. 26969 frames in 765.3s (35.2 fps).
+1436/26969 frames had >=1 detection, 1481 total boxes logged.
+Saved: p2_512_2026-07-30T09_27_04_thermal_clipped.json
+=== Testing imgsz: 640 | Video: 2026-07-15_thermal_clipped ===
+[0;93m2026-09-29 12:01:31.385654533 [W:onnxruntime:Default, device_discovery.cc:164 DiscoverDevicesForPlatform] GPU device discovery failed: device_discovery.cc:89 ReadFileContents Failed to open file: "/sys/class/drm/card1/device/vendor"[m
+
+Done. 12000 frames in 347.2s (34.6 fps).
+1078/12000 frames had >=1 detection, 1221 total boxes logged.
+Saved: p2_640_2026-07-15_thermal_clipped.json
+=== Testing imgsz: 640 | Video: 2026-07-30T09_27_04_thermal_clipped ===
+[0;93m2026-09-29 12:07:23.071328378 [W:onnxruntime:Default, device_discovery.cc:164 DiscoverDevicesForPlatform] GPU device discovery failed: device_discovery.cc:89 ReadFileContents Failed to open file: "/sys/class/drm/card1/device/vendor"[m
+
+Done. 26969 frames in 797.1s (33.8 fps).
+2597/26969 frames had >=1 detection, 2747 total boxes logged.
+Saved: p2_640_2026-07-30T09_27_04_thermal_clipped.json
