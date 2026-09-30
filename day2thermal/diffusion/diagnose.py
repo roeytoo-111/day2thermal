@@ -51,6 +51,23 @@ def sky_fraction(rgb):
     return float(((blue | white) & (tex < 6)).mean())
 
 
+def enhance(p, how):
+    """Fixed, camera-like detail enhancement of a prediction in [0,1] (never fitted to the target).
+    The real thermal is strongly detail-enhanced (DDE/AGC in the camera); the translator's output is smooth."""
+    if how == "none":
+        return p
+    u8 = (np.clip(p, 0, 1) * 255).astype(np.uint8)
+    if how == "clahe":
+        return cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8, 8)).apply(u8).astype(np.float64) / 255.0
+    if how == "unsharp":
+        blur = cv2.GaussianBlur(p, (0, 0), 1.5)
+        return np.clip(p + 1.5 * (p - blur), 0, 1)
+    if how == "clahe+unsharp":
+        q = enhance(p, "clahe")
+        return np.clip(q + 1.5 * (q - cv2.GaussianBlur(q, (0, 0), 1.5)), 0, 1)
+    raise ValueError(how)
+
+
 def metrics(p, t):
     pa = affine_fit(p, t)
     return {"l1": float(np.abs(p - t).mean()), "ssim": ssim_pair(p, t),
@@ -65,6 +82,8 @@ def main():
     ap.add_argument("--split", default="test")
     ap.add_argument("--pred-dir", required=True)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--enhance", default="none", choices=["none", "clahe", "unsharp", "clahe+unsharp"],
+                    help="apply a fixed detail enhancement to the predictions before scoring (texture test)")
     a = ap.parse_args()
     out = ensure_dir(a.out)
     coef = fit_linear_baseline(a.pairs)
@@ -74,7 +93,7 @@ def main():
         pred = cv2.imread(os.path.join(a.pred_dir, os.path.splitext(name)[0] + ".png"), cv2.IMREAD_GRAYSCALE)
         if pred is None:
             continue
-        pred = cv2.resize(pred, (real.shape[1], real.shape[0])).astype(np.float64) / 255.0
+        pred = enhance(cv2.resize(pred, (real.shape[1], real.shape[0])).astype(np.float64) / 255.0, a.enhance)
         base = np.clip(rgb.reshape(-1, 3).astype(np.float64) / 255.0 @ coef[:3] + coef[3], 0, 1).reshape(real.shape)
         r = {"name": name, "sky_frac": sky_fraction(rgb), "real_mean": float(real.mean()),
              "pred_mean": float(pred.mean())}
@@ -86,14 +105,14 @@ def main():
     d["content"] = pd.cut(d.sky_frac, [-0.01, 0.2, 0.5, 1.01], labels=["terrain (sky<20%)", "mixed", "sky (>50%)"])
     cols = ["l1", "l1_aff", "ssim", "ssim_aff", "edge_ncc", "hf_ratio"]
     summ = pd.DataFrame({f"{w}_{c}": d[f"{w}_{c}"] for w in ("model", "base") for c in cols})
-    lines = [f"{a.split}: {len(d)} pairs  (model vs linear-colour baseline; aff = after per-image a*x+b fit)", ""]
+    lines = [f"{a.split}: {len(d)} pairs, enhance={a.enhance}  (model vs linear-colour baseline; aff = after per-image a*x+b fit)", ""]
     lines.append(f"{'':<22}" + "".join(f"{c:>10}" for c in cols))
     for w in ("model", "base"):
         lines.append(f"{'ALL ' + w:<22}" + "".join(f"{summ[f'{w}_{c}'].median():>10.3f}" for c in cols))
     lines.append("")
     for grp, g in d.groupby("content", observed=True):
         for w in ("model", "base"):
-            lines.append(f"{str(grp)[:14] + ' ' + w + f' n={len(g)}':<22}" + "".join(f"{g[f'{w}_{c}'].median():>10.3f}" for c in cols))
+            lines.append(f"{str(grp).split(' ')[0] + ' ' + w + f' n={len(g)}':<22}" + "".join(f"{g[f'{w}_{c}'].median():>10.3f}" for c in cols))
     lines += ["", f"level: real mean {d.real_mean.median():.3f}, prediction mean {d.pred_mean.median():.3f} "
               f"(median |diff| {np.median(np.abs(d.real_mean - d.pred_mean)):.3f})",
               "medians shown; hf_ratio: 1 = same high-frequency energy as real"]
