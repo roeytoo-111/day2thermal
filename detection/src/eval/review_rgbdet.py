@@ -10,6 +10,8 @@ Keys:
   n        no drone here (becomes "nothing")
   drag     redraw the box (then y to accept the new one)
   space    skip for now (re-asked next run)
+  b        back to the previous box (within this run; re-decide it)
+  p        play frame-10 .. frame+10 (motion tells a drone from a speck / noise), same crop window
   q        save and quit (resumable; already-reviewed rows are never re-shown)
 
 Safety: --exclude-frame-min/max drops frames in that range before they're ever shown (e.g. a scored val
@@ -44,6 +46,8 @@ def parse_args():
     p.add_argument("--exclude-frame-min", type=int, default=None, help="drop frame_id >= this before reviewing")
     p.add_argument("--exclude-frame-max", type=int, default=None, help="drop frame_id < this before reviewing")
     p.add_argument("--zoom", type=int, default=5, help="magnification of the box crop")
+    p.add_argument("--play-window", type=int, default=10, help="'p' plays frame-N .. frame+N")
+    p.add_argument("--play-fps", type=float, default=8.0, help="playback speed for 'p'")
     return p.parse_args()
 
 
@@ -95,13 +99,35 @@ def main():
 
     cv2.namedWindow("confirm RGB-derived box")
     cv2.setMouseCallback("confirm RGB-derived box", on_mouse)
-    n_y = n_n = n_skip = 0
-    for r in todo.itertuples():
+    rows = list(todo.itertuples())
+    decisions = {}   # row index in `rows` -> {"verdict": ..., "box": [x0,y0,x1,y1] in ORIGINAL image coords}
+
+    def play(fi, x0c, y0c, x1c, y1c):
+        """Replay frame-N .. frame+N through the same crop window (approximate seeking for the
+        neighbours, same convention as gt_boxes.py's 'p' -- fine for an eyeball motion check)."""
+        delay = max(1, int(1000 / a.play_fps))
+        for d in range(-a.play_window, a.play_window + 1):
+            nb = fr.read(fi + d)
+            if nb is None:
+                continue
+            c = nb[y0c:y1c, x0c:x1c]
+            c = cv2.resize(c, (c.shape[1] * a.zoom, c.shape[0] * a.zoom), interpolation=cv2.INTER_NEAREST)
+            cv2.putText(c, f"frame {fi + d} ({'+' if d >= 0 else ''}{d})", (6, 16), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.45, (0, 200, 255), 1, cv2.LINE_AA)
+            cv2.imshow("confirm RGB-derived box", c)
+            if cv2.waitKey(delay) != -1:   # any key interrupts playback early
+                break
+
+    i = 0
+    while 0 <= i < len(rows):
+        r = rows[i]
         fi = int(r.frame_id)
         im = fr.read(fi)
         if im is None:
+            i += 1
             continue
-        box = [int(round(v)) for v in (r.x0, r.y0, r.x1, r.y1)]
+        prev = decisions.get(i)
+        box = prev["box"] if prev else [int(round(v)) for v in (r.x0, r.y0, r.x1, r.y1)]
         H, W = im.shape[:2]
         half = max(40, int(max(box[2] - box[0], box[3] - box[1]) * 1.5))
         cx, cy = int((box[0] + box[2]) / 2), int((box[1] + box[3]) / 2)
@@ -109,37 +135,52 @@ def main():
         x1c, y1c = min(cx + half, W), min(cy + half, H)
         crop0 = im[y0c:y1c, x0c:x1c]
         drag["box"] = [box[0] - x0c, box[1] - y0c, box[2] - x0c, box[3] - y0c]
-        while True:
+        n_y = sum(1 for d in decisions.values() if d["verdict"] == "drone")
+        n_n = sum(1 for d in decisions.values() if d["verdict"] == "nothing")
+        advance = None
+        while advance is None:
             crop = cv2.resize(crop0, (crop0.shape[1] * a.zoom, crop0.shape[0] * a.zoom),
                               interpolation=cv2.INTER_NEAREST)
             bx = drag["box"]
             cv2.rectangle(crop, (int(bx[0] * a.zoom), int(bx[1] * a.zoom)),
                           (int(bx[2] * a.zoom), int(bx[3] * a.zoom)), (0, 255, 255), 1)
-            cv2.putText(crop, f"frame {fi}  y=confirm n=nothing drag=redraw space=skip q=quit  "
-                              f"[{n_y} y / {n_n} n / {len(todo) - n_y - n_n - n_skip} left]",
-                        (6, 16), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 0), 1, cv2.LINE_AA)
+            cv2.putText(crop, f"frame {fi} ({i + 1}/{len(rows)})  y=confirm n=nothing drag=redraw "
+                              f"b=back p=play space=skip q=quit  [{n_y} y / {n_n} n]",
+                        (6, 16), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (0, 255, 0), 1, cv2.LINE_AA)
             cv2.imshow("confirm RGB-derived box", crop)
             k = cv2.waitKey(30) & 0xFF
             if drag["down"] is not None or k != 255:
                 if k == ord("y"):
                     bx = drag["box"]
-                    full.loc[idx_by_frame[fi], ["x0", "y0", "x1", "y1", "verdict", "reviewed"]] = \
-                        [bx[0] + x0c, bx[1] + y0c, bx[2] + x0c, bx[3] + y0c, "drone", "y"]
-                    n_y += 1
-                    break
-                if k == ord("n"):
-                    full.loc[idx_by_frame[fi], ["verdict", "reviewed"]] = ["nothing", "y"]
-                    n_n += 1
-                    break
-                if k == ord(" "):
-                    n_skip += 1
-                    break
-                if k == ord("q"):
+                    nb = [bx[0] + x0c, bx[1] + y0c, bx[2] + x0c, bx[3] + y0c]
+                    decisions[i] = {"verdict": "drone", "box": nb}
+                    advance = 1
+                elif k == ord("n"):
+                    decisions[i] = {"verdict": "nothing", "box": box}
+                    advance = 1
+                elif k == ord("p"):
+                    play(fi, x0c, y0c, x1c, y1c)
+                elif k == ord("b"):
+                    advance = -1
+                elif k == ord(" "):
+                    advance = 1   # left undecided (not in `decisions`): re-shown next run
+                elif k == ord("q"):
+                    for j, d in decisions.items():
+                        rr = rows[j]
+                        full.loc[idx_by_frame[int(rr.frame_id)], ["x0", "y0", "x1", "y1", "verdict", "reviewed"]] = \
+                            [d["box"][0], d["box"][1], d["box"][2], d["box"][3], d["verdict"], "y"]
                     save()
-                    print(f"saved {a.boxes}: {n_y} confirmed, {n_n} rejected, {n_skip} skipped this session")
+                    print(f"saved {a.boxes}: {n_y} confirmed, {n_n} rejected this session")
                     return
+        i = max(i + advance, 0)
+    for j, d in decisions.items():
+        rr = rows[j]
+        full.loc[idx_by_frame[int(rr.frame_id)], ["x0", "y0", "x1", "y1", "verdict", "reviewed"]] = \
+            [d["box"][0], d["box"][1], d["box"][2], d["box"][3], d["verdict"], "y"]
     save()
-    print(f"saved {a.boxes}: {n_y} confirmed, {n_n} rejected, {n_skip} skipped this session")
+    n_y = sum(1 for d in decisions.values() if d["verdict"] == "drone")
+    n_n = sum(1 for d in decisions.values() if d["verdict"] == "nothing")
+    print(f"saved {a.boxes}: {n_y} confirmed, {n_n} rejected this session")
 
 
 if __name__ == "__main__":
