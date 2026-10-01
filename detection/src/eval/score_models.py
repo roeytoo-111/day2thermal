@@ -8,6 +8,9 @@ A model is a directory with one detection JSON per video (run_yolo_inference.py 
     0623.json   2026-06-23_scenario2_thermal_clipped.mp4      (scored on its held-out VAL chunk only)
 Missing files are skipped. 06-23/07-15 train chunks are never scored (newer models trained on them).
 
+*_sky: only drones seen against sky (gt_background.py tags), all negatives -- the interceptor looks UP at
+the target, so these are the operational numbers.
+
 For each set: located recall and false-fire at conf 0.1, and located recall at the highest-recall
 threshold whose false-fire rate stays <= each target (5/10/25%) -- the fair comparison between models that
 fire at different rates.
@@ -28,18 +31,23 @@ from compute_recall_from_gt import on_target, wilson_ci, load_dets   # noqa: E40
 
 DET = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 NS = os.path.join(DET, "data", "new_sessions")
-SETS = {
-    "0708_all": ("0708", os.path.join(DET, "data", "recall_ground_truth", "boxes.csv"), None, None),
-    "0708_airborne": ("0708", os.path.join(DET, "data", "recall_ground_truth", "boxes.csv"), (201, 23599), None),
-    "0730_test2": ("0730", os.path.join(NS, "0730_boxes.csv"), None, None),
-    "0715_val (dark over terrain)": ("0715", os.path.join(NS, "0715_boxes.csv"), None, os.path.join(NS, "0715_manifest.csv")),
-    "0623_val": ("0623", os.path.join(NS, "0623_boxes.csv"), None, os.path.join(NS, "0623_manifest.csv")),
+SETS = {   # name: (json key, boxes, frame range, manifest for its val split, GT background filter)
+    "0708_all": ("0708", os.path.join(DET, "data", "recall_ground_truth", "boxes.csv"), None, None, None),
+    "0708_airborne": ("0708", os.path.join(DET, "data", "recall_ground_truth", "boxes.csv"), (201, 23599), None, None),
+    "0708_sky": ("0708", os.path.join(DET, "data", "recall_ground_truth", "boxes.csv"), None, None,
+                 os.path.join(DET, "data", "recall_ground_truth", "gt_bg.csv")),
+    "0730_test2": ("0730", os.path.join(NS, "0730_boxes.csv"), None, None, None),
+    "0730_sky": ("0730", os.path.join(NS, "0730_boxes.csv"), None, None, os.path.join(NS, "0730_gt_bg.csv")),
+    "0715_val (dark over terrain)": ("0715", os.path.join(NS, "0715_boxes.csv"), None, os.path.join(NS, "0715_manifest.csv"), None),
+    "0623_val": ("0623", os.path.join(NS, "0623_boxes.csv"), None, os.path.join(NS, "0623_manifest.csv"), None),
 }
 CONFS = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8]
 FF_TARGETS = [0.05, 0.10, 0.25]
 
 
-def load_set(boxes, rng, manifest):
+def load_set(boxes, rng, manifest, bg=None):
+    """bg: gt_background.py csv -> keep only positives seen against sky (negatives: all, a false fire anywhere
+    counts). The interceptor looks up at the target, so *_sky is the operational case."""
     b = pd.read_csv(boxes)
     if rng:
         b = b[(b.frame_id >= rng[0]) & (b.frame_id <= rng[1])]
@@ -48,6 +56,9 @@ def load_set(boxes, rng, manifest):
         b = b[b.frame_id.isin(m.loc[m.split == "val", "frame_id"])]
     pos = b[b.verdict == "drone"]
     neg = b[b.verdict.isin(["nothing", "bird_or_other"])]
+    if bg:
+        t = pd.read_csv(bg)
+        pos = pos[pos.frame_id.isin(t.loc[t.bg == "sky", "frame_id"])]
     return pos, neg
 
 
@@ -83,8 +94,8 @@ def main():
         confs = [floor] + confs
     print(f"common confidence floor: {floor} (thresholds used: {confs})\n")
     lines = []
-    for sname, (key, boxes, rng, manifest) in SETS.items():
-        pos, neg = load_set(boxes, rng, manifest)
+    for sname, (key, boxes, rng, manifest, bg) in SETS.items():
+        pos, neg = load_set(boxes, rng, manifest, bg)
         head = f"### {sname}: {len(pos)} positive / {len(neg)} negative frames"
         tab = [f"| model | recall @{confs[0]} | FF @{confs[0]} | " + " | ".join(f"recall @FF≤{int(t*100)}%" for t in FF_TARGETS) + " |",
                "|---|---|---|" + "---|" * len(FF_TARGETS)]

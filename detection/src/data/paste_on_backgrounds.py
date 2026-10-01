@@ -59,6 +59,10 @@ def parse_args():
     s.add_argument("--weights", action="append", required=True, help="YOLO weights for real-drone removal (union)")
     s.add_argument("--conf", type=float, default=0.1, help="low on purpose: inpainting a false fire costs little")
     s.add_argument("--imgsz", type=int, default=512)
+    s.add_argument("--extra_boxes", default=None,
+                   help="json {name: [[x0,y0,x1,y1,conf], ...]} merged into the removal boxes (e.g. RGB-detector "
+                        "boxes mapped into the crop by rgb_backgrounds.py)")
+    s.add_argument("--device", default="cpu")
     b = sub.add_parser("build")
     b.add_argument("--work", required=True)
     b.add_argument("--out", required=True)
@@ -113,9 +117,13 @@ def cmd_select(a):
         model = YOLO(w)
         for k in range(0, len(paths), 32):                      # small batches: a list source is preloaded
             for p, r in zip(paths[k:k + 32], model.predict(paths[k:k + 32], conf=a.conf, imgsz=a.imgsz,
-                                                           device="cpu", verbose=False)):
+                                                           device=a.device, verbose=False)):
                 for xyxy, c in zip(r.boxes.xyxy.tolist(), r.boxes.conf.tolist()):
                     found[os.path.basename(p)].append([round(v, 1) for v in xyxy] + [round(c, 3)])
+    if a.extra_boxes:
+        ex = json.load(open(a.extra_boxes))
+        for n in found:
+            found[n] += ex.get(n, [])
     with open(os.path.join(a.work, "backgrounds.csv"), "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["name", "session", "frame", "n_removed", "remove_boxes"])
