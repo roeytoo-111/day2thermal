@@ -101,7 +101,7 @@ def main():
         im = fr.read(fi)
         if im is None:
             continue
-        box = [r.x0, r.y0, r.x1, r.y1]
+        box = [int(round(v)) for v in (r.x0, r.y0, r.x1, r.y1)]
         H, W = im.shape[:2]
         half = max(40, int(max(box[2] - box[0], box[3] - box[1]) * 1.5))
         cx, cy = int((box[0] + box[2]) / 2), int((box[1] + box[3]) / 2)
@@ -113,7 +113,8 @@ def main():
             crop = cv2.resize(crop0, (crop0.shape[1] * a.zoom, crop0.shape[0] * a.zoom),
                               interpolation=cv2.INTER_NEAREST)
             bx = drag["box"]
-            cv2.rectangle(crop, (bx[0] * a.zoom, bx[1] * a.zoom), (bx[2] * a.zoom, bx[3] * a.zoom), (0, 255, 255), 1)
+            cv2.rectangle(crop, (int(bx[0] * a.zoom), int(bx[1] * a.zoom)),
+                          (int(bx[2] * a.zoom), int(bx[3] * a.zoom)), (0, 255, 255), 1)
             cv2.putText(crop, f"frame {fi}  y=confirm n=nothing drag=redraw space=skip q=quit  "
                               f"[{n_y} y / {n_n} n / {len(todo) - n_y - n_n - n_skip} left]",
                         (6, 16), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 0), 1, cv2.LINE_AA)
