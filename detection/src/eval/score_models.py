@@ -11,6 +11,10 @@ Missing files are skipped. 06-23/07-15 train chunks are never scored (newer mode
 *_sky: only drones seen against sky (gt_background.py tags), all negatives -- the interceptor looks UP at
 the target, so these are the operational numbers.
 
+Thresholds (2026-10-02): every distinct score >= the floor is tried, so recall @FF<=x is exact. The old 13-value
+grid added discretisation noise on top of run-to-run noise. "mean recall FF 1-25%" averages the exact recall
+over FF budgets 1%..25% -- one smoother number per model, less sensitive to a single operating point.
+
 For each set: located recall and false-fire at conf 0.1, and located recall at the highest-recall
 threshold whose false-fire rate stays <= each target (5/10/25%) -- the fair comparison between models that
 fire at different rates.
@@ -64,14 +68,26 @@ def load_set(boxes, rng, manifest, bg=None):
     return pos, neg
 
 
-def curve(dets, pos, neg, confs):
-    rows = []
-    for c in confs:
-        hit = sum(any(d["conf"] >= c and on_target(d["bbox"], (r.x0, r.y0, r.x1, r.y1))
-                      for d in dets.get(int(r.frame_id), [])) for r in pos.itertuples())
-        ff = sum(any(d["conf"] >= c for d in dets.get(int(f), [])) for f in neg.frame_id)
-        rows.append((c, hit, ff))
-    return rows
+def frame_scores(dets, pos, neg):
+    """Per positive frame: the highest conf among detections ON the drone (0 if none). Per negative frame: the
+    highest conf of any detection (0 if none). Every threshold's located recall / false-fire follows from these."""
+    sp = np.array([max([d["conf"] for d in dets.get(int(r.frame_id), [])
+                        if on_target(d["bbox"], (r.x0, r.y0, r.x1, r.y1))], default=0.0) for r in pos.itertuples()])
+    sn = np.array([max([d["conf"] for d in dets.get(int(f), [])], default=0.0) for f in neg.frame_id])
+    return sp, sn
+
+
+def at_ff(sp, sn, floor, t):
+    """Best located recall over ALL thresholds c >= floor with false-fire rate <= t (exact, not a coarse grid).
+    Returns (recall, threshold) or (None, None) if even the highest threshold fires too often."""
+    cands = np.unique(np.concatenate([sp[sp >= floor], sn[sn >= floor], [floor]]))
+    m = max(len(sn), 1)
+    best = (None, None)
+    for c in cands:                      # ascending: the first c meeting the FF budget has the highest recall
+        if (sn >= c).sum() / m <= t:
+            best = ((sp >= c).mean() if len(sp) else 0.0, float(c))
+            break
+    return best
 
 
 def main():
@@ -91,34 +107,32 @@ def main():
                 if c:
                     floors.append(min(c))
     floor = a.floor if a.floor is not None else round(max(floors), 2)
-    confs = [c for c in CONFS if c >= floor - 1e-9] or [floor]
-    if floor not in confs:
-        confs = [floor] + confs
-    print(f"common confidence floor: {floor} (thresholds used: {confs})\n")
+    print(f"common confidence floor: {floor} (every threshold >= floor is tried; exact recall at each FF budget)\n")
     lines = []
     for sname, (key, boxes, rng, manifest, bg) in SETS.items():
         pos, neg = load_set(boxes, rng, manifest, bg)
         head = f"### {sname}: {len(pos)} positive / {len(neg)} negative frames"
-        tab = [f"| model | recall @{confs[0]} | FF @{confs[0]} | " + " | ".join(f"recall @FF≤{int(t*100)}%" for t in FF_TARGETS) + " |",
-               "|---|---|---|" + "---|" * len(FF_TARGETS)]
+        tab = [f"| model | recall @{floor} | FF @{floor} | " + " | ".join(f"recall @FF≤{int(t*100)}%" for t in FF_TARGETS)
+               + " | mean recall FF 1–25% |", "|---|---|---|" + "---|" * (len(FF_TARGETS) + 1)]
         any_model = False
         for name, d in a.model:
             p = os.path.join(d, f"{key}.json")
             if not os.path.exists(p):
                 continue
             any_model = True
-            rows = curve(load_dets(p), pos, neg, confs)
+            sp, sn = frame_scores(load_dets(p), pos, neg)
             n, m = max(len(pos), 1), max(len(neg), 1)
-            r01 = rows[0]
-            lo, hi = wilson_ci(r01[1], n)
-            cells = [f"{r01[1] / n:.1%} [{lo:.0%}–{hi:.0%}]", f"{r01[2] / m:.1%}"]
-            for t in FF_TARGETS:
-                ok = [r for r in rows if r[2] / m <= t]
-                if not ok or len(neg) < 20:
-                    cells.append("n/a" if len(neg) < 20 else "—")
-                    continue
-                best = max(ok, key=lambda r: r[1])
-                cells.append(f"{best[1] / n:.1%} (conf {best[0]})")
+            hit0, ff0 = int((sp >= floor).sum()), int((sn >= floor).sum())
+            lo, hi = wilson_ci(hit0, n)
+            cells = [f"{hit0 / n:.1%} [{lo:.0%}–{hi:.0%}]", f"{ff0 / m:.1%}"]
+            if len(neg) < 20:
+                cells += ["n/a"] * (len(FF_TARGETS) + 1)
+            else:
+                for t in FF_TARGETS:
+                    r, c = at_ff(sp, sn, floor, t)
+                    cells.append("—" if r is None else f"{r:.1%} (conf {c:.2f})")
+                curve_vals = [at_ff(sp, sn, floor, t / 100)[0] or 0.0 for t in range(1, 26)]
+                cells.append(f"{np.mean(curve_vals):.1%}")
             tab.append(f"| {name} | " + " | ".join(cells) + " |")
         if any_model:
             lines += [head, "", *tab, ""]
