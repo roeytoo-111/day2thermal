@@ -38,7 +38,9 @@ SETS = {   # name: (json key, boxes, frame range, manifest for its val split, GT
                  os.path.join(DET, "data", "recall_ground_truth", "gt_bg.csv")),
     "0730_test2": ("0730", os.path.join(NS, "0730_boxes.csv"), None, None, None),
     "0730_sky": ("0730", os.path.join(NS, "0730_boxes.csv"), None, None, os.path.join(NS, "0730_gt_bg.csv")),
-    "0715_val (dark over terrain)": ("0715", os.path.join(NS, "0715_boxes.csv"), None, os.path.join(NS, "0715_manifest.csv"), None),
+    # 0715 val = everything labelled from frame 9775 on (train chunk ends at 9475; includes the 2026-10-01 densified
+    # labels, which are not in 0715_manifest.csv -- selecting by manifest scored only the original 12/27 frames)
+    "0715_val (dark over terrain)": ("0715", os.path.join(NS, "0715_boxes.csv"), (9775, 10 ** 9), None, None),
     "0623_val": ("0623", os.path.join(NS, "0623_boxes.csv"), None, os.path.join(NS, "0623_manifest.csv"), None),
 }
 CONFS = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8]
