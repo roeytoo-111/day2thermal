@@ -14,8 +14,12 @@ invisible to the RGB detector, so "nothing" is weak evidence).
 Input: RGB detections for the SAME clipped day video the registration was computed on (frame_id 1-based,
 bbox xyxy in day pixels), either
   * run_yolo_inference.py format: {"bbox", "conf"}, or
-  * ANN-Detection src/deploy/run_pipeline_tiled.py format: {"bbox", "stage1_conf", "stage2_prob", "final"}
-    -> only final == "confirmed" is used, conf = stage2_prob.
+  * ANN-Detection src/deploy/run_pipeline_tiled.py format: {"bbox", "stage1_conf", "stage2_prob", "final"},
+    final in {"accepted_high_conf" (stage1 alone was decisive, stage2 skipped: conf = stage1_conf),
+    "confirmed" (passed stage2: conf = stage2_prob), "rejected" (dropped)}. --min-conf then mixes two
+    different scores on a loosely comparable [0,1] scale; treat it as a coarse filter, not a calibrated one.
+    (Bug found 2026-10-01: an earlier version kept only "confirmed", silently dropping every
+    accepted_high_conf box -- on 0623s1 that is the bucket where the real detections live.)
 --rgb-frame-stride N: the JSON was made on a clip keeping every N-th frame (to save Jetson time:
     ffmpeg -i day_clipped.mp4 -vf "select=not(mod(n\,N))" -vsync 0 -c:v libx264 -crf 18 day_everyN.mp4),
     so JSON frame k (0-based) = day frame k*N.
@@ -74,9 +78,13 @@ def main():
     def norm(d):
         if "conf" in d:
             return d
-        if d.get("final") != "confirmed":                       # run_pipeline_tiled.py cascade output
-            return None
-        return {"bbox": d["bbox"], "conf": float(d.get("stage2_prob", d.get("stage1_conf", 0.0)))}
+        final = d.get("final")                                  # run_pipeline_tiled.py cascade output:
+        if final == "accepted_high_conf":                        # stage1 so confident it skipped stage2
+            return {"bbox": d["bbox"], "conf": float(d["stage1_conf"])}
+        if final == "confirmed":                                 # passed stage2 (conf = its probability,
+            return {"bbox": d["bbox"], "conf": float(d.get("stage2_prob", d.get("stage1_conf", 0.0)))}
+        return None                                               # "rejected": dropped (stage1 never meant to
+                                                                   # be accepted without stage2 confirming it)
     rgb = {}
     for e in json.load(open(a.rgb_json)):
         dets = [x for x in (norm(d) for d in e["detections"]) if x is not None]
