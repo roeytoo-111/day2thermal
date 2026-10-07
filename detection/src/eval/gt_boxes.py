@@ -341,6 +341,43 @@ def zoom(frame_bgr, cx, cy, half=16, scale=6):
 COLORS = [(0, 0, 255), (0, 200, 255), (0, 255, 0), (255, 128, 0), (255, 0, 255), (255, 255, 0)]
 
 
+def drone_gate(done, fi, max_gap):
+    """Where should the drone be in frame `fi`, given the nearest frames already labelled 'drone' (constant velocity,
+    i.e. a minimal Kalman-style gate)? Returns (cx, cy, radius, text) or None.
+      both neighbours within max_gap -> linear interpolation; radius grows with the neighbours' separation;
+      one side only -> extrapolate with the last speed when two anchors exist, else hold position; the radius grows
+      with the distance in frames (the drone can have turned). Anchors are boxes the human already confirmed."""
+    anchors = []
+    for f, r in done.items():
+        if r.get("verdict") == "drone" and r.get("x0", "") not in ("", None):
+            try:
+                anchors.append((int(f), (float(r["x0"]) + float(r["x1"])) / 2, (float(r["y0"]) + float(r["y1"])) / 2,
+                                max(float(r["x1"]) - float(r["x0"]), float(r["y1"]) - float(r["y0"]))))
+            except (ValueError, TypeError):
+                pass
+    anchors.sort()
+    before = [t for t in anchors if t[0] < fi and fi - t[0] <= max_gap]
+    after = [t for t in anchors if t[0] > fi and t[0] - fi <= max_gap]
+    if before and after:
+        (fa, xa, ya, sa), (fb, xb, yb, sb) = before[-1], after[0]
+        w = (fi - fa) / (fb - fa)
+        d = float(np.hypot(xb - xa, yb - ya))
+        return xa + (xb - xa) * w, ya + (yb - ya) * w, 12 + 0.2 * d + max(sa, sb) / 2, f"between {fa} and {fb}"
+    side = before[::-1] if before else after
+    if side:
+        f1, x1, y1, s1 = side[0]
+        dt = abs(fi - f1)
+        if len(side) >= 2 and abs(f1 - side[1][0]) > 0:
+            f2, x2, y2, _ = side[1]
+            vx, vy = (x1 - x2) / (f1 - f2), (y1 - y2) / (f1 - f2)
+        else:
+            vx = vy = 0.0
+        sp = float(np.hypot(vx, vy))
+        return x1 + vx * (fi - f1), y1 + vy * (fi - f1), min(15 + (0.5 + 0.5 * sp) * dt + s1 / 2, 150), \
+            f"from {'before' if before else 'after'} {f1}" + (" (velocity)" if sp > 0 else " (held)")
+    return None
+
+
 def cmd_review(a):
     m = pd.read_csv(a.manifest)
     if "label" not in m.columns:
@@ -449,6 +486,10 @@ def cmd_review(a):
         is_new = lab[fi] == ""
         im = read(fi)
         cands = props.get(str(fi), [])
+        gate = drone_gate(done, fi, a.gate_max_frames) if a.gate else None
+        if gate is not None and cands:                        # candidates inside the search circle come first
+            cands = sorted(cands, key=lambda c: (np.hypot(c["x"] - gate[0], c["y"] - gate[1]) > gate[2],
+                                                 np.hypot(c["x"] - gate[0], c["y"] - gate[1])))
         prevrow = done.get(fi) if a.verify else None
         prevbox = None
         if prevrow is not None and prevrow.get("x0", "") not in ("", None):
@@ -493,6 +534,13 @@ def cmd_review(a):
                               (int((prevbox[2] - zx0) * s6), int((prevbox[3] - zy0) * s6)), (255, 255, 255), 1)
             cv2.putText(z, "prev box", (4, 14), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1)
             tiles[5] = z
+        if gate is not None:
+            for v in (vis, rvis):
+                if v is not None:
+                    cv2.circle(v, (int(gate[0]), int(gate[1])), int(gate[2]), (0, 255, 255), 1, cv2.LINE_AA)
+                    cv2.drawMarker(v, (int(gate[0]), int(gate[1])), (0, 255, 255), cv2.MARKER_CROSS, 8, 1)
+            cv2.putText(vis, f"search region ({gate[3]}, r={gate[2]:.0f}px)", (6, 36), cv2.FONT_HERSHEY_SIMPLEX, 0.42,
+                        (0, 255, 255), 1)
         panel = np.vstack([np.hstack(tiles[0:2]), np.hstack(tiles[2:4]), np.hstack(tiles[4:6])])  # 576 x 384
         left = 640 * n_panels
         canvas = np.zeros((max(512, 576), left + 384, 3), np.uint8)
@@ -724,6 +772,10 @@ def main():
                    help="re-verify existing labels with the previous box pre-filled (Enter keeps it)")
     r.add_argument("--only", default="capped,nothing,unsure",
                    help="with --verify: comma list of capped,nothing,unsure,drone,suspect,unlabelled,all")
+    r.add_argument("--gate", action="store_true",
+                   help="draw a search circle where the drone should be, from your nearest labelled drone frames "
+                        "(constant velocity); candidates inside it are listed first")
+    r.add_argument("--gate-max-frames", type=int, default=90, help="neighbours further than this are ignored")
     r.add_argument("--redo-capped", action="store_true",
                    help="revisit only frames whose box hit the old 51-px auto-fit cap (fixed 2026-09-30)")
     sm = sub.add_parser("sample", help="sample frames of a new session for labelling (train/val split)")
