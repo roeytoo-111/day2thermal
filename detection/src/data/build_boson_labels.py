@@ -15,6 +15,10 @@ For every thermal frame inside a verified registration segment (and not carrying
           (>= --neg-therm-conf 0.10) in the frame. (The first version used 0.05 for both and left 5 negatives in
           1,223 frames: the RGB model fires faintly on almost every frame.)
           Both models are blind to a drone here, which is the best background evidence available.
+  tneg    the thermal model fires (>= --tneg-conf) but the day model has no drone-class detection >= 0.25 inside the
+          thermal view (the day model fires faintly on clouds almost everywhere, so "nothing at all" was too rare): a thermal
+          false alarm? NO: a visual check (2026-10-07) found many real drones the day model misses (blank day frames,
+          drones over terrain). Never used as negatives; QA only.
   skip    anything else (bird candidates, one-sided weak detections, ...): neither positive nor negative.
 
 Indexing: thermal frame = 0-based sequential decode index of the (remuxed) thermal mp4. Thermal JSON frame_id is
@@ -58,6 +62,7 @@ def parse_args():
     p.add_argument("--t-max", type=float, default=None, help="usable window end, thermal seconds")
     p.add_argument("--neg-rgb-conf", type=float, default=0.25, help="a clean negative has no RGB detection >= this")
     p.add_argument("--neg-therm-conf", type=float, default=0.10, help="... and no thermal detection >= this")
+    p.add_argument("--tneg-conf", type=float, default=0.25, help="thermal false alarm: thermal >= this, no RGB >= 0.25")
     p.add_argument("--margin", type=int, default=8, help="mapped box must lie this far inside the thermal frame")
     return p.parse_args()
 
@@ -104,8 +109,14 @@ def main():
                 for t in td:
                     if on_target(t["bbox"], tb) and t["conf"] >= a.therm_conf and (best is None or t["conf"] > best[1]):
                         best = (t["bbox"], t["conf"], c, db)
+            dist_box = None
             if best is not None:
                 status, box, tc, rc, dbox = "pos", best[0], best[1], best[2], best[3]
+                bcx, bcy = (box[0] + box[2]) / 2, (box[1] + box[3]) / 2
+                far = [t for t in td if t["conf"] >= a.tneg_conf and
+                       np.hypot((t["bbox"][0] + t["bbox"][2]) / 2 - bcx, (t["bbox"][1] + t["bbox"][3]) / 2 - bcy) > 40]
+                if far:                                       # one drone per flight: a confident thermal detection far
+                    dist_box = max(far, key=lambda t: t["conf"])["bbox"]   # from the confirmed drone is a false alarm
             else:
                 hard = [(tb, c, db) for tb, c, _, db in cands if c >= a.hard_conf
                         and not any(on_target(t["bbox"], tb) for t in td)]
@@ -114,6 +125,9 @@ def main():
                     status, box, rc = "hard", tb, c
                 elif not any_rgb and not any(t["conf"] >= a.neg_therm_conf for t in td):
                     status = "neg"
+                elif not any(c >= a.neg_rgb_conf for _, c, _, _ in cands) and any(t["conf"] >= a.tneg_conf for t in td):
+                    t = max(td, key=lambda t: t["conf"])        # thermal fires, the day camera sees nothing at all:
+                    status, box, tc = "tneg", t["bbox"], t["conf"]   # a thermal false alarm (clouds, ...), hard negative
                 else:
                     status = "skip"
             rows.append({"session": a.session, "frame": ti, "seg": g["id"], "status": status,
@@ -121,9 +135,10 @@ def main():
                          "x1": "" if box is None else round(box[2], 1), "y1": "" if box is None else round(box[3], 1),
                          "rgb_conf": "" if rc is None else round(rc, 3), "therm_conf": "" if tc is None else round(tc, 3),
                          "day_frame": k, "dx0": "" if dbox is None else round(dbox[0], 1), "dy0": "" if dbox is None else round(dbox[1], 1),
-                         "dx1": "" if dbox is None else round(dbox[2], 1), "dy1": "" if dbox is None else round(dbox[3], 1)})
+                         "dx1": "" if dbox is None else round(dbox[2], 1), "dy1": "" if dbox is None else round(dbox[3], 1),
+                         "distractor": "" if dist_box is None else json.dumps([round(v, 1) for v in dist_box])})
     df = pd.DataFrame(rows, columns=["session", "frame", "seg", "status", "x0", "y0", "x1", "y1", "rgb_conf", "therm_conf",
-                                      "day_frame", "dx0", "dy0", "dx1", "dy1"])
+                                      "day_frame", "dx0", "dy0", "dx1", "dy1", "distractor"])
     os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
     df.to_csv(a.out, index=False)
     n_all = sum(g["span"][1] - g["span"][0] + 1 for g in segs)
