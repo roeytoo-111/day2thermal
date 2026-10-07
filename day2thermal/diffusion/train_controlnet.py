@@ -188,6 +188,8 @@ def main():
     ap.add_argument("--init-controlnet", default=None,
                     help="start from a saved ControlNet (e.g. runs/diff_cn_all/best) instead of the SD UNet copy; "
                          "the optimizer restarts, so consider a lower --lr")
+    ap.add_argument("--snr-gamma", type=float, default=0.0,
+                    help="Min-SNR loss weighting min(SNR, gamma)/SNR per sample (e.g. 5); 0 = plain MSE")
     a = ap.parse_args()
 
     torch.manual_seed(a.seed)
@@ -243,7 +245,14 @@ def main():
                 pred = unet(noisy, t, encoder_hidden_states=e,
                             down_block_additional_residuals=[d.to(frozen_dtype) for d in down],
                             mid_block_additional_residual=mid.to(frozen_dtype)).sample
-            loss = F.mse_loss(pred.float(), noise.float()) / a.grad_accum
+            if a.snr_gamma > 0:                                         # Min-SNR-gamma (epsilon target)
+                ac = sched.alphas_cumprod.to(device)[t].float()
+                snr = ac / (1 - ac)
+                w = torch.clamp(snr, max=a.snr_gamma) / snr
+                per = F.mse_loss(pred.float(), noise.float(), reduction="none").mean(dim=(1, 2, 3))
+                loss = (per * w).mean() / a.grad_accum
+            else:
+                loss = F.mse_loss(pred.float(), noise.float()) / a.grad_accum
             loss.backward()
             tot += loss.item()
         torch.nn.utils.clip_grad_norm_(controlnet.parameters(), 1.0)
