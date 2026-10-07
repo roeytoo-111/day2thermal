@@ -71,9 +71,21 @@ def parse_args():
     )
     p.add_argument(
         "--zoom",
-        type=int,
+        type=float,
         default=5,
-        help="magnification of the box crop"
+        help="magnification of the box crop (shrunk automatically when the crop would not fit --max-w/--max-h)"
+    )
+    p.add_argument(
+        "--max-w",
+        type=int,
+        default=1180,
+        help="the zoomed crop is shrunk to fit this width (px); big drones otherwise overflow the screen"
+    )
+    p.add_argument(
+        "--max-h",
+        type=int,
+        default=640,
+        help="... and this height (px)"
     )
     p.add_argument(
         "--play-window",
@@ -92,6 +104,7 @@ def parse_args():
 
 def main():
     a = parse_args()
+    base_zoom = a.zoom
 
     b = pd.read_csv(a.boxes)
 
@@ -243,16 +256,16 @@ def main():
 
         # Otherwise handle box dragging.
         if ev == cv2.EVENT_LBUTTONDOWN:
-            drag["down"] = (x // z, y // z)
+            drag["down"] = (x / z, y / z)
 
         elif ev == cv2.EVENT_MOUSEMOVE and drag["down"] is not None:
-            drag["cur"] = (x // z, y // z)
+            drag["cur"] = (x / z, y / z)
 
         elif ev == cv2.EVENT_LBUTTONUP and drag["down"] is not None:
 
             (x0, y0), (x1, y1) = (
                 drag["down"],
-                (x // z, y // z)
+                (x / z, y / z)
             )
 
             if abs(x1 - x0) > 1 and abs(y1 - y0) > 1:
@@ -303,8 +316,8 @@ def main():
             c = cv2.resize(
                 c,
                 (
-                    c.shape[1] * a.zoom,
-                    c.shape[0] * a.zoom
+                    int(round(c.shape[1] * a.zoom)),
+                    int(round(c.shape[0] * a.zoom))
                 ),
                 interpolation=cv2.INTER_NEAREST
             )
@@ -387,6 +400,9 @@ def main():
 
         crop0 = im[y0c:y1c, x0c:x1c]
 
+        # effective zoom for THIS frame: the requested one, shrunk (never enlarged) so the window fits the screen
+        a.zoom = min(base_zoom, a.max_w / max(crop0.shape[1], 1), a.max_h / max(crop0.shape[0], 1))
+
         drag["box"] = [
             box[0] - x0c,
             box[1] - y0c,
@@ -413,8 +429,8 @@ def main():
             crop = cv2.resize(
                 crop0,
                 (
-                    crop0.shape[1] * a.zoom,
-                    crop0.shape[0] * a.zoom
+                    int(round(crop0.shape[1] * a.zoom)),
+                    int(round(crop0.shape[0] * a.zoom))
                 ),
                 interpolation=cv2.INTER_NEAREST
             )

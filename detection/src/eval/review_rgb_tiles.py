@@ -17,7 +17,8 @@ import pandas as pd
 
 ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
 ap.add_argument("--addon", required=True)
-ap.add_argument("--zoom", type=float, default=1.4)
+ap.add_argument("--zoom", type=float, default=1.0, help="tile magnification (tiles are 640 px; capped so the window is <= --max-h tall)")
+ap.add_argument("--max-h", type=int, default=700)
 ap.add_argument("--finalize", action="store_true")
 a = ap.parse_args()
 csv = os.path.join(a.addon, "review", "tiles.csv")
@@ -44,7 +45,7 @@ if a.finalize:
 
 todo = [i for i in df.index if df.at[i, "decision"] == ""]
 state = {"down": None, "cur": None, "box": None}
-Z = a.zoom
+Z = min(a.zoom, a.max_h / 640)
 def mouse(ev, x, y, flags, p):
     if ev == cv2.EVENT_LBUTTONDOWN: state["down"] = (x / Z, y / Z)
     elif ev == cv2.EVENT_MOUSEMOVE and state["down"] is not None: state["cur"] = (x / Z, y / Z)
