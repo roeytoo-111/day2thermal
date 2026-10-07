@@ -25,7 +25,8 @@ def put(src_split_dir, out_split, prefix=""):
         if os.path.exists(lbl):
             for l in open(lbl):
                 p = l.split()
-                if len(p) == 5 and p[0].isdigit() and int(p[0]) in REMAP:
+                # boxes (5 fields) AND Roboflow polygons (class + x y pairs; ultralytics turns them into boxes)
+                if len(p) >= 5 and len(p) % 2 == 1 and p[0].isdigit() and int(p[0]) in REMAP:
                     lines.append(" ".join([str(REMAP[int(p[0])])] + p[1:]))
         open(os.path.join(a.out, out_split, "labels", prefix + stem + ".txt"), "w").write("\n".join(lines) + ("\n" if lines else ""))
         n += 1
