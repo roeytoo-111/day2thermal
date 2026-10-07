@@ -169,6 +169,44 @@ def coarse_search(th_e, day_gray_full, s0, scale_span, rot_span, search_px):
     return best
 
 
+def coarse_search_inside(th_e, day_gray_full, s0, scale_span, rot_span, search_px):
+    """Mirror of coarse_search for rigs where the thermal view lies INSIDE the day view (Boson + 4K day, 2026-10:
+    ~4 day px per thermal px, day footprint wider than the thermal frame). The thermal edge map is the template
+    and slides over the shrunk + rotated day edge map. Returns (H, score, peak_margin), H = day full-res -> thermal."""
+    th_h, th_w = th_e.shape
+    mx, my = int(0.05 * th_w), int(0.05 * th_h)
+    tpl = np.ascontiguousarray(th_e[my:th_h - my, mx:th_w - mx])
+    th_, tw_ = tpl.shape
+    best = None
+    for s in s0 * np.linspace(1 - scale_span, 1 + scale_span, 9):
+        small = cv2.resize(day_gray_full, None, fx=s, fy=s, interpolation=cv2.INTER_AREA)
+        e_small = edge_map(small, 1.0)
+        hs, ws = e_small.shape
+        if hs < th_ or ws < tw_:
+            continue
+        for r in np.linspace(-rot_span, rot_span, 7):
+            Rot = np.vstack([cv2.getRotationMatrix2D((ws / 2, hs / 2), r, 1.0), [0, 0, 1]])
+            rot = cv2.warpAffine(e_small, Rot[:2], (ws, hs))
+            cx0 = (ws - tw_) // 2 - search_px
+            cy0 = (hs - th_) // 2 - search_px
+            x0, y0 = max(cx0, 0), max(cy0, 0)
+            x1 = min(ws, (ws + tw_) // 2 + search_px)
+            y1 = min(hs, (hs + th_) // 2 + search_px)
+            region = rot[y0:y1, x0:x1]
+            if region.shape[0] < th_ or region.shape[1] < tw_:
+                continue
+            res = cv2.matchTemplate(region, tpl, cv2.TM_CCOEFF_NORMED)
+            _, score, _, loc = cv2.minMaxLoc(res)
+            if best is None or score > best[1]:
+                sup = res.copy()
+                cv2.circle(sup, loc, 6, -1.0, -1)
+                margin = score - float(sup.max())
+                # thermal p -> rot: p - (mx,my) + (x0+loc);  day full -> thermal is the inverse chain
+                H = T(mx - (x0 + loc[0]), my - (y0 + loc[1])) @ Rot @ R(s)
+                best = (H, float(score), float(margin))
+    return best
+
+
 def ecc_refine(th_e, day_gray_full, H_coarse, work_scale, motion, iters):
     """Refine day->thermal H with ECC on edge maps. Template = thermal edges inside the footprint."""
     dw = cv2.resize(day_gray_full, None, fx=work_scale, fy=work_scale, interpolation=cv2.INTER_AREA)
@@ -278,10 +316,12 @@ def inner_rect(valid, margin=2):
 
 
 # -------------------------------------------------------------- calibrate
-def pick_still_frames(sync_report, n_th, fps_th, n_frames):
-    """Evenly spread thermal indices where the rig is nearly still (low ego-motion)."""
+def pick_still_frames(sync_report, n_th, fps_th, n_frames, t_min=None, t_max=None):
+    """Evenly spread thermal indices where the rig is nearly still (low ego-motion), optionally inside [t_min, t_max] s."""
     cache = os.path.join(os.path.dirname(sync_report), "motion_cache.npz") if sync_report else None
-    cand = np.arange(int(2 * fps_th), n_th - int(2 * fps_th))
+    lo = int(2 * fps_th) if t_min is None else max(int(2 * fps_th), int(t_min * fps_th))
+    hi = n_th - int(2 * fps_th) if t_max is None else min(n_th - int(2 * fps_th), int(t_max * fps_th))
+    cand = np.arange(lo, hi)
     if cache and os.path.exists(cache):
         m = np.load(cache)["thermal"]
         speed = np.hypot(m[:, 0], m[:, 1])
@@ -307,6 +347,8 @@ def solve_frames(frames, lam, s0, a, verbose=False, cache=None):
         if th_e.mean() < 0.01:
             continue
         cs = coarse_search(th_e, dy_g, s0, a.scale_span, a.rot_span, a.search_px)
+        if cs is None:                       # thermal view inside the day view (Boson rig): mirrored search
+            cs = coarse_search_inside(th_e, dy_g, s0, a.scale_span, a.rot_span, a.search_px)
         H = None
         if cs is not None:
             Hc, score, margin = cs
@@ -430,7 +472,7 @@ def cmd_calibrate(a):
         sys.exit("need --sync-report or both --offset-ms and --scale")
     print(f"offset {offset * 1000:+.0f} ms, drift {drift * 1000:+.3f} ms/s | seed scale {s0:.4f} thermal px per day px")
 
-    idxs = pick_still_frames(a.sync_report, mt["n"], mt["fps"], a.n_frames)
+    idxs = pick_still_frames(a.sync_report, mt["n"], mt["fps"], a.n_frames, a.t_min, a.t_max)
     cap_d, cap_t = cv2.VideoCapture(a.day), cv2.VideoCapture(a.thermal)
     frames = []
     for ti in idxs:
@@ -720,6 +762,8 @@ def main():
     c.add_argument("--offset-ms", type=float, default=None, help="thermal_time = day_time + offset")
     c.add_argument("--scale", type=float, default=None, help="seed: thermal px per day px")
     c.add_argument("--n-frames", type=int, default=100, help="calibration frames (~every 10 s)")
+    c.add_argument("--t-min", type=float, default=None, help="only calibrate on thermal time >= this (s)")
+    c.add_argument("--t-max", type=float, default=None, help="only calibrate on thermal time <= this (s)")
     c.add_argument("--scale-span", type=float, default=0.18,
                    help="coarse search: +/- fraction around seed scale (seed from motion is biased low)")
     c.add_argument("--rot-span", type=float, default=5.0, help="coarse search: +/- degrees")
