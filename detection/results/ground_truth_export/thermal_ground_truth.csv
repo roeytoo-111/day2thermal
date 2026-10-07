@@ -1,0 +1,1636 @@
+video,frame,time_s,has_drone,x0,y0,x1,y1,split
+2026-07-02_scenario1_thermal.mp4,40,1.6,1,521,321,629,401,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,80,3.2,1,559,349,640,406,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,120,4.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,160,6.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,200,8.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,240,9.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,280,11.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,320,12.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,360,14.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,400,16.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,440,17.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,480,19.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,520,20.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,560,22.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,600,24.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,640,25.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,680,27.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,720,28.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,760,30.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,800,32.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,840,33.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,880,35.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,920,36.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,960,38.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1000,40.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1040,41.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1080,43.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1120,44.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1160,46.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1200,48.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1240,49.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1280,51.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1320,52.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1360,54.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1400,56.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1440,57.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1480,59.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1520,60.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1560,62.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1600,64.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1640,65.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1680,67.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1720,68.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1760,70.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1800,72.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1840,73.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1880,75.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1920,76.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,1960,78.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2000,80.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2040,81.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2080,83.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2120,84.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2160,86.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2200,88.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2240,89.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2280,91.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2320,92.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2360,94.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2400,96.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2440,97.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2480,99.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2520,100.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2560,102.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2600,104.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2640,105.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2680,107.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2720,108.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2760,110.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2800,112.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2840,113.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2880,115.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2920,116.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,2960,118.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3000,120.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3040,121.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3080,123.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3120,124.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3160,126.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3200,128.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3240,129.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3280,131.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3320,132.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3360,134.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3400,136.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3440,137.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3480,139.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3520,140.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3560,142.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3600,144.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3640,145.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3680,147.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3720,148.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3760,150.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3800,152.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3840,153.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3880,155.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3920,156.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,3960,158.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4000,160.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4040,161.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4080,163.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4120,164.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4160,166.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4200,168.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4240,169.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4280,171.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4320,172.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4360,174.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4400,176.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4440,177.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4480,179.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4520,180.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4560,182.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4600,184.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4640,185.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4680,187.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4720,188.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4800,192.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4880,195.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,4920,196.8,1,185,181,191,186,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5000,200.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5040,201.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5080,203.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5120,204.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5160,206.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5200,208.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5240,209.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5280,211.2,1,79,168,84,174,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5320,212.8,1,95,203,101,208,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5360,214.4,1,126,215,132,220,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5400,216.0,1,161,222,167,227,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5440,217.6,1,210,217,215,222,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5480,219.2,1,255,197,260,202,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5520,220.8,1,218,119,223,125,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5560,222.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5600,224.0,1,391,137,396,142,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5640,225.6,1,168,130,173,135,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5680,227.2,1,216,138,221,143,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5720,228.8,1,193,170,198,175,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5760,230.4,1,203,188,208,193,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5800,232.0,1,239,197,244,203,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5840,233.6,1,269,174,274,179,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5880,235.2,1,282,117,287,122,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,5920,236.8,1,279,161,284,166,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6000,240.0,1,178,195,184,201,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6120,244.8,1,552,327,557,333,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6160,246.4,1,564,319,569,324,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6200,248.0,1,576,310,582,315,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6240,249.6,1,590,299,596,305,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6280,251.2,1,606,287,611,292,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6320,252.8,1,622,272,628,278,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6360,254.4,1,406,90,457,97,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6400,256.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6440,257.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6480,259.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6520,260.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6560,262.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6600,264.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6640,265.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6680,267.2,1,607,273,613,279,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6760,270.4,1,488,327,494,332,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6800,272.0,1,440,347,446,353,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6840,273.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6880,275.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6920,276.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,6960,278.4,1,278,164,283,170,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7000,280.0,1,328,184,333,189,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7080,283.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7120,284.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7160,286.4,1,561,294,566,299,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7200,288.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7240,289.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7320,292.8,1,66,206,72,211,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7360,294.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7400,296.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7440,297.6,1,10,181,17,188,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7520,300.8,1,78,120,86,127,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7560,302.4,1,116,23,125,33,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7640,305.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7680,307.2,1,491,10,503,21,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7720,308.8,1,586,91,596,100,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7800,312.0,1,407,181,414,186,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7840,313.6,1,376,217,383,222,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7880,315.2,1,368,198,375,203,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7920,316.8,1,363,210,368,216,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,7960,318.4,1,353,237,359,243,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8000,320.0,1,345,262,351,267,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8040,321.6,1,323,270,328,275,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8080,323.2,1,327,276,332,281,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8160,326.4,1,323,264,329,269,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8200,328.0,1,332,275,339,280,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8240,329.6,1,332,261,339,267,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8280,331.2,1,292,252,299,258,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8320,332.8,1,315,240,322,246,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8360,334.4,1,329,243,337,248,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8400,336.0,1,332,247,339,253,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8440,337.6,1,323,244,330,249,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8480,339.2,1,352,255,358,261,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8520,340.8,1,323,248,329,253,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8560,342.4,1,320,260,326,266,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8600,344.0,1,313,259,319,264,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8640,345.6,1,312,259,317,264,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8680,347.2,1,315,251,321,257,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8800,352.0,1,328,244,333,250,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8840,353.6,1,332,240,338,246,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8880,355.2,1,327,240,333,245,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8920,356.8,1,338,245,344,250,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,8960,358.4,1,333,262,338,267,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,9000,360.0,1,306,267,312,272,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,9040,361.6,1,296,259,302,264,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,9080,363.2,1,285,252,291,258,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,9120,364.8,1,292,258,298,264,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,9160,366.4,1,309,254,315,259,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,9360,374.4,1,274,193,281,201,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,9400,376.0,1,275,193,280,199,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,9440,377.6,1,283,195,288,201,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,9560,382.4,1,346,315,351,320,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,9680,387.2,1,374,200,379,206,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,9720,388.8,1,312,253,318,258,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,9760,390.4,1,330,249,337,255,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,9800,392.0,1,315,247,321,253,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,9840,393.6,1,296,235,302,241,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,9880,395.2,1,332,239,340,244,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,9920,396.8,1,309,207,317,213,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,9960,398.4,1,321,205,331,211,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10000,400.0,1,336,204,342,210,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10040,401.6,1,345,223,354,229,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10080,403.2,1,320,199,331,207,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10120,404.8,1,295,190,309,197,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10160,406.4,1,278,193,294,203,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10200,408.0,1,296,198,313,207,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10240,409.6,1,295,204,314,212,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10280,411.2,1,303,209,323,217,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10320,412.8,1,328,192,353,201,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10360,414.4,1,349,229,376,240,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10400,416.0,1,345,255,375,264,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10440,417.6,1,356,305,365,312,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10480,419.2,1,339,326,351,334,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10640,425.6,1,476,96,481,101,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10680,427.2,1,365,305,375,311,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10800,432.0,1,364,314,372,320,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10840,433.6,1,350,313,363,319,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10880,435.2,1,379,312,385,318,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10920,436.8,1,387,322,394,327,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,10960,438.4,1,386,308,392,314,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11000,440.0,1,361,347,367,353,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11040,441.6,1,368,357,381,364,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11080,443.2,1,385,383,395,390,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11160,446.4,1,431,342,440,348,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11200,448.0,1,446,394,460,401,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11240,449.6,1,449,423,459,431,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11280,451.2,1,468,497,479,504,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11320,452.8,1,540,430,549,437,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11360,454.4,1,477,390,486,396,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11400,456.0,1,352,425,359,432,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11440,457.6,1,294,359,309,366,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11480,459.2,1,361,261,383,277,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11520,460.8,1,291,277,304,284,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11600,464.0,1,284,287,311,297,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11640,465.6,1,296,252,320,262,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11680,467.2,1,309,207,343,222,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11720,468.8,1,324,241,353,260,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11760,470.4,1,304,215,349,238,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11800,472.0,1,296,225,325,244,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11840,473.6,1,277,260,309,274,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11880,475.2,1,268,280,297,290,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11920,476.8,1,278,251,295,260,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,11960,478.4,1,269,267,288,274,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12000,480.0,1,268,264,287,272,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12040,481.6,1,277,257,294,263,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12080,483.2,1,269,265,284,272,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12120,484.8,1,287,261,300,267,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12160,486.4,1,301,262,313,268,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12200,488.0,1,332,255,344,261,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12240,489.6,1,325,261,337,267,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12280,491.2,1,323,268,333,274,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12320,492.8,1,320,282,328,288,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12360,494.4,1,316,286,324,291,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12400,496.0,1,315,273,322,279,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12440,497.6,1,319,266,325,272,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12480,499.2,1,327,269,335,277,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12520,500.8,1,340,268,349,275,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12600,504.0,1,327,273,334,278,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12640,505.6,1,327,263,335,269,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12680,507.2,1,287,244,296,250,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12720,508.8,1,270,235,280,240,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12760,510.4,1,266,237,276,244,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12800,512.0,1,276,248,285,254,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12840,513.6,1,301,264,309,270,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12880,515.2,1,320,271,328,277,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12920,516.8,1,313,294,321,301,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,12960,518.4,1,271,268,279,274,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13000,520.0,1,279,262,286,268,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13040,521.6,1,298,247,304,253,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13080,523.2,1,304,264,310,269,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13280,531.2,1,295,291,311,302,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13320,532.8,1,271,300,297,309,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13360,534.4,1,236,288,268,313,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13400,536.0,1,215,295,257,319,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13440,537.6,1,251,311,273,318,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13480,539.2,1,263,299,284,308,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13520,540.8,1,310,295,330,308,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13560,542.4,1,328,403,357,412,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13600,544.0,1,404,401,455,433,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13640,545.6,1,428,346,470,360,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13680,547.2,1,383,450,432,467,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13720,548.8,1,306,377,357,421,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13760,550.4,1,253,402,304,433,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13840,553.6,1,227,408,270,434,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13880,555.2,1,177,395,211,424,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13920,556.8,1,139,321,171,329,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,13960,558.4,1,195,319,222,334,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14000,560.0,1,255,319,302,352,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14040,561.6,1,306,377,338,388,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14080,563.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14120,564.8,1,394,427,428,440,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14160,566.4,1,377,414,420,432,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14200,568.0,1,189,373,213,387,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14240,569.6,1,136,409,172,432,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14280,571.2,1,309,416,337,433,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14320,572.8,1,236,449,257,459,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14360,574.4,1,262,339,278,347,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14400,576.0,1,282,306,299,314,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14480,579.2,1,288,313,312,332,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14520,580.8,1,293,321,319,334,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14560,582.4,1,302,352,333,379,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14600,584.0,1,277,456,339,502,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14640,585.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14680,587.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14720,588.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14760,590.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14800,592.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14840,593.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14880,595.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14920,596.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,14960,598.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15000,600.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15040,601.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15080,603.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15120,604.8,1,282,44,298,54,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15160,606.4,1,264,72,278,80,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15200,608.0,1,304,98,316,105,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15240,609.6,1,394,130,405,137,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15280,611.2,1,392,139,402,146,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15320,612.8,1,358,180,368,186,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15360,614.4,1,338,199,346,205,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15400,616.0,1,312,206,319,212,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15440,617.6,1,301,198,308,204,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15480,619.2,1,302,193,309,199,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15520,620.8,1,319,189,326,195,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15560,622.4,1,334,192,341,198,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15600,624.0,1,324,208,331,214,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15640,625.6,1,319,236,326,242,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15680,627.2,1,313,251,320,256,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15720,628.8,1,315,260,320,266,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15760,630.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15800,632.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15840,633.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15880,635.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15920,636.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,15960,638.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16000,640.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16040,641.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16080,643.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16120,644.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16160,646.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16200,648.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16240,649.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16280,651.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16320,652.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16360,654.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16400,656.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16440,657.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16480,659.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16520,660.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16560,662.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16600,664.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16800,672.0,1,199,378,212,384,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16840,673.6,1,250,354,260,360,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16880,675.2,1,290,333,304,341,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16920,676.8,1,308,320,320,327,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,16960,678.4,1,339,315,351,321,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17000,680.0,1,358,315,370,322,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17040,681.6,1,348,347,361,360,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17080,683.2,1,369,370,386,376,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17120,684.8,1,367,378,380,385,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17160,686.4,1,336,384,353,407,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17200,688.0,1,282,381,298,388,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17240,689.6,1,292,349,311,363,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17280,691.2,1,295,347,311,353,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17320,692.8,1,289,345,310,360,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17360,694.4,1,304,347,321,355,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17400,696.0,1,302,353,322,360,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17520,700.8,1,306,388,328,397,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17560,702.4,1,271,402,292,415,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17600,704.0,1,246,394,278,410,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17640,705.6,1,286,374,322,385,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17680,707.2,1,299,453,340,470,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17720,708.8,1,238,424,275,440,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17760,710.4,1,197,445,229,457,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17800,712.0,1,189,418,220,436,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17840,713.6,1,214,390,245,403,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17880,715.2,1,229,357,238,363,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17920,716.8,1,250,341,256,346,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,17960,718.4,1,278,314,284,319,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18000,720.0,1,301,312,308,318,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18040,721.6,1,290,315,299,321,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18080,723.2,1,302,312,307,317,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18120,724.8,1,299,304,305,310,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18160,726.4,1,336,310,344,316,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18200,728.0,1,336,314,344,320,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18240,729.6,1,327,319,336,325,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18280,731.2,1,338,324,345,329,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18320,732.8,1,332,329,343,335,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18360,734.4,1,328,340,342,346,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18400,736.0,1,349,353,359,359,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18440,737.6,1,341,365,349,370,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18480,739.2,1,352,367,361,373,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18520,740.8,1,367,379,380,385,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18560,742.4,1,339,390,351,395,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18600,744.0,1,322,395,338,400,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18640,745.6,1,332,407,347,413,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18680,747.2,1,332,423,346,429,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18720,748.8,1,329,430,339,436,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18760,750.4,1,325,434,340,441,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18800,752.0,1,320,440,338,447,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18840,753.6,1,314,429,328,436,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18880,755.2,1,316,428,335,435,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18920,756.8,1,327,426,342,433,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,18960,758.4,1,298,425,309,431,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19000,760.0,1,205,429,224,437,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19040,761.6,1,205,420,224,427,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19080,763.2,1,248,408,259,415,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19120,764.8,1,288,392,301,398,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19160,766.4,1,282,381,302,387,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19200,768.0,1,281,389,297,396,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19240,769.6,1,293,397,303,402,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19280,771.2,1,282,402,300,408,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19320,772.8,1,270,404,288,412,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19360,774.4,1,256,404,278,418,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19400,776.0,1,261,413,292,428,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19440,777.6,1,262,416,293,433,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19480,779.2,1,263,432,290,445,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19520,780.8,1,238,422,263,435,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19560,782.4,1,196,401,207,409,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19600,784.0,1,191,375,209,382,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19640,785.6,1,223,350,262,383,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19680,787.2,1,266,366,279,373,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19720,788.8,1,280,363,318,388,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19760,790.4,1,311,369,327,378,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19800,792.0,1,335,374,354,390,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19840,793.6,1,345,366,369,374,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19880,795.2,1,350,391,377,401,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19920,796.8,1,332,384,362,400,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,19960,798.4,1,333,415,370,428,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20000,800.0,1,363,440,401,460,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20040,801.6,1,454,472,505,499,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20080,803.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20120,804.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20160,806.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20200,808.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20240,809.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20280,811.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20440,817.6,1,293,311,299,317,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20480,819.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20520,820.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20560,822.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20600,824.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20640,825.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20680,827.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20720,828.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20760,830.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20800,832.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20840,833.6,1,99,87,104,93,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20880,835.2,1,31,66,36,71,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,20920,836.8,1,266,187,271,192,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21000,840.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21040,841.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21080,843.2,1,402,324,409,330,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21120,844.8,1,410,306,416,312,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21160,846.4,1,403,302,409,308,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21200,848.0,1,404,305,410,311,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21240,849.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21280,851.2,1,222,202,228,208,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21320,852.8,1,215,202,222,207,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21360,854.4,1,224,200,231,205,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21400,856.0,1,226,201,233,208,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21440,857.6,1,232,202,239,208,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21480,859.2,1,18,225,25,231,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21520,860.8,1,45,227,52,234,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21560,862.4,1,82,245,88,251,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21600,864.0,1,250,243,258,248,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21640,865.6,1,355,234,360,239,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21680,867.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21720,868.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21760,870.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21800,872.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21840,873.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21880,875.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21920,876.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,21960,878.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22000,880.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22040,881.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22080,883.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22120,884.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22160,886.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22200,888.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22240,889.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22280,891.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22320,892.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22360,894.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22400,896.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22440,897.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22480,899.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22520,900.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22560,902.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22600,904.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22640,905.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22680,907.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22720,908.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22760,910.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22800,912.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22840,913.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22880,915.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22920,916.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,22960,918.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23000,920.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23040,921.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23080,923.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23120,924.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23160,926.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23200,928.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23240,929.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23280,931.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23320,932.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23360,934.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23400,936.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23440,937.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23480,939.2,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23520,940.8,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23560,942.4,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23600,944.0,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23640,945.6,0,,,,,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23680,947.2,1,0,438,50,465,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23720,948.8,1,2,438,53,477,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23760,950.4,1,7,440,58,467,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23800,952.0,1,6,440,57,468,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23840,953.6,1,5,439,56,477,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23880,955.2,1,5,439,56,476,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23920,956.8,1,4,427,55,478,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,23960,958.4,1,1,444,59,476,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,24000,960.0,1,5,449,57,477,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,24040,961.6,1,8,452,57,476,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,24080,963.2,1,2,449,56,478,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,24120,964.8,1,5,445,59,482,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,24160,966.4,1,4,447,62,476,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,24200,968.0,1,8,446,59,478,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,24240,969.6,1,6,439,57,482,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,24280,971.2,1,5,438,55,483,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,24320,972.8,1,7,446,63,480,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,24360,974.4,1,0,430,46,479,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,24400,976.0,1,0,440,45,479,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,24440,977.6,1,2,424,47,457,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,24480,979.2,1,0,376,29,422,test (never trained on)
+2026-07-02_scenario1_thermal.mp4,24520,980.8,1,0,371,45,413,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,25,0.5,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,77,1.54,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,123,2.46,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,169,3.38,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,220,4.4,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,272,5.44,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,321,6.42,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,372,7.44,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,420,8.4,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,467,9.34,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,516,10.32,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,570,11.4,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,620,12.4,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,672,13.44,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,722,14.44,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,773,15.46,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,824,16.48,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,873,17.46,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,922,18.44,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,971,19.42,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,1019,20.38,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,1072,21.44,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,1125,22.5,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,1174,23.48,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,1226,24.52,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,1276,25.52,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,1330,26.6,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,1383,27.66,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,1434,28.68,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,1487,29.74,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,1537,30.74,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,1582,31.64,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,1637,32.74,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,1685,33.7,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,1743,34.86,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,1796,35.92,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,1849,36.98,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,1903,38.06,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,1952,39.04,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2001,40.02,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2053,41.06,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2103,42.06,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2155,43.1,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2206,44.12,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2255,45.1,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2304,46.08,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2355,47.1,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2410,48.2,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2460,49.2,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2508,50.16,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2554,51.08,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2602,52.04,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2651,53.02,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2702,54.04,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2753,55.06,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2805,56.1,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2854,57.08,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2901,58.02,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,2948,58.96,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3002,60.04,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3056,61.12,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3105,62.1,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3161,63.22,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3211,64.22,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3260,65.2,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3308,66.16,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3357,67.14,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3409,68.18,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3464,69.28,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3518,70.36,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3574,71.48,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3631,72.62,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3681,73.62,1,11,113,20,120,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3735,74.7,1,89,127,98,133,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3786,75.72,1,210,112,218,117,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3838,76.76,1,255,131,263,136,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3887,77.74,1,265,168,272,172,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3936,78.72,1,275,182,282,186,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,3985,79.7,1,295,192,300,196,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,4036,80.72,1,314,201,318,204,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,4089,81.78,1,308,197,315,202,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,4140,82.8,1,302,192,307,195,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,4426,88.52,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,4478,89.56,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,4532,90.64,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,4584,91.68,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,4632,92.64,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,4681,93.62,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,4730,94.6,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,4777,95.54,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,4829,96.58,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,4879,97.58,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,4927,98.54,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,4973,99.46,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5022,100.44,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5069,101.38,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5117,102.34,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5166,103.32,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5216,104.32,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5262,105.24,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5308,106.16,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5352,107.04,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5396,107.92,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5443,108.86,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5481,109.62,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5527,110.54,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5573,111.46,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5615,112.3,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5652,113.04,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5696,113.92,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5735,114.7,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5783,115.66,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5827,116.54,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5874,117.48,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5912,118.24,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,5958,119.16,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6004,120.08,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6051,121.02,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6098,121.96,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6143,122.86,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6191,123.82,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6246,124.92,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6299,125.98,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6354,127.08,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6405,128.1,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6454,129.08,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6504,130.08,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6554,131.08,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6604,132.08,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6654,133.08,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6710,134.2,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6758,135.16,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6808,136.16,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6857,137.14,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6902,138.04,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,6951,139.02,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7000,140.0,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7050,141.0,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7099,141.98,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7148,142.96,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7196,143.92,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7240,144.8,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7287,145.74,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7335,146.7,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7384,147.68,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7435,148.7,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7486,149.72,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7533,150.66,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7582,151.64,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7631,152.62,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7676,153.52,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7723,154.46,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7772,155.44,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7819,156.38,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7870,157.4,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7925,158.5,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,7979,159.58,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,8032,160.64,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,8086,161.72,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,8140,162.8,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,8194,163.88,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,8248,164.96,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,8301,166.02,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,8358,167.16,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,8412,168.24,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,8464,169.28,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,8516,170.32,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,8569,171.38,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,8625,172.5,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,8675,173.5,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,8723,174.46,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,8775,175.5,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,8827,176.54,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,8876,177.52,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,8923,178.46,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,8974,179.48,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9025,180.5,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9079,181.58,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9131,182.62,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9185,183.7,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9234,184.68,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9286,185.72,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9338,186.76,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9389,187.78,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9439,188.78,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9487,189.74,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9538,190.76,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9590,191.8,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9638,192.76,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9691,193.82,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9741,194.82,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9790,195.8,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9839,196.78,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9888,197.76,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9935,198.7,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,9986,199.72,1,309,204,313,208,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,10038,200.76,1,299,182,303,186,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,10088,201.76,1,300,184,304,188,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,10138,202.76,1,305,180,309,184,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,10191,203.82,1,317,181,320,185,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,10241,204.82,1,332,178,336,182,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,10294,205.88,1,343,176,348,180,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,10348,206.96,1,322,185,326,188,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,10400,208.0,1,299,200,305,204,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,10699,213.98,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,10794,215.88,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,10840,216.8,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,10890,217.8,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,10989,219.78,1,329,231,332,235,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,11037,220.74,1,300,231,305,235,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,11087,221.74,1,271,205,274,209,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,11138,222.76,1,259,208,265,212,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,11185,223.7,1,258,203,261,207,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,11232,224.64,1,272,210,277,214,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,11284,225.68,1,294,201,300,205,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,11337,226.74,1,337,167,351,174,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,11389,227.78,1,326,155,341,161,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,11444,228.88,1,314,144,326,152,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,11496,229.92,1,300,165,305,169,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,11550,231.0,1,299,169,303,173,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,11600,232.0,1,306,186,310,190,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,11649,232.98,1,305,190,309,194,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,11697,233.94,1,326,196,330,200,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,11747,234.94,1,329,196,333,199,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,11795,235.9,1,309,212,313,216,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,12732,254.64,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,12785,255.7,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,12837,256.74,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,12891,257.82,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,12944,258.88,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,12996,259.92,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13047,260.94,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13095,261.9,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13142,262.84,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13197,263.94,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13246,264.92,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13294,265.88,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13344,266.88,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13390,267.8,1,344,157,354,166,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13438,268.76,1,341,147,357,155,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13488,269.76,1,364,129,376,139,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13539,270.78,1,360,138,374,150,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13588,271.76,1,343,146,348,151,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13638,272.76,1,322,143,338,156,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13685,273.7,1,315,141,329,152,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13733,274.66,1,315,145,329,151,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13781,275.62,1,316,155,332,166,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13830,276.6,1,322,171,337,183,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13881,277.62,1,304,172,319,183,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13927,278.54,1,304,163,322,176,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,13975,279.5,1,315,169,334,182,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,14025,280.5,1,305,147,328,164,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,14077,281.54,1,305,139,330,159,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,14129,282.58,1,321,143,343,160,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,14179,283.58,1,315,147,347,164,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,14226,284.52,1,319,153,342,160,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,14272,285.44,1,327,125,356,145,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,14324,286.48,1,337,145,363,160,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,14374,287.48,1,361,170,385,179,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,14421,288.42,1,355,184,381,203,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,14472,289.44,1,336,197,374,215,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,14524,290.48,1,307,202,331,225,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,14580,291.6,1,263,226,297,241,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,14637,292.74,1,294,229,323,243,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,14695,293.9,1,293,229,320,240,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,14753,295.06,1,288,231,308,244,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,14808,296.16,1,304,229,333,242,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,14857,297.14,1,315,227,339,240,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,14904,298.08,1,313,251,341,266,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,14953,299.06,1,291,257,316,267,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,15006,300.12,1,287,231,314,248,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,15060,301.2,1,291,232,321,244,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,15214,304.28,1,248,211,262,225,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,15265,305.3,1,242,214,266,227,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,15316,306.32,1,222,219,242,239,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,15368,307.36,1,203,217,225,238,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,15418,308.36,1,205,245,224,260,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,15463,309.26,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,15606,312.12,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,15955,319.1,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,16006,320.12,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,16055,321.1,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,16251,325.02,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,16302,326.04,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,16355,327.1,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,16403,328.06,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,16454,329.08,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,16503,330.06,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,16552,331.04,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,16600,332.0,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,16652,333.04,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,16700,334.0,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,16749,334.98,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,16800,336.0,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,16847,336.94,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,16895,337.9,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,16942,338.84,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,17041,340.82,1,401,199,419,218,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,17094,341.88,1,394,194,432,210,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,17149,342.98,1,393,176,428,194,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,17203,344.06,1,374,153,406,173,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,17256,345.12,1,335,141,365,170,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,17306,346.12,1,349,161,357,167,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,17358,347.16,1,322,143,354,166,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,17407,348.14,1,295,110,336,133,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,17458,349.16,1,300,165,340,191,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,17509,350.18,1,296,186,343,209,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,17560,351.2,1,318,164,341,183,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,17608,352.16,1,315,168,340,184,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,17658,353.16,1,316,176,352,199,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,17705,354.1,1,304,192,346,211,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,17801,356.02,1,322,201,362,217,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,17851,357.02,1,345,204,376,221,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,17952,359.04,1,369,230,408,248,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,18428,368.56,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,18476,369.52,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,18526,370.52,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,18568,371.36,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,18621,372.42,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,18672,373.44,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,18724,374.48,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,18778,375.56,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,18830,376.6,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,18883,377.66,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,18940,378.8,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,18995,379.9,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,19047,380.94,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,21013,420.26,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,21066,421.32,1,458,238,478,255,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,21118,422.36,1,322,172,363,189,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,21172,423.44,1,325,171,356,190,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,21225,424.5,1,363,198,391,217,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,21467,429.34,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,21518,430.36,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,21568,431.36,1,317,190,345,199,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,21616,432.32,1,317,196,343,205,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,21665,433.3,1,311,211,337,220,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,21715,434.3,1,310,208,331,219,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,21764,435.28,1,318,215,340,227,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,21816,436.32,1,328,165,341,175,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,21869,437.38,1,332,154,341,169,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,21920,438.4,1,321,166,333,175,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,22168,443.36,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,22219,444.38,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,22272,445.44,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,22324,446.48,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,22372,447.44,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,22418,448.36,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,22467,449.34,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,22515,450.3,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,22562,451.24,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,22614,452.28,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,22663,453.26,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,22715,454.3,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,22764,455.28,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,22810,456.2,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,22858,457.16,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,22908,458.16,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,22954,459.08,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23000,460.0,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23047,460.94,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23097,461.94,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23151,463.02,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23200,464.0,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23245,464.9,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23292,465.84,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23344,466.88,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23393,467.86,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23441,468.82,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23494,469.88,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23545,470.9,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23598,471.96,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23653,473.06,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23704,474.08,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23759,475.18,1,336,212,353,232,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23809,476.18,1,329,221,348,234,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23863,477.26,1,331,219,355,238,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23917,478.34,1,338,213,361,239,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,23970,479.4,1,325,218,354,236,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,24065,481.3,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,24116,482.32,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,24165,483.3,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,24217,484.34,1,310,241,330,251,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,24268,485.36,1,302,229,325,242,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,24319,486.38,1,310,243,331,255,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,24367,487.34,1,313,252,340,266,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,24416,488.32,1,303,264,331,284,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,24465,489.3,1,289,270,320,287,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,24514,490.28,1,289,276,313,288,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,24559,491.18,1,296,267,325,286,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,24610,492.2,1,293,254,328,271,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,24658,493.16,1,301,235,334,257,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,24711,494.22,1,306,238,334,257,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,24761,495.22,1,313,229,335,239,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,24814,496.28,1,317,218,356,245,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,24866,497.32,1,324,223,362,241,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,24917,498.34,1,341,221,387,248,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,24970,499.4,1,314,267,352,283,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,25018,500.36,1,285,294,335,313,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,25114,502.28,1,320,183,361,205,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,25168,503.36,1,331,191,376,214,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,25223,504.46,1,353,228,384,242,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,25273,505.46,1,347,193,362,200,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,25324,506.48,1,325,189,346,200,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,26220,524.4,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,26273,525.46,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,26323,526.46,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,26374,527.48,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,26422,528.44,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,26522,530.44,0,,,,,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,26621,532.42,1,310,232,338,248,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,26672,533.44,1,295,233,325,242,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,26723,534.46,1,323,232,346,252,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,26773,535.46,1,325,242,352,255,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,26818,536.36,1,311,257,341,267,test (never trained on)
+2026-07-30T09_27_04_thermal_clipped.mp4,26869,537.38,1,314,317,349,331,test (never trained on)
+2026-07-15_thermal_clipped.mp4,25,1.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,225,9.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,825,33.0,1,366,199,373,205,seen in our training
+2026-07-15_thermal_clipped.mp4,875,35.0,1,319,217,363,227,seen in our training
+2026-07-15_thermal_clipped.mp4,1225,49.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,1275,51.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,1325,53.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,1375,55.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,1425,57.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,1475,59.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,1525,61.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,1575,63.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,1625,65.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,1675,67.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,1725,69.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,1775,71.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,1825,73.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,1875,75.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,1925,77.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,1975,79.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2025,81.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2075,83.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2125,85.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2175,87.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2225,89.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2275,91.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2325,93.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2375,95.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2425,97.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2475,99.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2525,101.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2575,103.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2625,105.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2675,107.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2725,109.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2775,111.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2825,113.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2875,115.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2925,117.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,2975,119.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3025,121.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3075,123.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3125,125.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3175,127.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3225,129.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3275,131.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3325,133.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3375,135.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3425,137.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3475,139.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3525,141.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3575,143.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3625,145.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3675,147.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3725,149.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3775,151.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3825,153.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3875,155.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3925,157.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,3975,159.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,4025,161.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,4075,163.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,4125,165.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,4175,167.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,4225,169.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,4275,171.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,4325,173.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,4375,175.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,4425,177.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,4475,179.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,4525,181.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,4575,183.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,4625,185.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,4675,187.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,4725,189.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,4775,191.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,4825,193.0,1,380,269,407,281,seen in our training
+2026-07-15_thermal_clipped.mp4,4875,195.0,1,378,272,416,318,seen in our training
+2026-07-15_thermal_clipped.mp4,4925,197.0,1,348,299,375,309,seen in our training
+2026-07-15_thermal_clipped.mp4,4975,199.0,1,350,283,389,301,seen in our training
+2026-07-15_thermal_clipped.mp4,5025,201.0,1,351,285,382,302,seen in our training
+2026-07-15_thermal_clipped.mp4,5075,203.0,1,368,318,392,329,seen in our training
+2026-07-15_thermal_clipped.mp4,5125,205.0,1,356,355,385,362,seen in our training
+2026-07-15_thermal_clipped.mp4,5175,207.0,1,359,361,393,381,seen in our training
+2026-07-15_thermal_clipped.mp4,5225,209.0,1,375,334,405,344,seen in our training
+2026-07-15_thermal_clipped.mp4,5275,211.0,1,355,303,381,317,seen in our training
+2026-07-15_thermal_clipped.mp4,5325,213.0,1,347,305,376,312,seen in our training
+2026-07-15_thermal_clipped.mp4,5375,215.0,1,355,279,381,288,seen in our training
+2026-07-15_thermal_clipped.mp4,5425,217.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,5475,219.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,5525,221.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,5575,223.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,5625,225.0,1,338,303,352,311,seen in our training
+2026-07-15_thermal_clipped.mp4,5675,227.0,1,356,319,371,326,seen in our training
+2026-07-15_thermal_clipped.mp4,5725,229.0,1,350,327,384,337,seen in our training
+2026-07-15_thermal_clipped.mp4,5775,231.0,1,350,329,378,341,seen in our training
+2026-07-15_thermal_clipped.mp4,5825,233.0,1,331,331,347,338,seen in our training
+2026-07-15_thermal_clipped.mp4,5875,235.0,1,357,304,385,311,seen in our training
+2026-07-15_thermal_clipped.mp4,5925,237.0,1,262,300,297,315,seen in our training
+2026-07-15_thermal_clipped.mp4,5975,239.0,1,253,294,275,303,seen in our training
+2026-07-15_thermal_clipped.mp4,6025,241.0,1,269,292,295,309,seen in our training
+2026-07-15_thermal_clipped.mp4,6075,243.0,1,250,301,275,311,seen in our training
+2026-07-15_thermal_clipped.mp4,6125,245.0,1,263,305,288,316,seen in our training
+2026-07-15_thermal_clipped.mp4,6175,247.0,1,279,297,307,313,seen in our training
+2026-07-15_thermal_clipped.mp4,6225,249.0,1,322,340,353,348,seen in our training
+2026-07-15_thermal_clipped.mp4,6275,251.0,1,361,417,386,432,seen in our training
+2026-07-15_thermal_clipped.mp4,6325,253.0,1,372,436,394,448,seen in our training
+2026-07-15_thermal_clipped.mp4,6375,255.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,6425,257.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,6475,259.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,6525,261.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,6575,263.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,6625,265.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,6675,267.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,6725,269.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,6775,271.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,6825,273.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,6875,275.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,6925,277.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,6975,279.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,7025,281.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,7075,283.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,7125,285.0,0,,,,,seen in our training
+2026-07-15_thermal_clipped.mp4,7175,287.0,1,283,292,302,300,seen in our training
+2026-07-15_thermal_clipped.mp4,7225,289.0,1,246,218,271,230,seen in our training
+2026-07-15_thermal_clipped.mp4,7275,291.0,1,257,230,280,242,seen in our training
+2026-07-15_thermal_clipped.mp4,7325,293.0,1,307,282,335,294,seen in our training
+2026-07-15_thermal_clipped.mp4,7375,295.0,1,313,315,351,329,seen in our training
+2026-07-15_thermal_clipped.mp4,7425,297.0,1,301,308,333,321,seen in our training
+2026-07-15_thermal_clipped.mp4,7475,299.0,1,300,312,336,328,seen in our training
+2026-07-15_thermal_clipped.mp4,7525,301.0,1,309,336,348,354,seen in our training
+2026-07-15_thermal_clipped.mp4,7575,303.0,1,311,326,343,341,seen in our training
+2026-07-15_thermal_clipped.mp4,7625,305.0,1,304,313,342,331,seen in our training
+2026-07-15_thermal_clipped.mp4,7675,307.0,1,306,332,342,350,seen in our training
+2026-07-15_thermal_clipped.mp4,7725,309.0,1,305,312,349,333,seen in our training
+2026-07-15_thermal_clipped.mp4,7775,311.0,1,309,300,352,312,seen in our training
+2026-07-15_thermal_clipped.mp4,7825,313.0,1,344,303,390,321,seen in our training
+2026-07-15_thermal_clipped.mp4,7875,315.0,1,317,303,384,321,seen in our training
+2026-07-15_thermal_clipped.mp4,7925,317.0,1,296,388,357,406,seen in our training
+2026-07-15_thermal_clipped.mp4,7975,319.0,1,287,374,337,394,seen in our training
+2026-07-15_thermal_clipped.mp4,8025,321.0,1,294,349,340,365,seen in our training
+2026-07-15_thermal_clipped.mp4,8075,323.0,1,292,353,332,370,seen in our training
+2026-07-15_thermal_clipped.mp4,8125,325.0,1,307,316,335,331,seen in our training
+2026-07-15_thermal_clipped.mp4,8175,327.0,1,301,323,339,339,seen in our training
+2026-07-15_thermal_clipped.mp4,8225,329.0,1,310,329,337,339,seen in our training
+2026-07-15_thermal_clipped.mp4,8275,331.0,1,312,320,338,332,seen in our training
+2026-07-15_thermal_clipped.mp4,8325,333.0,1,326,344,356,354,seen in our training
+2026-07-15_thermal_clipped.mp4,8375,335.0,1,375,375,409,392,seen in our training
+2026-07-15_thermal_clipped.mp4,8425,337.0,1,370,427,426,444,seen in our training
+2026-07-15_thermal_clipped.mp4,8475,339.0,1,310,409,365,433,seen in our training
+2026-07-15_thermal_clipped.mp4,8525,341.0,1,344,398,395,420,seen in our training
+2026-07-15_thermal_clipped.mp4,8575,343.0,1,396,345,441,383,seen in our training
+2026-07-15_thermal_clipped.mp4,8625,345.0,1,409,342,442,356,seen in our training
+2026-07-15_thermal_clipped.mp4,8675,347.0,1,386,324,412,335,seen in our training
+2026-07-15_thermal_clipped.mp4,8725,349.0,1,398,324,426,337,seen in our training
+2026-07-15_thermal_clipped.mp4,8825,353.0,1,348,327,369,338,seen in our training
+2026-07-15_thermal_clipped.mp4,8875,355.0,1,316,340,354,355,seen in our training
+2026-07-15_thermal_clipped.mp4,8925,357.0,1,342,318,367,326,seen in our training
+2026-07-15_thermal_clipped.mp4,8975,359.0,1,350,296,379,305,seen in our training
+2026-07-15_thermal_clipped.mp4,9025,361.0,1,346,295,370,307,seen in our training
+2026-07-15_thermal_clipped.mp4,9075,363.0,1,348,291,371,302,seen in our training
+2026-07-15_thermal_clipped.mp4,9125,365.0,1,345,302,370,315,seen in our training
+2026-07-15_thermal_clipped.mp4,9175,367.0,1,311,305,356,352,seen in our training
+2026-07-15_thermal_clipped.mp4,9225,369.0,1,277,311,300,321,seen in our training
+2026-07-15_thermal_clipped.mp4,9275,371.0,1,273,285,301,296,seen in our training
+2026-07-15_thermal_clipped.mp4,9325,373.0,1,282,264,302,278,seen in our training
+2026-07-15_thermal_clipped.mp4,9375,375.0,1,303,271,316,278,seen in our training
+2026-07-15_thermal_clipped.mp4,9425,377.0,1,307,276,323,279,seen in our training
+2026-07-15_thermal_clipped.mp4,9772,390.88,1,350,270,365,276,seen in our training
+2026-07-15_thermal_clipped.mp4,9775,391.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,9782,391.28,1,341,242,366,251,test (held out)
+2026-07-15_thermal_clipped.mp4,9792,391.68,1,351,241,372,251,test (held out)
+2026-07-15_thermal_clipped.mp4,9802,392.08,1,359,246,382,256,test (held out)
+2026-07-15_thermal_clipped.mp4,9812,392.48,1,366,249,385,262,test (held out)
+2026-07-15_thermal_clipped.mp4,9822,392.88,1,336,268,354,276,test (held out)
+2026-07-15_thermal_clipped.mp4,9825,393.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,9832,393.28,1,335,268,353,276,test (held out)
+2026-07-15_thermal_clipped.mp4,9842,393.68,1,340,273,360,282,test (held out)
+2026-07-15_thermal_clipped.mp4,9852,394.08,1,242,264,256,273,test (held out)
+2026-07-15_thermal_clipped.mp4,9862,394.48,1,339,266,359,277,test (held out)
+2026-07-15_thermal_clipped.mp4,9872,394.88,1,335,273,356,281,test (held out)
+2026-07-15_thermal_clipped.mp4,9875,395.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,9882,395.28,1,328,274,347,282,test (held out)
+2026-07-15_thermal_clipped.mp4,9892,395.68,1,324,284,340,292,test (held out)
+2026-07-15_thermal_clipped.mp4,9902,396.08,1,321,289,336,297,test (held out)
+2026-07-15_thermal_clipped.mp4,9912,396.48,1,314,292,331,299,test (held out)
+2026-07-15_thermal_clipped.mp4,9922,396.88,1,313,290,329,301,test (held out)
+2026-07-15_thermal_clipped.mp4,9925,397.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,9932,397.28,1,309,292,330,302,test (held out)
+2026-07-15_thermal_clipped.mp4,9942,397.68,1,309,291,325,301,test (held out)
+2026-07-15_thermal_clipped.mp4,9952,398.08,1,316,290,330,298,test (held out)
+2026-07-15_thermal_clipped.mp4,9962,398.48,1,326,291,340,298,test (held out)
+2026-07-15_thermal_clipped.mp4,9972,398.88,1,336,293,353,300,test (held out)
+2026-07-15_thermal_clipped.mp4,9975,399.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,9982,399.28,1,330,294,350,302,test (held out)
+2026-07-15_thermal_clipped.mp4,9992,399.68,1,317,300,332,308,test (held out)
+2026-07-15_thermal_clipped.mp4,10002,400.08,1,310,307,325,316,test (held out)
+2026-07-15_thermal_clipped.mp4,10012,400.48,1,304,308,325,317,test (held out)
+2026-07-15_thermal_clipped.mp4,10022,400.88,1,304,311,323,321,test (held out)
+2026-07-15_thermal_clipped.mp4,10025,401.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,10032,401.28,1,309,316,335,331,test (held out)
+2026-07-15_thermal_clipped.mp4,10042,401.68,1,315,323,334,331,test (held out)
+2026-07-15_thermal_clipped.mp4,10052,402.08,1,317,322,338,333,test (held out)
+2026-07-15_thermal_clipped.mp4,10062,402.48,1,321,321,339,333,test (held out)
+2026-07-15_thermal_clipped.mp4,10072,402.88,1,321,319,342,327,test (held out)
+2026-07-15_thermal_clipped.mp4,10075,403.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,10082,403.28,1,326,307,346,321,test (held out)
+2026-07-15_thermal_clipped.mp4,10092,403.68,1,323,307,352,318,test (held out)
+2026-07-15_thermal_clipped.mp4,10102,404.08,1,325,311,346,317,test (held out)
+2026-07-15_thermal_clipped.mp4,10112,404.48,1,323,312,343,325,test (held out)
+2026-07-15_thermal_clipped.mp4,10122,404.88,1,320,316,337,324,test (held out)
+2026-07-15_thermal_clipped.mp4,10125,405.0,1,319,316,335,326,test (held out)
+2026-07-15_thermal_clipped.mp4,10132,405.28,1,316,314,338,321,test (held out)
+2026-07-15_thermal_clipped.mp4,10142,405.68,1,324,310,342,323,test (held out)
+2026-07-15_thermal_clipped.mp4,10152,406.08,1,332,309,347,316,test (held out)
+2026-07-15_thermal_clipped.mp4,10162,406.48,1,337,318,347,324,test (held out)
+2026-07-15_thermal_clipped.mp4,10172,406.88,1,338,316,356,323,test (held out)
+2026-07-15_thermal_clipped.mp4,10175,407.0,1,335,319,355,327,test (held out)
+2026-07-15_thermal_clipped.mp4,10182,407.28,1,335,321,349,328,test (held out)
+2026-07-15_thermal_clipped.mp4,10192,407.68,1,333,322,350,331,test (held out)
+2026-07-15_thermal_clipped.mp4,10202,408.08,1,331,331,347,336,test (held out)
+2026-07-15_thermal_clipped.mp4,10212,408.48,1,327,332,341,339,test (held out)
+2026-07-15_thermal_clipped.mp4,10222,408.88,1,325,323,335,330,test (held out)
+2026-07-15_thermal_clipped.mp4,10225,409.0,1,320,321,340,333,test (held out)
+2026-07-15_thermal_clipped.mp4,10232,409.28,1,318,318,332,325,test (held out)
+2026-07-15_thermal_clipped.mp4,10242,409.68,1,316,313,329,321,test (held out)
+2026-07-15_thermal_clipped.mp4,10252,410.08,1,309,310,324,319,test (held out)
+2026-07-15_thermal_clipped.mp4,10262,410.48,1,303,307,317,315,test (held out)
+2026-07-15_thermal_clipped.mp4,10272,410.88,1,306,304,325,313,test (held out)
+2026-07-15_thermal_clipped.mp4,10282,411.28,1,309,305,326,312,test (held out)
+2026-07-15_thermal_clipped.mp4,10292,411.68,1,299,303,315,309,test (held out)
+2026-07-15_thermal_clipped.mp4,10302,412.08,1,291,299,311,310,test (held out)
+2026-07-15_thermal_clipped.mp4,10312,412.48,1,293,292,309,302,test (held out)
+2026-07-15_thermal_clipped.mp4,10322,412.88,1,568,294,578,301,test (held out)
+2026-07-15_thermal_clipped.mp4,10332,413.28,1,575,317,603,340,test (held out)
+2026-07-15_thermal_clipped.mp4,10342,413.68,1,81,493,90,505,test (held out)
+2026-07-15_thermal_clipped.mp4,10352,414.08,1,526,401,562,422,test (held out)
+2026-07-15_thermal_clipped.mp4,10362,414.48,1,539,408,549,422,test (held out)
+2026-07-15_thermal_clipped.mp4,10372,414.88,1,606,327,631,346,test (held out)
+2026-07-15_thermal_clipped.mp4,10382,415.28,1,584,414,592,422,test (held out)
+2026-07-15_thermal_clipped.mp4,10392,415.68,1,578,387,629,432,test (held out)
+2026-07-15_thermal_clipped.mp4,10402,416.08,1,589,433,620,460,test (held out)
+2026-07-15_thermal_clipped.mp4,10412,416.48,1,617,329,637,344,test (held out)
+2026-07-15_thermal_clipped.mp4,10422,416.88,1,591,405,632,436,test (held out)
+2026-07-15_thermal_clipped.mp4,10432,417.28,1,554,450,580,471,test (held out)
+2026-07-15_thermal_clipped.mp4,10442,417.68,1,610,312,624,321,test (held out)
+2026-07-15_thermal_clipped.mp4,10452,418.08,1,624,338,637,347,test (held out)
+2026-07-15_thermal_clipped.mp4,10462,418.48,1,468,359,478,367,test (held out)
+2026-07-15_thermal_clipped.mp4,10472,418.88,1,505,353,524,369,test (held out)
+2026-07-15_thermal_clipped.mp4,10482,419.28,1,313,315,332,323,test (held out)
+2026-07-15_thermal_clipped.mp4,10492,419.68,1,316,293,327,300,test (held out)
+2026-07-15_thermal_clipped.mp4,10502,420.08,1,308,284,322,290,test (held out)
+2026-07-15_thermal_clipped.mp4,10512,420.48,1,519,363,532,374,test (held out)
+2026-07-15_thermal_clipped.mp4,10522,420.88,1,519,341,532,350,test (held out)
+2026-07-15_thermal_clipped.mp4,10525,421.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,10532,421.28,1,325,290,342,296,test (held out)
+2026-07-15_thermal_clipped.mp4,10542,421.68,1,328,289,345,300,test (held out)
+2026-07-15_thermal_clipped.mp4,10552,422.08,1,329,290,347,301,test (held out)
+2026-07-15_thermal_clipped.mp4,10562,422.48,1,337,289,355,300,test (held out)
+2026-07-15_thermal_clipped.mp4,10572,422.88,1,338,291,356,301,test (held out)
+2026-07-15_thermal_clipped.mp4,10575,423.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,10582,423.28,1,330,294,349,302,test (held out)
+2026-07-15_thermal_clipped.mp4,10592,423.68,1,333,293,352,304,test (held out)
+2026-07-15_thermal_clipped.mp4,10602,424.08,1,345,298,361,309,test (held out)
+2026-07-15_thermal_clipped.mp4,10612,424.48,1,345,299,359,306,test (held out)
+2026-07-15_thermal_clipped.mp4,10622,424.88,1,344,299,361,306,test (held out)
+2026-07-15_thermal_clipped.mp4,10625,425.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,10632,425.28,1,340,296,356,303,test (held out)
+2026-07-15_thermal_clipped.mp4,10642,425.68,1,342,291,356,299,test (held out)
+2026-07-15_thermal_clipped.mp4,10652,426.08,1,336,287,351,293,test (held out)
+2026-07-15_thermal_clipped.mp4,10662,426.48,1,335,287,349,300,test (held out)
+2026-07-15_thermal_clipped.mp4,10672,426.88,1,333,287,355,299,test (held out)
+2026-07-15_thermal_clipped.mp4,10682,427.28,1,332,288,351,298,test (held out)
+2026-07-15_thermal_clipped.mp4,10692,427.68,1,335,298,355,303,test (held out)
+2026-07-15_thermal_clipped.mp4,10702,428.08,1,336,297,356,306,test (held out)
+2026-07-15_thermal_clipped.mp4,10712,428.48,1,340,294,356,304,test (held out)
+2026-07-15_thermal_clipped.mp4,10722,428.88,1,333,294,353,300,test (held out)
+2026-07-15_thermal_clipped.mp4,10725,429.0,1,334,293,351,302,test (held out)
+2026-07-15_thermal_clipped.mp4,10732,429.28,1,333,294,347,301,test (held out)
+2026-07-15_thermal_clipped.mp4,10742,429.68,1,330,291,349,302,test (held out)
+2026-07-15_thermal_clipped.mp4,10752,430.08,1,332,291,347,299,test (held out)
+2026-07-15_thermal_clipped.mp4,10762,430.48,1,330,293,346,300,test (held out)
+2026-07-15_thermal_clipped.mp4,10772,430.88,1,332,292,350,303,test (held out)
+2026-07-15_thermal_clipped.mp4,10775,431.0,1,333,292,353,303,test (held out)
+2026-07-15_thermal_clipped.mp4,10782,431.28,1,332,296,353,305,test (held out)
+2026-07-15_thermal_clipped.mp4,10792,431.68,1,338,304,354,311,test (held out)
+2026-07-15_thermal_clipped.mp4,10802,432.08,1,334,307,352,317,test (held out)
+2026-07-15_thermal_clipped.mp4,10812,432.48,1,330,312,349,321,test (held out)
+2026-07-15_thermal_clipped.mp4,10822,432.88,1,329,320,344,330,test (held out)
+2026-07-15_thermal_clipped.mp4,10825,433.0,1,330,321,342,329,test (held out)
+2026-07-15_thermal_clipped.mp4,10832,433.28,1,327,324,342,333,test (held out)
+2026-07-15_thermal_clipped.mp4,10842,433.68,1,317,329,328,337,test (held out)
+2026-07-15_thermal_clipped.mp4,10852,434.08,1,298,328,322,335,test (held out)
+2026-07-15_thermal_clipped.mp4,10862,434.48,1,297,327,317,334,test (held out)
+2026-07-15_thermal_clipped.mp4,10872,434.88,1,300,321,319,329,test (held out)
+2026-07-15_thermal_clipped.mp4,10875,435.0,1,295,319,323,331,test (held out)
+2026-07-15_thermal_clipped.mp4,10882,435.28,1,300,313,327,325,test (held out)
+2026-07-15_thermal_clipped.mp4,10892,435.68,1,311,314,335,322,test (held out)
+2026-07-15_thermal_clipped.mp4,10902,436.08,1,320,312,344,321,test (held out)
+2026-07-15_thermal_clipped.mp4,10912,436.48,1,327,312,353,321,test (held out)
+2026-07-15_thermal_clipped.mp4,10922,436.88,1,336,310,351,317,test (held out)
+2026-07-15_thermal_clipped.mp4,10925,437.0,1,338,309,349,316,test (held out)
+2026-07-15_thermal_clipped.mp4,10932,437.28,1,316,302,344,311,test (held out)
+2026-07-15_thermal_clipped.mp4,10942,437.68,1,311,293,340,309,test (held out)
+2026-07-15_thermal_clipped.mp4,10952,438.08,1,320,292,338,301,test (held out)
+2026-07-15_thermal_clipped.mp4,10962,438.48,1,327,287,362,301,test (held out)
+2026-07-15_thermal_clipped.mp4,10972,438.88,1,335,283,367,295,test (held out)
+2026-07-15_thermal_clipped.mp4,10975,439.0,1,337,284,369,297,test (held out)
+2026-07-15_thermal_clipped.mp4,10982,439.28,1,337,295,370,311,test (held out)
+2026-07-15_thermal_clipped.mp4,10992,439.68,1,343,298,372,313,test (held out)
+2026-07-15_thermal_clipped.mp4,11002,440.08,1,346,303,378,321,test (held out)
+2026-07-15_thermal_clipped.mp4,11012,440.48,1,365,315,381,327,test (held out)
+2026-07-15_thermal_clipped.mp4,11022,440.88,1,354,311,386,334,test (held out)
+2026-07-15_thermal_clipped.mp4,11025,441.0,1,353,316,381,329,test (held out)
+2026-07-15_thermal_clipped.mp4,11032,441.28,1,336,313,382,328,test (held out)
+2026-07-15_thermal_clipped.mp4,11042,441.68,1,338,304,372,321,test (held out)
+2026-07-15_thermal_clipped.mp4,11052,442.08,1,324,294,368,311,test (held out)
+2026-07-15_thermal_clipped.mp4,11062,442.48,1,334,282,372,293,test (held out)
+2026-07-15_thermal_clipped.mp4,11075,443.0,1,336,259,385,274,test (held out)
+2026-07-15_thermal_clipped.mp4,11082,443.28,1,353,248,402,270,test (held out)
+2026-07-15_thermal_clipped.mp4,11092,443.68,1,405,255,449,279,test (held out)
+2026-07-15_thermal_clipped.mp4,11102,444.08,1,453,252,511,281,test (held out)
+2026-07-15_thermal_clipped.mp4,11112,444.48,1,516,270,580,293,test (held out)
+2026-07-15_thermal_clipped.mp4,11122,444.88,1,586,299,639,323,test (held out)
+2026-07-15_thermal_clipped.mp4,11125,445.0,1,625,317,640,327,test (held out)
+2026-07-15_thermal_clipped.mp4,11132,445.28,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11142,445.68,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11152,446.08,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11162,446.48,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11172,446.88,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11175,447.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11182,447.28,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11192,447.68,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11202,448.08,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11212,448.48,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11222,448.88,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11225,449.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11232,449.28,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11242,449.68,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11252,450.08,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11262,450.48,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11272,450.88,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11275,451.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11282,451.28,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11292,451.68,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11302,452.08,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11312,452.48,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11322,452.88,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11325,453.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11332,453.28,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11342,453.68,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11352,454.08,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11362,454.48,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11372,454.88,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11375,455.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11382,455.28,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11392,455.68,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11402,456.08,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11412,456.48,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11422,456.88,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11425,457.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11432,457.28,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11442,457.68,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11452,458.08,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11462,458.48,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11472,458.88,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11475,459.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11482,459.28,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11492,459.68,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11502,460.08,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11512,460.48,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11522,460.88,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11525,461.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11532,461.28,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11542,461.68,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11552,462.08,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11562,462.48,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11572,462.88,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11575,463.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11582,463.28,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11592,463.68,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11602,464.08,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11612,464.48,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11622,464.88,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11625,465.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11632,465.28,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11642,465.68,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11652,466.08,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11662,466.48,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11672,466.88,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11675,467.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11682,467.28,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11692,467.68,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11702,468.08,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11712,468.48,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11722,468.88,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11725,469.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11732,469.28,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11742,469.68,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11752,470.08,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11762,470.48,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11772,470.88,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11775,471.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11782,471.28,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11792,471.68,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11802,472.08,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11812,472.48,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11822,472.88,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11825,473.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11832,473.28,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11842,473.68,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11852,474.08,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11862,474.48,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11872,474.88,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11875,475.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11882,475.28,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11892,475.68,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11902,476.08,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11912,476.48,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11922,476.88,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11925,477.0,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11932,477.28,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11942,477.68,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11952,478.08,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11962,478.48,0,,,,,test (held out)
+2026-07-15_thermal_clipped.mp4,11975,479.0,0,,,,,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,149,2.98,1,453,201,459,206,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,250,5.0,1,480,158,486,164,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,350,7.0,1,164,136,173,144,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,450,9.0,1,327,166,337,174,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,550,11.0,1,300,193,308,198,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,650,13.0,1,327,217,334,223,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,750,15.0,1,390,223,396,228,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,850,17.0,1,353,247,359,253,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,950,19.0,1,344,264,350,269,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,1150,23.0,1,336,246,343,251,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,1250,25.0,1,333,241,341,247,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,1350,27.0,1,366,237,376,245,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,1450,29.0,1,281,202,294,210,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,1550,31.0,1,283,219,291,225,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,1650,33.0,1,287,214,297,225,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,1750,35.0,1,357,226,366,232,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,1850,37.0,1,386,237,398,250,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,1950,39.0,1,348,250,360,257,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,2050,41.0,1,348,242,362,252,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,2150,43.0,1,370,215,382,225,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,2250,45.0,1,338,231,351,240,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,2350,47.0,1,326,220,339,229,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,2450,49.0,1,387,219,400,230,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,2550,51.0,1,357,267,371,278,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,2650,53.0,1,279,290,293,298,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,2749,54.98,1,236,256,249,264,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,2849,56.98,1,239,243,254,251,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,2949,58.98,1,223,219,237,227,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,3050,61.0,1,218,206,231,213,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,3150,63.0,1,219,196,231,204,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,3250,65.0,1,226,197,237,205,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,3350,67.0,1,234,193,244,201,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,3450,69.0,1,221,203,228,210,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,3549,70.98,1,191,215,198,222,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,3650,73.0,1,216,237,221,243,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,3749,74.98,1,258,225,264,230,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,3850,77.0,1,327,223,334,229,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,3950,79.0,1,344,227,350,233,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,4050,81.0,1,341,215,348,220,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,4150,83.0,1,336,219,344,225,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,4250,85.0,1,330,234,338,241,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,4350,87.0,1,299,249,307,258,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,4450,89.0,1,323,248,329,254,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,4549,90.98,1,328,259,336,264,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,4650,93.0,1,335,249,341,255,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,4750,95.0,1,327,256,334,262,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,4850,97.0,1,330,256,336,262,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,4950,99.0,1,331,253,338,259,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,5050,101.0,1,335,259,341,265,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,5150,103.0,1,319,251,326,256,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,5250,105.0,1,299,226,305,231,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,5350,107.0,1,335,225,343,231,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,5450,109.0,1,331,231,339,237,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,5549,110.98,1,334,208,344,214,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,5649,112.98,1,336,202,352,214,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,5749,114.98,1,206,255,224,264,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,5850,117.0,1,196,268,220,277,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,5950,119.0,1,203,258,220,270,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,6050,121.0,1,211,238,228,248,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,6150,123.0,1,229,226,243,235,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,6250,125.0,1,225,218,238,228,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,6349,126.98,1,229,194,242,203,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,6449,128.98,1,243,198,257,209,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,6549,130.98,1,256,225,269,235,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,6650,133.0,1,250,250,265,260,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,6750,135.0,1,282,231,296,243,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,6850,137.0,1,306,234,320,247,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,6949,138.98,1,324,237,340,250,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,7049,140.98,1,300,219,316,233,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,7150,143.0,1,313,220,332,238,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,7249,144.98,1,308,231,332,251,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,7349,146.98,1,353,259,383,282,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,7450,149.0,1,324,259,353,274,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,7550,151.0,1,319,230,339,242,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,7650,153.0,1,316,232,343,243,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,7750,155.0,1,312,220,340,231,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,7850,157.0,1,308,249,333,261,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,7950,159.0,1,236,232,276,254,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,8050,161.0,1,296,222,332,257,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,8150,163.0,1,260,177,292,206,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,8250,165.0,1,281,232,310,257,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,8350,167.0,1,312,209,337,233,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,8449,168.98,1,281,217,307,247,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,8550,171.0,1,288,220,314,247,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,8650,173.0,1,284,212,306,237,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,8750,175.0,1,288,197,312,223,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,8850,177.0,1,313,212,340,241,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,8950,179.0,1,305,272,331,292,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,9050,181.0,1,229,269,246,283,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,9149,182.98,1,330,291,343,300,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,9249,184.98,1,338,224,351,232,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,9349,186.98,1,350,195,362,201,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,9450,189.0,1,341,212,353,219,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,9550,191.0,1,330,209,340,215,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,9650,193.0,1,341,183,348,189,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,9750,195.0,1,312,164,322,170,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,9850,197.0,1,364,192,371,197,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,9949,198.98,1,378,194,385,199,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,10049,200.98,1,341,201,348,206,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,10149,202.98,1,329,209,335,215,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,10250,205.0,1,318,229,328,235,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,10350,207.0,1,363,266,375,272,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,10450,209.0,1,386,293,392,299,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,10550,211.0,1,401,292,407,297,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,10650,213.0,1,377,253,385,259,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,10750,215.0,1,334,236,346,242,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,10849,216.98,1,297,214,336,236,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,10949,218.98,1,329,211,341,217,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,11050,221.0,1,309,194,320,201,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,11150,223.0,1,322,225,332,231,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,11250,225.0,1,327,235,335,243,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,11350,227.0,1,325,216,335,222,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,11450,229.0,1,327,199,340,206,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,11550,231.0,1,320,233,332,240,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,11650,233.0,1,322,261,332,268,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,11750,235.0,1,320,257,330,264,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,11850,237.0,1,311,251,352,268,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,11950,239.0,1,319,249,331,257,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,12048,240.96,1,310,259,319,266,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,12148,242.96,1,307,256,321,266,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,12249,244.98,1,304,252,314,263,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,12349,246.98,1,310,243,317,251,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,12449,248.98,1,317,264,325,270,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,12549,250.98,1,323,281,329,286,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,12649,252.98,1,348,292,355,298,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,12748,254.96,1,366,288,373,293,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,12848,256.96,1,354,275,363,281,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,12948,258.96,1,341,263,351,268,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,13049,260.98,1,341,228,353,234,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,13149,262.98,1,335,236,349,244,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,13249,264.98,1,333,208,345,214,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,13349,266.98,1,329,184,341,190,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,13449,268.98,1,339,182,353,188,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,13548,270.96,1,367,180,384,186,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,13648,272.96,1,351,191,369,198,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,13748,274.96,1,354,174,376,182,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,13849,276.98,1,345,186,368,196,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,13949,278.98,1,324,235,357,246,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,14048,280.96,1,310,259,346,268,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,14149,282.98,1,337,390,356,399,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,14248,284.96,1,343,369,365,374,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,14349,286.98,1,360,272,370,279,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,14448,288.96,1,354,270,378,278,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,14549,290.98,1,319,261,345,269,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,14649,292.98,1,316,244,343,254,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,14749,294.98,1,317,221,342,230,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,14848,296.96,1,315,208,337,216,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,14949,298.98,1,321,209,344,217,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,15049,300.98,1,330,215,353,225,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,15149,302.98,1,315,223,337,231,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,15249,304.98,1,314,226,335,233,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,15349,306.98,1,321,190,342,199,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,15449,308.98,1,328,156,350,166,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,15548,310.96,1,320,171,347,181,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,15649,312.98,1,318,245,349,253,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,15749,314.98,1,429,269,446,278,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,15849,316.98,1,366,265,400,278,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,15949,318.98,1,244,305,295,345,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,16049,320.98,1,253,268,293,303,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,16149,322.98,1,217,322,248,343,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,16249,324.98,1,222,257,249,275,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,16348,326.96,1,193,227,225,265,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,16449,328.98,1,369,286,404,305,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,16548,330.96,1,239,241,274,258,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,16649,332.98,1,495,178,534,198,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,16749,334.98,1,535,191,568,211,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,16849,336.98,1,278,254,319,284,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,16949,338.98,1,284,178,356,227,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,17049,340.98,1,371,158,413,181,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,17148,342.96,1,420,133,455,151,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,17248,344.96,1,334,185,367,200,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,17348,346.96,1,311,203,341,216,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,17449,348.98,1,320,202,342,212,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,17549,350.98,1,324,180,341,187,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,17649,352.98,1,331,161,347,168,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,17749,354.98,1,335,156,350,163,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,17849,356.98,1,347,172,362,179,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,17949,358.98,1,332,175,345,183,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,18048,360.96,1,325,171,335,178,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,18149,362.98,1,349,193,359,200,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,18249,364.98,1,340,181,349,187,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,18349,366.98,1,330,186,337,191,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,18449,368.98,1,319,201,327,207,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,18549,370.98,1,332,228,338,234,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,18649,372.98,1,349,247,356,252,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,18749,374.98,1,333,243,339,250,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,18849,376.98,1,319,239,326,244,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,18949,378.98,1,315,232,322,238,seen in our training
+2026-06-23_scenario2_thermal_clipped.mp4,19549,390.98,1,327,230,335,236,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,19649,392.98,1,315,231,322,238,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,19749,394.98,1,310,233,324,251,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,19849,396.98,1,306,238,327,263,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,19948,398.96,1,312,248,318,253,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,20048,400.96,1,327,246,333,252,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,20148,402.96,1,325,238,332,246,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,20249,404.98,1,317,235,323,241,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,20349,406.98,1,296,244,302,250,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,20449,408.98,1,270,243,276,249,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,20549,410.98,1,286,259,293,266,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,20648,412.96,1,294,272,301,281,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,20748,414.96,1,298,280,307,288,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,20949,418.98,1,319,278,326,285,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,21049,420.98,1,306,263,315,272,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,21149,422.98,1,306,251,313,256,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,21249,424.98,1,328,234,336,240,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,21349,426.98,1,313,182,322,189,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,21449,428.98,1,305,127,316,134,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,21549,430.98,1,367,113,381,121,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,21649,432.98,1,390,49,405,56,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,21749,434.98,0,,,,,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,21849,436.98,0,,,,,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,22449,448.98,0,,,,,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,22549,450.98,0,,,,,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,22649,452.98,0,,,,,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,22748,454.96,0,,,,,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,22849,456.98,0,,,,,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,22948,458.96,0,,,,,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,23049,460.98,0,,,,,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,23149,462.98,0,,,,,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,23249,464.98,0,,,,,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,23349,466.98,0,,,,,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,23449,468.98,0,,,,,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,23548,470.96,0,,,,,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,23648,472.96,1,373,357,378,363,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,23748,474.96,1,363,358,368,365,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,23849,476.98,1,380,308,386,313,test (held out)
+2026-06-23_scenario2_thermal_clipped.mp4,23949,478.98,0,,,,,test (held out)

@@ -46,6 +46,9 @@ SETS = {   # name: (json key, boxes, frame range, manifest for its val split, GT
     # labels, which are not in 0715_manifest.csv -- selecting by manifest scored only the original 12/27 frames)
     "0715_val (dark over terrain)": ("0715", os.path.join(NS, "0715_boxes.csv"), (9775, 10 ** 9), None, None),
     "0623_val": ("0623", os.path.join(NS, "0623_boxes.csv"), None, os.path.join(NS, "0623_manifest.csv"), None),
+    # Boson 2026-10-06 held-out sessions, human ground truth (gt_boxes.py review); skipped until those files exist
+    "boson_0858 (held out, 4:46+)": ("0858", os.path.join(DET, "..", "data", "boson_work", "gt", "08_58_15_boxes.csv"), None, None, None),
+    "boson_1015 (held out, 0-1:30)": ("1015", os.path.join(DET, "..", "data", "boson_work", "gt", "10_15_59_boxes.csv"), None, None, None),
 }
 CONFS = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8]
 FF_TARGETS = [0.05, 0.10, 0.25]
@@ -110,6 +113,8 @@ def main():
     print(f"common confidence floor: {floor} (every threshold >= floor is tried; exact recall at each FF budget)\n")
     lines = []
     for sname, (key, boxes, rng, manifest, bg) in SETS.items():
+        if not os.path.exists(boxes):
+            continue
         pos, neg = load_set(boxes, rng, manifest, bg)
         head = f"### {sname}: {len(pos)} positive / {len(neg)} negative frames"
         tab = [f"| model | recall @{floor} | FF @{floor} | " + " | ".join(f"recall @FF≤{int(t*100)}%" for t in FF_TARGETS)
