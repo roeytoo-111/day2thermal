@@ -70,7 +70,7 @@ def probe(path):
 def frame_motion(path, size):
     """Global (dx, dy, response) between consecutive frames, via ffmpeg gray decode + phase correlation."""
     w, h = map(int, size.split("x"))
-    cmd = ["ffmpeg", "-v", "error", "-threads", "0", "-i", path,
+    cmd = ["ffmpeg", "-v", "error", "-threads", "0", "-i", path, "-fps_mode", "passthrough",   # no frame dup/drop to a header fps
            "-vf", f"scale={w}:{h}:flags=area,format=gray", "-f", "rawvideo", "-"]
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, bufsize=w * h * 64)
     win = cv2.createHanningWindow((w, h), cv2.CV_32F)

@@ -81,7 +81,8 @@ def ffmpeg_frames(path, size=None, gray=False):
         vf.append(f"scale={w}:{h}:flags=area")
     vf.append("format=gray" if gray else "format=bgr24")
     ch = 1 if gray else 3
-    proc = subprocess.Popen(["ffmpeg", "-v", "error", "-threads", "0", "-i", path, "-vf", ",".join(vf),
+    proc = subprocess.Popen(["ffmpeg", "-v", "error", "-threads", "0", "-i", path, "-fps_mode", "passthrough",
+                             "-vf", ",".join(vf),   # passthrough: files whose header fps is wrong (Boson .ts: 60/120 for 30) would be duplicated
                              "-f", "rawvideo", "-"], stdout=subprocess.PIPE, bufsize=w * h * ch * 8)
     try:
         while True:
