@@ -1,7 +1,7 @@
 r"""
 Copy a thermal YOLO dataset to the uav = 0 convention: the old thermal sets are [bird, thermal-uav] (uav = 1); the
-copy is [uav, bird] (labels 0 <-> 1 swapped, polygons kept). Images are a directory symlink to the source, so only
-labels take space. Counts per class are printed for both, so the swap can be checked.
+copy is [uav, bird] (labels 0 <-> 1 swapped, polygons kept). Images are hard links to the source, so only labels take
+space (not a folder symlink: Ultralytics resolves it and would read the source's old-order labels). Counts per class are printed for both, so the swap can be checked.
 
     python3 src/data/swap_uav_class.py --src data/thermal-4-boson3PR --out data/thermal-5-boson3PR-u0
 """
@@ -23,9 +23,11 @@ def main():
         if not os.path.isdir(os.path.join(src, split, "images")):
             continue
         os.makedirs(os.path.join(out, split, "labels"), exist_ok=True)
-        link = os.path.join(out, split, "images")
-        if not os.path.islink(link):
-            os.symlink(os.path.join(src, split, "images"), link)
+        os.makedirs(os.path.join(out, split, "images"), exist_ok=True)
+        for im in glob.glob(os.path.join(src, split, "images", "*")):    # hard links: a symlinked folder is
+            dst = os.path.join(out, split, "images", os.path.basename(im))  # resolved by Ultralytics back to the
+            if not os.path.exists(dst):                                  # source labels (old class order)
+                os.link(os.path.realpath(im), dst)
         for f in glob.glob(os.path.join(src, split, "labels", "*.txt")):
             lines = []
             for l in open(f):
