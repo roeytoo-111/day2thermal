@@ -11,7 +11,9 @@ For every thermal frame inside a verified registration segment (and not carrying
           registration error). Measured precision of this rule on hand-reviewed 06-23 s1 boxes: 99.5%.
   hard    RGB candidate (conf >= --hard-conf) inside the thermal frame, thermal model silent (< 0.05) there.
           These are the thermal model's misses *or* RGB false alarms: for human review, never auto-labelled.
-  neg     NO RGB detection at all (any class, conf >= 0.05) and NO thermal detection (>= 0.05) in the frame.
+  neg     NO confident RGB detection (any class, conf >= --neg-rgb-conf 0.25) and NO thermal detection
+          (>= --neg-therm-conf 0.10) in the frame. (The first version used 0.05 for both and left 5 negatives in
+          1,223 frames: the RGB model fires faintly on almost every frame.)
           Both models are blind to a drone here, which is the best background evidence available.
   skip    anything else (bird candidates, one-sided weak detections, ...): neither positive nor negative.
 
@@ -54,6 +56,8 @@ def parse_args():
     p.add_argument("--therm-conf", type=float, default=0.20)
     p.add_argument("--t-min", type=float, default=None, help="usable window start, thermal seconds")
     p.add_argument("--t-max", type=float, default=None, help="usable window end, thermal seconds")
+    p.add_argument("--neg-rgb-conf", type=float, default=0.25, help="a clean negative has no RGB detection >= this")
+    p.add_argument("--neg-therm-conf", type=float, default=0.10, help="... and no thermal detection >= this")
     p.add_argument("--margin", type=int, default=8, help="mapped box must lie this far inside the thermal frame")
     return p.parse_args()
 
@@ -86,37 +90,40 @@ def main():
             rd = rgb[k]
             cands, any_rgb = [], False
             for d in rd:
-                if d["conf"] >= 0.05:
+                if d["conf"] >= a.neg_rgb_conf:
                     any_rgb = True
                 if d["cls"] not in DRONE_CLASSES or d["conf"] < a.rgb_conf:
                     continue
                 tb = day_box_to_thermal(d["bbox"], Hm, lam, th_size)
                 if tb[0] < a.margin or tb[1] < a.margin or tb[2] > W - a.margin or tb[3] > H - a.margin:
                     continue
-                cands.append((tb, d["conf"], d["cls"]))
-            status, box, rc, tc = None, None, None, None
+                cands.append((tb, d["conf"], d["cls"], d["bbox"]))
+            status, box, rc, tc, dbox = None, None, None, None, None
             best = None
-            for tb, c, cls in cands:
+            for tb, c, cls, db in cands:
                 for t in td:
                     if on_target(t["bbox"], tb) and t["conf"] >= a.therm_conf and (best is None or t["conf"] > best[1]):
-                        best = (t["bbox"], t["conf"], c)
+                        best = (t["bbox"], t["conf"], c, db)
             if best is not None:
-                status, box, tc, rc = "pos", best[0], best[1], best[2]
+                status, box, tc, rc, dbox = "pos", best[0], best[1], best[2], best[3]
             else:
-                hard = [(tb, c) for tb, c, _ in cands if c >= a.hard_conf
+                hard = [(tb, c, db) for tb, c, _, db in cands if c >= a.hard_conf
                         and not any(on_target(t["bbox"], tb) for t in td)]
                 if hard:
-                    tb, c = max(hard, key=lambda x: x[1])
+                    tb, c, dbox = max(hard, key=lambda x: x[1])
                     status, box, rc = "hard", tb, c
-                elif not any_rgb and not td:
+                elif not any_rgb and not any(t["conf"] >= a.neg_therm_conf for t in td):
                     status = "neg"
                 else:
                     status = "skip"
             rows.append({"session": a.session, "frame": ti, "seg": g["id"], "status": status,
                          "x0": "" if box is None else round(box[0], 1), "y0": "" if box is None else round(box[1], 1),
                          "x1": "" if box is None else round(box[2], 1), "y1": "" if box is None else round(box[3], 1),
-                         "rgb_conf": "" if rc is None else round(rc, 3), "therm_conf": "" if tc is None else round(tc, 3)})
-    df = pd.DataFrame(rows, columns=["session", "frame", "seg", "status", "x0", "y0", "x1", "y1", "rgb_conf", "therm_conf"])
+                         "rgb_conf": "" if rc is None else round(rc, 3), "therm_conf": "" if tc is None else round(tc, 3),
+                         "day_frame": k, "dx0": "" if dbox is None else round(dbox[0], 1), "dy0": "" if dbox is None else round(dbox[1], 1),
+                         "dx1": "" if dbox is None else round(dbox[2], 1), "dy1": "" if dbox is None else round(dbox[3], 1)})
+    df = pd.DataFrame(rows, columns=["session", "frame", "seg", "status", "x0", "y0", "x1", "y1", "rgb_conf", "therm_conf",
+                                      "day_frame", "dx0", "dy0", "dx1", "dy1"])
     os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
     df.to_csv(a.out, index=False)
     n_all = sum(g["span"][1] - g["span"][0] + 1 for g in segs)
