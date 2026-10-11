@@ -13,7 +13,7 @@ Keys
   b              the current box is a bird          o   the current box is an airplane / other object
   x              clear the box                      a / d   previous / next frame without changing it
   + / -          zoom in / out                     c   toggle candidates            q   save and quit
-Mouse: click the overview to move the zoom there; drag in the zoom to draw a box (4K pixels).
+Mouse: click the overview to move the zoom there; DRAG on the overview or in the zoom to draw a box (4K pixels).
 A search circle (constant velocity from the nearest confirmed drone boxes, as gt_boxes --gate) is drawn in red,
 and the zoom centres on it when the frame has no box.
 
@@ -277,9 +277,13 @@ def main():
             cv2.rectangle(ov, (int(b[0] * sx) - 4, int(b[1] * sx) - 4), (int(b[2] * sx) + 4, int(b[3] * sx) + 4), (0, 255, 0), 1)
             cv2.rectangle(zm, (int((b[0] - zx) * zs), int((b[1] - zy) * zs)), (int((b[2] - zx) * zs), int((b[3] - zy) * zs)),
                           (0, 255, 0), 1)
-        if st["drag"] and st["drag"][1]:
-            (x0, y0), (x1, y1) = st["drag"]
-            cv2.rectangle(zm, (x0, y0), (x1, y1), (0, 255, 0), 1)
+        d = st["drag"]
+        if d and d["p1"]:
+            (x0_, y0_), (x1_, y1_) = d["p0"], d["p1"]
+            if d["panel"] == "ov":
+                cv2.rectangle(ov, (x0_, y0_), (x1_, y1_), (0, 255, 0), 1)
+            else:
+                cv2.rectangle(zm, (x0_ - OV_W, y0_), (x1_ - OV_W, y1_), (0, 255, 0), 1)
         canvas = np.zeros((OV_H + 70, OV_W + ZW, 3), np.uint8)
         canvas[:OV_H, :OV_W] = ov; canvas[:ZW, OV_W:] = zm
         dec = "-" if r is None else f"{r['verdict']}{' ' + r['cls'] if r.get('cls') else ''}" \
@@ -287,7 +291,7 @@ def main():
         done = sum(1 for x in rows.values() if x["source"] == "human")
         lines = [f"{st['i'] + 1}/{len(order)}  t={t:.3f}  now: {dec}   human-reviewed {done}/{len(ts)}   zoom {s}px",
                  "Space or k keep | 1-9 candidate | n nothing | u unsure | b bird | o other | x clear | a/d prev/next | "
-                 "+/- zoom | c cands | q quit"]
+                 "+/- zoom | c cands | q quit  |  DRAG on either panel = draw a box, click overview = move zoom"]
         for j, l in enumerate(lines):
             cv2.putText(canvas, l, (8, OV_H + 22 + 22 * j), 0, 0.45, (230, 230, 230), 1)
         cv2.imshow("day GT", canvas)
@@ -301,25 +305,34 @@ def main():
         if not g:
             return
         zx, zy, s, sx = g
-        if x < OV_W and y < OV_H and ev == cv2.EVENT_LBUTTONDOWN:
-            st["center"] = (x / sx, y / sx); refresh()
-        elif x >= OV_W and y < ZW:
-            p = (x - OV_W, y)
-            if ev == cv2.EVENT_LBUTTONDOWN:
-                st["drag"] = [p, None]
-            elif ev == cv2.EVENT_MOUSEMOVE and st["drag"]:
-                st["drag"][1] = p; refresh()
-            elif ev == cv2.EVENT_LBUTTONUP and st["drag"]:
-                (x0, y0), p1 = st["drag"][0], (p if st["drag"][1] is None else st["drag"][1])
-                st["drag"] = None
-                zs = ZW / s
-                bx = sorted([zx + x0 / zs, zx + p1[0] / zs]); by = sorted([zy + y0 / zs, zy + p1[1] / zs])
-                if bx[1] - bx[0] >= 2 and by[1] - by[0] >= 2:
-                    rows[cur()] = {"t": f"{cur():.6f}", "verdict": "drone", "cls": "uav",
-                                   "x0": f"{bx[0]:.1f}", "y0": f"{by[0]:.1f}", "x1": f"{bx[1]:.1f}", "y1": f"{by[1]:.1f}",
-                                   "difficult": "0", "source": "human"}
-                    save_rows(a.out, rows)
-                refresh()
+        zs = ZW / s
+        in_ov = x < OV_W and y < OV_H
+        in_zm = x >= OV_W and y < ZW
+        if ev == cv2.EVENT_LBUTTONDOWN and (in_ov or in_zm):
+            st["drag"] = {"panel": "ov" if in_ov else "zm", "p0": (x, y), "p1": None}
+        elif ev == cv2.EVENT_MOUSEMOVE and st["drag"]:
+            st["drag"]["p1"] = (x, y); refresh()
+        elif ev == cv2.EVENT_LBUTTONUP and st["drag"]:
+            d = st["drag"]; st["drag"] = None
+            p0, p1 = d["p0"], (d["p1"] or (x, y))
+            moved = max(abs(p1[0] - p0[0]), abs(p1[1] - p0[1]))
+            if d["panel"] == "ov":
+                if moved < 5:                                      # plain click on the overview: move the zoom there
+                    st["center"] = (p0[0] / sx, p0[1] / sx)
+                else:                                              # drag on the overview: draw a box (4K px)
+                    bx = sorted([p0[0] / sx, p1[0] / sx]); by = sorted([p0[1] / sx, p1[1] / sx])
+                    set_drawn(bx, by)
+            elif moved >= 3:                                       # drag in the zoom: draw a box (4K px)
+                bx = sorted([zx + (p0[0] - OV_W) / zs, zx + (p1[0] - OV_W) / zs]); by = sorted([zy + p0[1] / zs, zy + p1[1] / zs])
+                set_drawn(bx, by)
+            refresh()
+
+    def set_drawn(bx, by):
+        if bx[1] - bx[0] >= 2 and by[1] - by[0] >= 2:
+            rows[cur()] = {"t": f"{cur():.6f}", "verdict": "drone", "cls": "uav",
+                           "x0": f"{bx[0]:.1f}", "y0": f"{by[0]:.1f}", "x1": f"{bx[1]:.1f}", "y1": f"{by[1]:.1f}",
+                           "difficult": "0", "source": "human"}
+            save_rows(a.out, rows)
 
     def refresh():
         geo["g"] = draw()
