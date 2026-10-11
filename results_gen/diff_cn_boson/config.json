@@ -1,0 +1,22 @@
+{
+  "data": "data/diff_pairs_boson",
+  "out": "runs/diff_cn_boson",
+  "pretrained": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+  "width": 512,
+  "height": 256,
+  "steps": 8000,
+  "batch": 4,
+  "grad_accum": 2,
+  "lr": 1e-05,
+  "rot_deg": 5.0,
+  "val_every": 500,
+  "val_steps": 20,
+  "val_max": 40,
+  "patience": 6,
+  "mixed": "bf16",
+  "workers": 4,
+  "seed": 0,
+  "cpu": false,
+  "init_controlnet": "runs/diff_cn_all/best",
+  "snr_gamma": 0.0
+}
