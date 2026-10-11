@@ -6,7 +6,7 @@ Window (fits ~1200x520): left = the whole frame downscaled, right = a zoom on th
 detections at that timestamp, numbered) are drawn on both; green = the current box of this frame.
 
 Keys
-  Enter / space  keep the current decision (a pre-filled box becomes a confirmed drone) and go on
+  Space / k / Enter  keep the current decision (a pre-filled box becomes a confirmed drone) and go on
                  (on a frame with no box and no decision it does nothing: press n for "nothing")
   1..9           candidate k is the drone              n   nothing in this frame (empty)
   u              unsure / difficult (keeps the box if there is one: too small / ambiguous to demand)
@@ -223,7 +223,7 @@ def main():
               f"{' (difficult)' if r.get('difficult') == '1' else ''} [{r['source']}]"
         done = sum(1 for x in rows.values() if x["source"] == "human")
         lines = [f"{st['i'] + 1}/{len(order)}  t={t:.3f}  now: {dec}   human-reviewed {done}/{len(ts)}   zoom {s}px",
-                 "Enter keep | 1-9 candidate | n nothing | u unsure | b bird | o other | x clear | a/d prev/next | "
+                 "Space or k keep | 1-9 candidate | n nothing | u unsure | b bird | o other | x clear | a/d prev/next | "
                  "+/- zoom | c cands | q quit"]
         for j, l in enumerate(lines):
             cv2.putText(canvas, l, (8, OV_H + 22 + 22 * j), 0, 0.45, (230, 230, 230), 1)
@@ -274,7 +274,7 @@ def main():
             rows[t] = row; save_rows(a.out, rows)
         if k == ord("q"):
             save_rows(a.out, rows); break
-        elif k in (13, 32):
+        elif k in (13, 32, ord("k")):
             if r is not None:
                 decide(r["verdict"], r.get("cls", "") or ("uav" if r["verdict"] == "drone" else ""), b, r.get("difficult", "0"))
                 moved = True
