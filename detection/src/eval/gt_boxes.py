@@ -516,8 +516,12 @@ def cmd_review(a):
                 z = day.zoom_tile(fi, c["x"], c["y"])        # full-res day pixels, same area as the IR tile
             if z is None:
                 z, _ = zoom(im, c["x"], c["y"])
-            cv2.putText(z, f"{n + 1} {tiles_from['src'] if day is not None else 'IR'}  t{c['z_temporal']:.0f} "
-                           f"s{c['z_spatial']:.0f}", (4, 14), cv2.FONT_HERSHEY_SIMPLEX, 0.45, COLORS[n], 1)
+            if "z_temporal" in c:
+                tag = f"t{c['z_temporal']:.0f} s{c['z_spatial']:.0f}"
+            else:                                               # model / day-projected candidates (prefill_from_tracks.py)
+                tag = f"{'day' if c.get('from_day') else 'M0'} {c.get('score', 0):.2f}"
+            cv2.putText(z, f"{n + 1} {tiles_from['src'] if day is not None else 'IR'}  {tag}", (4, 14),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.45, COLORS[n], 1)
             tiles.append(z)
         while len(tiles) < K:
             tiles.append(np.zeros((192, 192, 3), np.uint8))
