@@ -41,49 +41,111 @@ sys.path.insert(0, "/shared/interceptor/tools/pipeline_eval")
 from frames import FrameExtractor   # noqa: E402
 
 OV_W, OV_H, ZW = 800, 450, 420
-COLS = {0: (0, 220, 255), 1: (255, 255, 0), 2: (255, 0, 255)}     # uav yellow, airplane cyan, bird magenta (BGR)
+# one colour per candidate NUMBER (BGR); green is the current box, red the search circle
+PAL = [(0, 255, 255), (255, 0, 255), (255, 255, 0), (0, 140, 255), (255, 120, 0), (180, 105, 255), (255, 255, 255), (60, 20, 220), (150, 255, 150)]
 FIELDS = ["t", "verdict", "cls", "x0", "y0", "x1", "y1", "difficult", "source"]
 
 
 class Frames:
-    """Exact 4K frame by timestamp (interceptor FrameExtractor decoding), small in-memory LRU, prefetch."""
-    def __init__(self, path, cache_dir, keep=24):
-        self.fx, self.path, self.keep = FrameExtractor(cache_dir), path, keep
-        self.mem, self.lock = OrderedDict(), threading.Lock()
-        self.idx = self.fx.index(path)
+    """Exact 4K frames by timestamp. One ffmpeg run per keyframe segment decodes ALL the wanted frames of that segment
+    (raw BGR through a pipe, no PNG), stops as soon as they are out, and a small pool prefetches the next segments."""
+    def __init__(self, path, cache_dir, wanted, keep=40, workers=2):
+        import re, bisect, subprocess, concurrent.futures
+        self._re, self._bisect, self._sp = re, bisect, subprocess
+        self.path, self.keep = path, keep
+        self.idx = FrameExtractor(cache_dir).index(path)
+        self.W, self.H = self.idx.width, self.idx.height
+        self.kt = [k[0] for k in self.idx.keys]
+        self.wanted = sorted(set(self.idx.nearest(t) for t in wanted if self.idx.nearest(t) is not None))
+        self.mem, self.lock, self.inflight, self.bad = OrderedDict(), threading.Lock(), {}, set()
+        self.pool = concurrent.futures.ThreadPoolExecutor(workers)
 
-    def _load(self, t):
+    def _seg(self, t):
+        return max(0, self._bisect.bisect_right(self.kt, t + 1e-6) - 1)
+
+    def _decode_segment(self, si):
+        lo = self.kt[si]; hi = self.kt[si + 1] - 1e-6 if si + 1 < len(self.kt) else float("inf")
+        need = [t for t in self.wanted[self._bisect.bisect_left(self.wanted, lo - 1e-6):] if t < hi]
+        if not need:
+            return
+        expr = "+".join(f"between(t\\,{t - 0.0004:.6f}\\,{t + 0.0004:.6f})" for t in need)
+        size = self.W * self.H * 3
+        for back in range(0, 14):                           # a keyframe may be undecodable (no SPS/PPS): step back
+            if si - back < 0:
+                break
+            if (si - back) in self.bad:
+                continue
+            pos = self.idx.keys[si - back][1]
+            p = self._sp.Popen(["ffmpeg", "-v", "info", "-skip_initial_bytes", str(pos),
+                                "-t", f"{max(need) - self.kt[si - back] + 0.15:.3f}",   # INPUT duration: -to / output -t do not stop it
+                                "-copyts", "-i", self.path,
+                                "-vf", f"select={expr},showinfo", "-vsync", "0",
+                                "-f", "rawvideo", "-pix_fmt", "bgr24", "pipe:1"], stdout=self._sp.PIPE, stderr=self._sp.PIPE, bufsize=size)
+            import queue
+            q = queue.Queue()
+            def err():
+                for line in iter(p.stderr.readline, b""):
+                    m = self._re.search(rb"pts_time:([0-9.]+)", line)
+                    if m and b"showinfo" in line:
+                        q.put(float(m.group(1)))
+                q.put(None)
+            threading.Thread(target=err, daemon=True).start()
+            got = 0
+            wd = threading.Timer(30.0, p.kill); wd.daemon = True; wd.start()   # never decode on forever
+            while got < len(need):
+                t = q.get()
+                if t is None:
+                    break
+                buf = p.stdout.read(size)
+                if len(buf) < size:
+                    break
+                tt = min(need, key=lambda x: abs(x - t))
+                if abs(tt - t) < 0.0015:
+                    im = np.frombuffer(buf, np.uint8).reshape(self.H, self.W, 3).copy()
+                    with self.lock:
+                        self.mem[round(tt, 6)] = im
+                        while len(self.mem) > self.keep:
+                            self.mem.popitem(last=False)
+                    got += 1
+            wd.cancel(); p.kill(); p.wait()
+            if got:
+                return
+            self.bad.add(si - back)
+
+    def _ensure(self, t):
         tt = self.idx.nearest(t)
-        good = self.fx._good_keys.setdefault(self.path, set())
-        cands = [k for k in self.idx.keys if k[0] <= tt + 1e-6][::-1]
-        for kt, pos in ([k for k in cands if k[1] in good] + [k for k in cands if k[1] not in good])[:12]:
-            img, got = self.fx._decode_at(self.path, pos, tt)
-            if got is not None and abs(got - tt) < 0.0015:
-                good.add(pos)
-                return cv2.cvtColor(np.asarray(img), cv2.COLOR_RGB2BGR)
-        return None
-
-    def get(self, t):
-        key = round(t, 6)
+        if tt is None:
+            return None
+        key = round(tt, 6); si = self._seg(tt)
         with self.lock:
             if key in self.mem:
-                self.mem.move_to_end(key)
-                return self.mem[key]
-        im = self._load(t)
+                self.mem.move_to_end(key); return key
+            fut = self.inflight.get(si)
+            if fut is None:
+                fut = self.inflight[si] = self.pool.submit(self._decode_segment, si)
+        fut.result()
         with self.lock:
-            self.mem[key] = im
-            while len(self.mem) > self.keep:
-                self.mem.popitem(last=False)
-        return im
+            if self.inflight.get(si) is fut:
+                self.inflight.pop(si, None)
+        return key
+
+    def get(self, t):
+        key = self._ensure(t)
+        if key is None:
+            return None
+        with self.lock:
+            return self.mem.get(key)
 
     def prefetch(self, ts):
-        def run():
-            for t in ts:
-                with self.lock:
-                    if round(t, 6) in self.mem:
-                        continue
-                self.get(t)
-        threading.Thread(target=run, daemon=True).start()
+        for t in ts:
+            tt = self.idx.nearest(t)
+            if tt is None:
+                continue
+            si = self._seg(tt)
+            with self.lock:
+                if round(tt, 6) in self.mem or si in self.inflight:
+                    continue
+                self.inflight[si] = self.pool.submit(self._decode_segment, si)
 
 
 def load_rows(path):
@@ -149,7 +211,7 @@ def main():
         print("nothing to review"); return
     print(f"{len(order)} frames to review ({a.only}); {sum(1 for r in rows.values() if r['source'] == 'human')} "
           f"human decisions so far")
-    fr = Frames(a.video, a.cache_dir)
+    fr = Frames(a.video, a.cache_dir, ts)
     st = {"i": 0, "zoom": 160, "center": None, "drag": None, "cands": True}
     cv2.namedWindow("day GT", cv2.WINDOW_AUTOSIZE)
 
@@ -202,13 +264,14 @@ def main():
             cv2.circle(zm, (int((g[0] - zx) * zs), int((g[1] - zy) * zs)), int(g[2] * zs), (0, 0, 255), 1)
         if st["cands"]:
             for k, d in enumerate(cands(t), 1):
-                col = COLS.get(d[5], (200, 200, 200))
-                cv2.rectangle(ov, (int(d[0] * sx) - 3, int(d[1] * sx) - 3), (int(d[2] * sx) + 3, int(d[3] * sx) + 3), col, 1)
-                cv2.putText(ov, str(k), (int(d[2] * sx) + 4, int(d[1] * sx) + 2), 0, 0.4, col, 1)
+                col = PAL[(k - 1) % len(PAL)]
+                nm = D["names"].get(str(d[5]), str(d[5]))
+                tag = "th" if d[5] == 9 else nm[:3]                 # th = thermal detection projected here
+                cv2.rectangle(ov, (int(d[0] * sx) - 3, int(d[1] * sx) - 3), (int(d[2] * sx) + 3, int(d[3] * sx) + 3), col, 2)
+                cv2.putText(ov, str(k), (int(d[2] * sx) + 5, int(d[1] * sx) + 4), 0, 0.55, col, 2)
                 cv2.rectangle(zm, (int((d[0] - zx) * zs) - 2, int((d[1] - zy) * zs) - 2),
-                              (int((d[2] - zx) * zs) + 2, int((d[3] - zy) * zs) + 2), col, 1)
-                cv2.putText(zm, f"{k} {D['names'].get(str(d[5]), d[5])} {d[4]:.2f}",
-                            (int((d[0] - zx) * zs), int((d[1] - zy) * zs) - 5), 0, 0.4, col, 1)
+                              (int((d[2] - zx) * zs) + 2, int((d[3] - zy) * zs) + 2), col, 2)
+                cv2.putText(zm, f"{k} {tag} {d[4]:.2f}", (int((d[0] - zx) * zs), int((d[1] - zy) * zs) - 6), 0, 0.5, col, 2)
         b = box_of(t); r = rows.get(t)
         if b:
             cv2.rectangle(ov, (int(b[0] * sx) - 4, int(b[1] * sx) - 4), (int(b[2] * sx) + 4, int(b[3] * sx) + 4), (0, 255, 0), 1)
@@ -228,7 +291,7 @@ def main():
         for j, l in enumerate(lines):
             cv2.putText(canvas, l, (8, OV_H + 22 + 22 * j), 0, 0.45, (230, 230, 230), 1)
         cv2.imshow("day GT", canvas)
-        fr.prefetch(order[st["i"] + 1: st["i"] + 6])
+        fr.prefetch(order[st["i"] + 1: st["i"] + 16])
         return (zx, zy, s, sx)
 
     geo = {}
