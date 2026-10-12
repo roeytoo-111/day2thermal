@@ -3,7 +3,7 @@ Build the N1 / N2 / N3 thermal datasets (notebook 2026-10-12 section 2) from M0'
 (a folder symlink would be resolved by Ultralytics back to the source labels):
 
   N1 = base + mined hard Boson frames (mine_thermal_hard.py, part A) + a second copy of every hard existing real
-       training image (part B, prefix "hd_")
+       training image (part B, prefix "hd_") + real drone-free backgrounds as empty images (make_clean_negatives.py)
   N2 = base with half of the pasted images (bgpaste_ / bgboson_) removed (seeded)
   N3 = N2 + the N1 additions (hard copies only for images N2 still has)
 valid / test are the base's, unchanged. Counts go to <out>/build_config.json.
@@ -69,6 +69,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--base", required=True); ap.add_argument("--hard", required=True)
     ap.add_argument("--out-prefix", required=True); ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--neg", default=None, help="make_clean_negatives.py output (images/, labels/)")
     a = ap.parse_args()
     train = sorted(glob.glob(f"{a.base}/train/images/*"))
     pastes = [f for f in train if os.path.basename(f).startswith(PASTE)]
@@ -76,7 +77,9 @@ def main():
     rng = random.Random(a.seed); half = set(rng.sample(pastes, len(pastes) // 2))
     extra = [(f, lab_of(f)) for f in sorted(glob.glob(f"{a.hard}/boson/images/*"))]
     dup = [l.strip() for l in open(f"{a.hard}/hard_existing.txt") if l.strip()]
-    build(f"{a.out_prefix}-N1-u0", a.base, train, extra, dup, "base + mined hard Boson frames + hard real images x2")
+    if a.neg:
+        extra += [(f, lab_of(f)) for f in sorted(glob.glob(f"{a.neg}/images/*"))]
+    build(f"{a.out_prefix}-N1-u0", a.base, train, extra, dup, "base + mined hard Boson frames + hard real images x2 + clean real negatives")
     build(f"{a.out_prefix}-N2-u0", a.base, real + sorted(half), [], [], f"base with {len(pastes) - len(half)} of {len(pastes)} pastes removed")
     build(f"{a.out_prefix}-N3-u0", a.base, real + sorted(half), extra, dup, "N2 + N1 additions")
 
