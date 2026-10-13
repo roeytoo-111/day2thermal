@@ -22,7 +22,8 @@ import cv2
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "eval"))
 from ensemble_dets import fuse   # noqa: E402
 
-EXCLUDE = ("08_58_15", "10_15_59", "10_05_11", "07-02", "0702", "07-30", "07_30", "thermal.mp4", "th_output")
+EXCLUDE = ("08_58_15", "10_15_59", "10_05_11", "07-02", "0702", "07-30", "07_30", "th_output")
+EXCLUDE_EXACT = ("thermal.mp4", "day.mp4")   # the 07-02 test video; matched exactly (Boson files end in _thermal.mp4)
 
 
 def main():
@@ -42,7 +43,7 @@ def main():
     stats = {}
     for v in a.videos:
         name = os.path.basename(v).replace("_thermal", "").rsplit(".", 1)[0]
-        if any(x in os.path.basename(v) for x in EXCLUDE):
+        if any(x in os.path.basename(v) for x in EXCLUDE) or os.path.basename(v) in EXCLUDE_EXACT:
             print("skip (held out / test):", v); continue
         cap = cv2.VideoCapture(v); fps = cap.get(cv2.CAP_PROP_FPS) or 25
         tmax = next((float(s) for k, s in limits.items() if k in v), None)
