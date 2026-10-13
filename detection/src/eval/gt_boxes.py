@@ -572,6 +572,8 @@ def cmd_review(a):
         cv2.imshow("GT boxes", canvas)
         mouse["event"] = None
         key = wait_input(canvas)
+        if key == ord("k"):
+            key = 13                       # k = Enter (Enter can freeze the VS Code terminal)
 
         def confirm(box, src):
             """Show the box on both panels; Enter accept, Esc cancel, +/- grow/shrink, drag again to redraw."""
