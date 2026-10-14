@@ -93,7 +93,9 @@ _GENERIC = re.compile(r"^(img|image|images|frame|photo|pic|picture|screenshot|de
 _TAIL = re.compile(r"^(.*?[A-Za-z].*?[A-Za-z].*?[A-Za-z].*?)[-_ ]+\d+[-_ ]*$")
 
 
-def source_key(path):
+def source_key(path, size=None):
+    """size = (W, H) of the image if known: generic names on un-resized, non-square video frames (v4's 07-08 4K
+    footage, frame_00001..., in train AND valid) are one video, keyed by prefix + resolution."""
     s = os.path.splitext(os.path.basename(path))[0]
     m = _OURS.match(s)
     if m:
@@ -107,7 +109,18 @@ def source_key(path):
     m = _TAIL.match(s)      # one trailing frame / burst number, only if >= 3 letters remain (not "000000000247")
     if m and not _GENERIC.match(m.group(1).strip("-_ ")):
         return m.group(1)
+    if m and size and size[0] != size[1]:
+        return f"{m.group(1).strip('-_ ')}@{size[0]}x{size[1]}"
     return s
+
+
+def frame_number(path):
+    """Frame / sequence number of a video-frame file name (DJI_0025_MP4-0218_jpg.rf.x -> 218, frame_00008 -> 8), NaN if none."""
+    s = _RF.sub("", os.path.splitext(os.path.basename(path))[0])
+    while _EXT.search(s):
+        s = _EXT.sub("", s)
+    m = re.search(r"_(\d{6})(?:_\d+)?$", s) or re.search(r"(\d+)\D*$", s)   # our tiles: <session>_<frame6>[_k]
+    return float(m.group(1)) if m else float("nan")
 
 
 def dhash(gray):

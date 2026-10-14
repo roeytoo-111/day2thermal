@@ -29,7 +29,7 @@ import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import rgb_ds as R   # noqa: E402
 
-SPLITS = ("train", "valid", "test")
+SPLITS = ("train", "valid", "test", "test_boson_heldout")
 
 
 def analyse(args):
@@ -40,7 +40,7 @@ def analyse(args):
     H, W = g.shape
     th = cv2.resize(g, (64, 64), interpolation=cv2.INTER_AREA).astype(np.float32)
     blocks = th.reshape(8, 8, 8, 8).std(axis=(1, 3))
-    img = {"path": path, "split": split, "source": R.source_key(path), "W": W, "H": H, "lum": float(g.mean()),
+    img = {"path": path, "split": split, "source": R.source_key(path, (W, H)), "W": W, "H": H, "lum": float(g.mean()),
            "smooth_frac": float((blocks < 6).mean())}
     img["dhash"], hp, img["detail"] = R.fingerprint(g); img["_hp"] = hp
     boxes = []

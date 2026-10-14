@@ -1,7 +1,8 @@
 # RGB data prep: label fixes, re-split, new flight data
 
 Tools for the next RGB run (after `yolo26s_fw4_20261011`). Class order everywhere: **0 uav, 1 airplane, 2 bird**.
-Fixed_wing_v3 on disk is (bird, airplane, uav); the tools read each folder's `data.yaml` and remap.
+Work on **Fixed_wing_v4** at `/media/daniel/TRANSCEND/Fixed_wing_v4_20261011_191146` (the TRANSCEND drive must be mounted).
+Do not use the old local `ANN-Detection/data/datasets/Fixed_wing_v3`: it has 5,476 simulator drone images labelled bird.
 Run everything from `detection/` with `../.venv/bin/python`. No tool uses the Enter key.
 
 ## 1. Fix labels (human): `review_label_fixes.py`
@@ -10,13 +11,13 @@ The proposals come from fw4 vs the labels (`src/data/propose_rgb_label_fixes.py`
 
 | queue | proposals | images |
 |---|---|---|
-| `../data/rgb_fixes/v3`: v3 valid + test | 699 (538 missing birds) | 210 |
-| `../data/rgb_fixes/v3_train`: v3 train | see its `queue.csv` | |
+| `../data/rgb_fixes/v4`: v4 valid + test | 706 (493 missing birds, 71 airplanes called something else) | 256 |
+| `../data/rgb_fixes/v4_train`: v4 train | see its `queue.csv` (fw4 was trained on these, so fewer) | |
 
 ```
-../.venv/bin/python src/eval/review_label_fixes.py --fixes ../data/rgb_fixes/v3                 # do this one first
-../.venv/bin/python src/eval/review_label_fixes.py --fixes ../data/rgb_fixes/v3_train --kind wrong_class
-../.venv/bin/python src/eval/review_label_fixes.py --fixes ../data/rgb_fixes/v3_train --kind missing
+../.venv/bin/python src/eval/review_label_fixes.py --fixes ../data/rgb_fixes/v4                 # do this one first
+../.venv/bin/python src/eval/review_label_fixes.py --fixes ../data/rgb_fixes/v4_train --kind wrong_class
+../.venv/bin/python src/eval/review_label_fixes.py --fixes ../data/rgb_fixes/v4_train --kind missing
 ```
 
 Keys:
@@ -40,10 +41,10 @@ Rules of thumb:
 
 When done, write the corrected labels:
 ```
-../.venv/bin/python src/eval/review_label_fixes.py --fixes ../data/rgb_fixes/v3 --finalize --labels-out ../data/rgb_fixes/labels
-../.venv/bin/python src/eval/review_label_fixes.py --fixes ../data/rgb_fixes/v3_train --finalize --labels-out ../data/rgb_fixes/labels
+../.venv/bin/python src/eval/review_label_fixes.py --fixes ../data/rgb_fixes/v4 --finalize --labels-out ../data/rgb_fixes/labels
+../.venv/bin/python src/eval/review_label_fixes.py --fixes ../data/rgb_fixes/v4_train --finalize --labels-out ../data/rgb_fixes/labels
 ```
-`../data/rgb_fixes/labels/` and `../data/rgb_fixes/excluded.txt` are keyed by file name, so they apply to the same images inside Fixed_wing_v4.
+`../data/rgb_fixes/labels/` and `../data/rgb_fixes/excluded.txt` are keyed by file name and written in uav, airplane, bird order.
 
 ## 2. New flight data (today): `scripts/new_flight_rgb.sh`
 
@@ -70,21 +71,31 @@ scripts/new_flight_rgb.sh review ../data/flight_20261014     # YOU: d / f / b pe
 
 ```
 ../.venv/bin/python src/data/resplit_by_source.py \
-    --data ../../ANN-Detection/data/datasets/Fixed_wing_v4_20261011_191146 ../data/flight_20261014/rgb_addon \
+    --data /media/daniel/TRANSCEND/Fixed_wing_v4_20261011_191146 ../data/flight_20261014/rgb_addon \
     --labels-override ../data/rgb_fixes/labels --exclude ../data/rgb_fixes/excluded.txt \
-    --force "test:^session(08_58_15|10_15_59)$" --out ../../ANN-Detection/data/datasets/Fixed_wing_v5
+    --force "test:^session(08_58_15|10_15_59)$" --force 'train:^img_\d+$' --out <somewhere>/Fixed_wing_v5
 ```
 
 What it does:
 - Pools all splits of all inputs.
 - Groups images by source video / photo series and by near-duplicate picture.
 - Assigns whole groups to train / valid / test, balancing small drones, airplanes, birds and empty images.
+- Pins the simulator renders (`img_NNNN`, 7,120 images) to train with `--force 'train:^img_\d+$'`: valid/test stay real camera images.
+- Splits long single videos in time: the last 15% may go to valid/test, and a 5% gap before it is dropped.
 - Keeps one picture per near-duplicate cluster in valid/test.
 - Writes hard links and a `data.yaml` with uav = 0.
 
 Use `--dry-run` to see `SPLIT.md` first.
 
-On v3 the result is about 18.5k / 3.3k / 2.2k images, with no source shared between splits. Before, 58% of valid images shared a source with train.
+v4 dry run (before label fixes):
+
+| | v4 as delivered | re-split |
+|---|---|---|
+| train / valid / test images | 23,426 / 3,100 / 1,516 (+100 Boson) | 23,849 / 2,145 / 1,500 |
+| real uav < 16 px in valid | 47 | 106 |
+| real uav < 16 px in test | 66 | 73 |
+| empty images in valid / test | 338 / 99 | 411 / 271 |
+| valid images sharing a source with train | 60% | 0, except time-split long videos (5% gap) |
 
 ## 4. Audit: `rgb_audit.py`
 
@@ -99,4 +110,4 @@ It reports, per split:
 - source concentration;
 - leakage.
 
-`results/rgb_audit/v3/AUDIT.md` is the baseline.
+`results/rgb_audit/v4/AUDIT.md` is the baseline.
