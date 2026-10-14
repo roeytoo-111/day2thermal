@@ -20,6 +20,8 @@ ap.add_argument("--addon", required=True)
 ap.add_argument("--zoom", type=float, default=1.0, help="tile magnification (tiles are 640 px; capped so the window is <= --max-h tall)")
 ap.add_argument("--max-h", type=int, default=700)
 ap.add_argument("--finalize", action="store_true")
+ap.add_argument("--names", default="bird,airplane,uav", help="class order of the labels written by --finalize "
+                "(default: Fixed_wing_v3's; use uav,airplane,bird for v4 and later)")
 a = ap.parse_args()
 csv = os.path.join(a.addon, "review", "tiles.csv")
 df = pd.read_csv(csv)
@@ -36,7 +38,8 @@ if a.finalize:
         shutil.copy2(os.path.join(a.addon, "review", "tiles", r.tile), os.path.join(a.addon, "train", "images", "rv_" + r.tile))
         line = ""
         if r.decision in ("d", "b"):
-            cls = 2 if r.decision == "d" else 0
+            names = a.names.split(",")
+            cls = names.index("uav") if r.decision == "d" else names.index("bird")
             line = f"{cls} {(r.x0 + r.x1) / 2 / 640:.6f} {(r.y0 + r.y1) / 2 / 640:.6f} {(r.x1 - r.x0) / 640:.6f} {(r.y1 - r.y0) / 640:.6f}\n"
         open(os.path.join(a.addon, "train", "labels", "rv_" + stem + ".txt"), "w").write(line)
         n[r.decision] += 1
