@@ -87,7 +87,7 @@ def read_labels(path):
 _RF = re.compile(r"\.rf\.[0-9a-f]{8,}$")
 _EXT = re.compile(r"_(jpe?g|png|webp|bmp)$", re.I)
 _VID = re.compile(r"^(.*_(?:mp4|mov|avi|mkv))-\d+$", re.I)
-_OURS = re.compile(r"^(?:rv_)?(?:fp_)?(?:boson|miss)([0-9_]+?)_\d{6}(?:_\d+)?$")   # our flight tiles -> one key per session
+_OURS = re.compile(r"^(?:rv_)?(?:fp_)?(?:boson|miss|trkfp|trk)([0-9_]+?)_\d{6}(?:_\d+)?$")   # our flight tiles -> one key per session
 _GENERIC = re.compile(r"^(img|image|images|frame|photo|pic|picture|screenshot|descarga|download|unnamed|untitled|"
                       r"maxresdefault|hqdefault|\d+)$", re.I)
 _TAIL = re.compile(r"^(.*?[A-Za-z].*?[A-Za-z].*?[A-Za-z].*?)[-_ ]+\d+[-_ ]*$")
