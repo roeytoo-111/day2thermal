@@ -11,7 +11,8 @@ RGB-only flight videos (no thermal witness) -> object tracks for one human decis
             uav / airplane / bird tracks: one tile every --step processed frames (box at a random place in the tile)
             false-alarm tracks: one tile every --fp-step processed frames around the false box -> negative
           Every decided object at that frame inside the tile is labelled with its decided class (false alarms are
-          left unlabelled = background). A tile is skipped if it holds a box from an undecided / unsure track, or
+          left unlabelled = background). Boxes drawn in the reviewer are objects of that one frame (each gets a tile)
+          and replace the model's box when they contain its centre. A tile is skipped if it holds a box from an undecided / unsure track, or
           the interpolated box of a decided object track that the model missed at that frame.
 
     python3 src/data/mine_rgb_tracks.py mine   --W ../data/flight_20261014 --dets-dir ../data/flight_20261014/rgbdets
@@ -132,7 +133,8 @@ def cmd_mine(a):
                     cv2.putText(c_, f"{c:.2f}", (3, 14), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 0), 1, cv2.LINE_AA)
                     cv2.imwrite(os.path.join(a.W, "tracks", "crops", f"{s}_{tid}_{n_}.jpg"), c_, [cv2.IMWRITE_JPEG_QUALITY, 92])
             i += 1
-        json.dump({"session": s, "step": step, "args": vars(a), "tracks": tr}, open(out, "w"))
+        json.dump({"session": s, "step": step, "frame_size": [int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))],
+                   "args": vars(a), "tracks": tr}, open(out, "w"))
         lens = [t["n"] for t in tr]
         print(f"{s}: {len(tr)} tracks with max conf >= {a.alarm_conf} (median {np.median(lens) if lens else 0:.0f} detections, "
               f"{sum(n >= 10 for n in lens)} with >= 10)", flush=True)
@@ -159,6 +161,17 @@ def cmd_export(a):
     tot = {"uav": 0, "airplane": 0, "bird": 0, "neg": 0, "skipped": 0}
     for f in sorted(glob.glob(os.path.join(a.W, "tracks", "*.json"))):
         T = json.load(open(f)); s, step = T["session"], T["step"]; tr = T["tracks"]
+        # your drawn boxes (review_rgb_tracks.py) = single-frame objects; one replaces the model's box of the same object
+        for t in list(tr):
+            for m in t.get("manual", []):
+                for o in tr:
+                    if m["k"] in o["k"]:
+                        j = o["k"].index(m["k"]); ob = o["b"][j]
+                        cx, cy = (ob[0] + ob[2]) / 2, (ob[1] + ob[3]) / 2
+                        if m["box"][0] <= cx <= m["box"][2] and m["box"][1] <= cy <= m["box"][3]:
+                            o["k"].pop(j); o["b"].pop(j); o["c"].pop(j)
+                tr.append({"k": [m["k"]], "b": [m["box"]], "c": [1.0], "decision": m["cls"], "manual": []})
+        tr = [t for t in tr if t["k"]]
         obj = [t for t in tr if t["decision"] in NAMES]
         fps = [t for t in tr if t["decision"] == "f"]
         open_ = [t for t in tr if t["decision"] not in NAMES + ["f"]]
