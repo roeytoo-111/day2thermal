@@ -31,6 +31,9 @@ def main():
     files = sorted(glob.glob(os.path.join(a.W, "tracks", "*.json")))
     if a.session:
         files = [f for f in files if os.path.basename(f)[:-5] == a.session]
+    if not files:
+        raise SystemExit(f"no tracks in {a.W}/tracks yet: run detection (rgb_label_videos.py) and "
+                         "mine_rgb_tracks.py mine first")
     docs = {f: json.load(open(f)) for f in files}
     todo = [(f, i) for f in files for i, t in enumerate(docs[f]["tracks"]) if t["decision"] == "" and t["n"] >= a.min_n]
     n_all = sum(len(d["tracks"]) for d in docs.values())
