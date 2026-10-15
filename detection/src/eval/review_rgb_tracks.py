@@ -19,6 +19,7 @@ No Enter key.
 
     python3 src/eval/review_rgb_tracks.py --W ../data/flight_20261014
     python3 src/eval/review_rgb_tracks.py --W ../data/flight_20261014 --min-n 3     # long tracks first pass
+    python3 src/eval/review_rgb_tracks.py --W ../data/flight_20261014 --recheck ../data/flight_20261014/recheck_f_sky.json
 """
 import os
 import glob
@@ -45,6 +46,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--W", required=True); ap.add_argument("--min-n", type=int, default=1)
     ap.add_argument("--session", default=None)
+    ap.add_argument("--recheck", default=None, help="json list of [session, track id]: show these again whatever "
+                                                     "their decision (e.g. <W>/recheck_f_sky.json)")
     a = ap.parse_args()
     files = sorted(glob.glob(os.path.join(a.W, "tracks", "*.json")))
     if a.session:
@@ -53,7 +56,13 @@ def main():
         raise SystemExit(f"no tracks in {a.W}/tracks yet: run detection (rgb_label_videos.py) and "
                          "mine_rgb_tracks.py mine first")
     docs = {f: json.load(open(f)) for f in files}
-    todo = [(f, i) for f in files for i, t in enumerate(docs[f]["tracks"]) if t["decision"] == "" and t["n"] >= a.min_n]
+    if a.recheck:
+        want = {(s_, int(i_)) for s_, i_ in json.load(open(a.recheck))}
+        todo = [(f, i) for f in files for i, t in enumerate(docs[f]["tracks"]) if (docs[f]["session"], t["id"]) in want]
+        for f, i in todo:
+            docs[f]["tracks"][i]["prev"] = docs[f]["tracks"][i]["decision"]
+    else:
+        todo = [(f, i) for f in files for i, t in enumerate(docs[f]["tracks"]) if t["decision"] == "" and t["n"] >= a.min_n]
     n_all = sum(len(d["tracks"]) for d in docs.values())
     save = lambda: [json.dump(d, open(f, "w")) for f, d in docs.items()]
     st = {"down": None, "cur": None, "geo": [], "drawn": None}
@@ -116,7 +125,7 @@ def main():
             done = sum(1 for dd in docs.values() for tt in dd["tracks"] if tt["decision"])
             dur = (t["k"][-1] - t["k"][0]) / 30
             votes = " ".join(f"{k}:{v}" for k, v in sorted(t["cls_votes"].items(), key=lambda x: -x[1]))
-            mine = f"  your boxes: {len(t['manual'])}" if t["manual"] else ""
+            mine = (f"  your boxes: {len(t['manual'])}" if t["manual"] else "") + (f"  RECHECK (was {t['prev']})" if a.recheck else "")
             cv2.putText(canvas, f"[{done}/{n_all}] {s} track {t['id']}: {t['n']} dets over {dur:.1f}s, max conf {t['max_conf']:.2f}, model says {votes}{mine}",
                         (6, 18), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1, cv2.LINE_AA)
             help_ = ("BOX DRAWN: u / p / b = label it as drone / airplane / bird,  c = clear" if st["drawn"] else

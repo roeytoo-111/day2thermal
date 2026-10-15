@@ -11,8 +11,8 @@ RGB-only flight videos (no thermal witness) -> object tracks for one human decis
             uav / airplane / bird tracks: one tile every --step processed frames (box at a random place in the tile)
             false-alarm tracks: one tile every --fp-step processed frames around the false box -> negative
           Every decided object at that frame inside the tile is labelled with its decided class (false alarms are
-          left unlabelled = background). Boxes drawn in the reviewer are objects of that one frame (each gets a tile)
-          and replace the model's box when they contain its centre. A tile is skipped if it holds a box from an undecided / unsure track, or
+          left unlabelled = background). Boxes drawn in the reviewer are objects of that one frame (each gets a tile),
+          snapped to the object they cover (tighten()), and replace the model's box when they contain its centre. A tile is skipped if it holds a box from an undecided / unsure track, or
           the interpolated box of a decided object track that the model missed at that frame.
 
     python3 src/data/mine_rgb_tracks.py mine   --W ../data/flight_20261014 --dets-dir ../data/flight_20261014/rgbdets
@@ -140,6 +140,63 @@ def cmd_mine(a):
               f"{sum(n >= 10 for n in lens)} with >= 10)", flush=True)
 
 
+def tighten(im, box, pad=2, grow=0.5):
+    """Snap a hand-drawn box to the object: in the box expanded by `grow` x its size, pixels differing from the window
+    border (background) by > max(12, 4 x MAD) form blobs; the blob with most pixels inside the drawn box is the object
+    (it may extend past a box that cut off a wingtip). Returns (box, ok); ok=False if nothing contrasting is there."""
+    H, W = im.shape[:2]
+    bw, bh = box[2] - box[0], box[3] - box[1]
+    X0, Y0 = int(max(0, box[0] - grow * bw)), int(max(0, box[1] - grow * bh))
+    X1, Y1 = int(min(W, box[2] + grow * bw)), int(min(H, box[3] + grow * bh))
+    if X1 - X0 < 6 or Y1 - Y0 < 6:
+        return box, False
+    g = cv2.cvtColor(im[Y0:Y1, X0:X1], cv2.COLOR_BGR2GRAY).astype(np.float32)
+    border = np.concatenate([g[0], g[-1], g[:, 0], g[:, -1]])
+    bg = np.median(border); mad = np.median(np.abs(border - bg)) + 1e-3
+    m = (np.abs(g - bg) > max(12, 4 * mad)).astype(np.uint8)
+    m = cv2.morphologyEx(m, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8))
+    n, lab, st, _ = cv2.connectedComponentsWithStats(m)
+    if n < 2:
+        return box, False
+    inb = np.zeros(m.shape, bool)
+    inb[int(box[1]) - Y0:int(box[3]) - Y0, int(box[0]) - X0:int(box[2]) - X0] = True
+    score = [(lab[inb] == k).sum() for k in range(1, n)]
+    k = 1 + int(np.argmax(score))
+    if score[k - 1] < 6 or score[k - 1] < 0.3 * st[k, cv2.CC_STAT_AREA]:
+        return box, False
+    bx, by, cw, ch = st[k, :4]
+    return [float(max(X0 + bx - pad, 0)), float(max(Y0 + by - pad, 0)), float(min(X0 + bx + cw + pad, W)), float(min(Y0 + by + ch + pad, H))], True
+
+
+def tighten_manual(W, s, tr):
+    """Snap every drawn box to the object it covers (hand boxes were up to 3x too large and sometimes cut a wingtip);
+    boxes with no contrasting object inside are dropped. Verified on the 64 boxes of 2026-10-14 (63 kept)."""
+    want = {}
+    for t in tr:
+        for m in t.get("manual", []):
+            want.setdefault(m["k"], []).append(m)
+    if not want:
+        return 0
+    cap = cv2.VideoCapture(os.path.join(W, "mp4", f"{s}_day.mp4"))
+    i, dropped = 0, 0
+    while i <= max(want):
+        if i not in want:
+            if not cap.grab():
+                break
+            i += 1; continue
+        ok, im = cap.read()
+        if not ok:
+            break
+        for m in want[i]:
+            nb, good = tighten(im, m["box"])
+            m["box"], m["drop"] = [round(v, 1) for v in nb], not good
+            dropped += not good
+        i += 1
+    for t in tr:
+        t["manual"] = [m for m in t.get("manual", []) if not m.get("drop")]
+    return dropped
+
+
 def place(box, W, H, rng):
     x0, y0, x1, y1 = box
     lo_x, hi_x = max(0, int(x1) + MARGIN - TILE), min(W - TILE, int(x0) - MARGIN)
@@ -161,6 +218,9 @@ def cmd_export(a):
     tot = {"uav": 0, "airplane": 0, "bird": 0, "neg": 0, "skipped": 0}
     for f in sorted(glob.glob(os.path.join(a.W, "tracks", "*.json"))):
         T = json.load(open(f)); s, step = T["session"], T["step"]; tr = T["tracks"]
+        n_drop = tighten_manual(a.W, s, tr)
+        if n_drop:
+            print(f"{s}: {n_drop} drawn boxes with no object inside dropped")
         # your drawn boxes (review_rgb_tracks.py) = single-frame objects; one replaces the model's box of the same object
         for t in list(tr):
             for m in t.get("manual", []):
