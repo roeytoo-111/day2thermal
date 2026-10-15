@@ -72,7 +72,7 @@ def main():
         rows = {}
         for mname, pt in a.model:
             m = YOLO(pt)
-            v = m.val(data=y, split="test", imgsz=a.imgsz, batch=16, conf=0.001, device=a.device, verbose=False, plots=False)
+            v = m.val(data=y, split="test", imgsz=a.imgsz, batch=16, conf=0.001, device=a.device, verbose=False, plots=False, workers=0)
             r = {"mAP50": v.box.map50, "mAP50-95": v.box.map}
             for i, n in enumerate(names):
                 if i < len(v.box.ap50):
