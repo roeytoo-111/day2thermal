@@ -22,7 +22,7 @@ def main():
     import ultralytics
     from ultralytics import YOLO
     args = dict(torch.load(a.fw4, map_location="cpu", weights_only=False)["train_args"])
-    drop = {"model", "data", "project", "name", "device", "save_dir", "resume", "pretrained", "mode", "task"}
+    drop = {"model", "data", "project", "name", "device", "save_dir", "resume", "pretrained", "mode", "task", "exist_ok"}
     args = {k: v for k, v in args.items() if k not in drop}
     if a.seed is not None:
         args["seed"] = a.seed
