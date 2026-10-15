@@ -5,7 +5,9 @@ CC BY 4.0: commercial use allowed with attribution).
 Candidates: images with a human-verified positive label Cloud or Sky and NO positive label for anything that flies
 (aircraft, airliner, airplane, fixed-wing, jet, glider, helicopter, drone, bird, insect, butterfly, kite, balloon,
 hot-air balloon, parachute). Of 18.8k such val+test images, 15,649 qualify (all CC BY 2.0).
-The detector runs on each whole image (imgsz 640); every uav / airplane box >= --conf is a false alarm candidate. A
+Only sky-dominated images are used (>= --min-smooth smooth thumbnail blocks, or the Cloud label): "Sky" also tags car
+and boat close-ups. The detector runs on each whole image (imgsz 640); every SMALL uav / airplane box (long side <=
+--max-box-frac of the image) >= --conf is a false alarm candidate. A
 640 tile is cut around it at native resolution (the scale the tiled 4K pipeline sees; padded grey if the image is
 smaller) and queued in <out>/review/tiles.csv, the format of review_rgb_tiles.py (d = there IS a drone after all,
 f = false alarm -> negative, b = bird). Unlabelled flying things are rare but possible, hence the review.
@@ -33,6 +35,11 @@ def main():
     ap.add_argument("--conf", type=float, default=0.10); ap.add_argument("--per-image", type=int, default=2)
     ap.add_argument("--imgsz", type=int, default=640); ap.add_argument("--batch", type=int, default=16)
     ap.add_argument("--device", default=None)
+    ap.add_argument("--min-smooth", type=float, default=0.5, help="share of smooth 8x8 thumbnail blocks (sky) an image "
+                    "needs, unless it carries the Cloud label")
+    ap.add_argument("--max-box-frac", type=float, default=0.3, help="false box long side <= this x image long side "
+                    "(the 'Sky' label also covers car / boat close-ups that fw4 calls airplane: not our scene)")
+    ap.add_argument("--labels", nargs="*", default=[], help="Open Images human image-label csvs (to read the Cloud label)")
     a = ap.parse_args()
     from ultralytics import YOLO
     model = YOLO(a.model)
@@ -40,6 +47,13 @@ def main():
     meta = pd.concat([pd.read_csv(m) for m in a.meta]).set_index("ImageID")
     tdir = os.path.join(a.out, "review", "tiles"); os.makedirs(tdir, exist_ok=True)
     paths = sorted(glob.glob(os.path.join(a.images, "*.jpg")))
+    cloud = set()
+    for lp in a.labels:
+        L = pd.read_csv(lp); cloud |= set(L[(L.Confidence == 1) & (L.LabelName == "/m/0csby")].ImageID)
+
+    def smooth_frac(im):
+        th = cv2.resize(cv2.cvtColor(im, cv2.COLOR_BGR2GRAY), (64, 64), interpolation=cv2.INTER_AREA).astype(np.float32)
+        return float((th.reshape(8, 8, 8, 8).std(axis=(1, 3)) < 6).mean())
     rows, attr, n_img_fp, stats = [], [], 0, []
     for b0 in range(0, len(paths), a.batch):
         chunk = paths[b0:b0 + a.batch]
@@ -47,13 +61,18 @@ def main():
         for p, r in zip(chunk, res):
             iid = os.path.basename(p)[:-4]
             dets = [(b, float(c), model.names[int(k)]) for b, c, k in zip(r.boxes.xyxy.tolist(), r.boxes.conf.tolist(), r.boxes.cls.tolist())]
-            mx = max([c for b, c, n in dets if n in ("uav", "airplane")], default=0.0)
-            stats.append({"image": iid, "max_alarm_conf": mx, "n_alarm_05": sum(1 for b, c, n in dets if n in ("uav", "airplane"))})
-            fps = sorted([d for d in dets if d[2] in ("uav", "airplane") and d[1] >= a.conf], key=lambda d: -d[1])[:a.per_image]
+            im = r.orig_img; H, W = im.shape[:2]
+            sf = smooth_frac(im); skyish = sf >= a.min_smooth or iid in cloud
+            small = [d for d in dets if d[2] in ("uav", "airplane") and max(d[0][2] - d[0][0], d[0][3] - d[0][1]) <= a.max_box_frac * max(H, W)]
+            mx = max([c for b, c, n in small], default=0.0)
+            stats.append({"image": iid, "smooth_frac": round(sf, 3), "cloud_label": iid in cloud, "skyish": skyish,
+                          "max_alarm_conf_small": mx})
+            if not skyish:
+                continue
+            fps = sorted([d for d in small if d[1] >= a.conf], key=lambda d: -d[1])[:a.per_image]
             if not fps:
                 continue
             n_img_fp += 1
-            im = r.orig_img; H, W = im.shape[:2]
             for j, (b, c, nm) in enumerate(fps):
                 cx, cy = (b[0] + b[2]) / 2, (b[1] + b[3]) / 2
                 tx, ty = int(np.clip(cx - TILE / 2, 0, max(W - TILE, 0))), int(np.clip(cy - TILE / 2, 0, max(H - TILE, 0)))
@@ -73,8 +92,10 @@ def main():
     pd.DataFrame(rows).to_csv(os.path.join(a.out, "review", "tiles.csv"), index=False)
     pd.DataFrame(attr).to_csv(os.path.join(a.out, "attribution.csv"), index=False)
     S = pd.DataFrame(stats); S.to_csv(os.path.join(a.out, "per_image.csv"), index=False)
-    print(f"{len(paths)} sky images: {n_img_fp} ({100 * n_img_fp / max(len(paths), 1):.1f}%) with a uav/airplane box >= {a.conf}; "
-          f">= 0.15: {(S.max_alarm_conf >= 0.15).sum()}, >= 0.25: {(S.max_alarm_conf >= 0.25).sum()}; {len(rows)} review tiles")
+    K = S[S.skyish]
+    print(f"{len(paths)} images, {len(K)} sky-dominated or Cloud-labelled: {n_img_fp} ({100 * n_img_fp / max(len(K), 1):.1f}%) with a "
+          f"small uav/airplane box >= {a.conf}; >= 0.15: {(K.max_alarm_conf_small >= 0.15).sum()}, >= 0.25: "
+          f"{(K.max_alarm_conf_small >= 0.25).sum()}; {len(rows)} review tiles")
 
 
 if __name__ == "__main__":
