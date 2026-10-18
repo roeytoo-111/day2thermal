@@ -37,6 +37,7 @@ import numpy as np
 import pandas as pd
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+_last_panels, _cur_ep = [], None
 sys.path.insert(0, HERE)
 from score_arsuf_gt import load_dets, hit   # noqa: E402
 from review_day_gt import Frames            # noqa: E402
@@ -157,10 +158,10 @@ def cmd_review(a):
             if pn and pn is panel_at(x, y) and abs(x - x0) > 2 and abs(y - y0) > 2:
                 f = lambda px, py: (pn["ox"] + (px - pn["x"]) / pn["z"], pn["oy"] + (py - pn["y"]) / pn["z"])
                 (ax, ay), (bx, by) = f(min(x0, x), min(y0, y)), f(max(x0, x), max(y0, y))
-                st["drawn"] = {"t": pn["t"], "box": [round(ax, 1), round(ay, 1), round(bx, 1), round(by, 1)]}
+                st["drawn"] = {"t": pn["t"], "panel": pn["id"], "box": [round(ax, 1), round(ay, 1), round(bx, 1), round(by, 1)]}
             st["down"] = None; st["cur"] = None
 
-    cv2.namedWindow("episodes"); cv2.setMouseCallback("episodes", mouse)
+    cv2.namedWindow("episodes", cv2.WINDOW_AUTOSIZE); cv2.setMouseCallback("episodes", mouse)
     todo = [i for i, e in enumerate(eps) if e["decision"] == ""]
     hist, j = [], 0
     while 0 <= j < len(todo):
@@ -171,27 +172,40 @@ def cmd_review(a):
         full = cv2.imread(os.path.join(a.W, "crops", f"ep{e['id']}_full.jpg"))
         if full is None:
             full = np.zeros((720, 1280, 3), np.uint8)
-        zf = full.shape[1] / FW
+        # Distinct frames only (132 of 171 episodes on 08_58_15 are ONE frame: showing it three times painted every box three
+        # times), crops at CW px, whole frame at FULLW px, so the window fits a 1080p screen and is never rescaled
+        # (a rescaled window maps the mouse to the wrong pixels).
+        CW, FULLW = 300, 860
+        full = cv2.resize(full, (FULLW, int(full.shape[0] * FULLW / full.shape[1])), interpolation=cv2.INTER_AREA)
+        zf = FULLW / FW
         st["panels"] = []
+        seen = set()
         for k, c in enumerate(crops):
-            if c is not None:
-                x0, y0, z = e["crop_geo"][str(k)]
-                st["panels"].append({"x": k * 325, "y": 52, "w": c.shape[1], "h": c.shape[0], "t": e["shots"][k], "ox": x0, "oy": y0, "z": z})
-        st["panels"].append({"x": 0, "y": 52 + 330, "w": full.shape[1], "h": full.shape[0], "t": e["shots"][1], "ox": 0, "oy": 0, "z": zf})
+            t = e["shots"][k]
+            if c is None or round(t, 4) in seen:
+                continue
+            seen.add(round(t, 4))
+            x0, y0, z = e["crop_geo"][str(k)]
+            sc = CW / max(c.shape[:2]); c = cv2.resize(c, (int(c.shape[1] * sc), int(c.shape[0] * sc)), interpolation=cv2.INTER_AREA)
+            st["panels"].append({"id": f"c{k}", "img": c, "x": len(st["panels"]) * (CW + 5), "y": 52, "w": c.shape[1], "h": c.shape[0], "t": t,
+                                 "ox": x0, "oy": y0, "z": z * sc})
+        st["panels"].append({"id": "full", "img": full, "x": 0, "y": 52 + CW + 5, "w": full.shape[1], "h": full.shape[0], "t": e["shots"][1],
+                             "ox": 0, "oy": 0, "z": zf})
+        global _last_panels, _cur_ep
+        _last_panels, _cur_ep = st["panels"], e   # for tests: the geometry the mouse is mapped through
         while True:
-            canvas = np.zeros((52 + 330 + full.shape[0], max(3 * 325, full.shape[1]), 3), np.uint8)
-            for k, c in enumerate(crops):
-                if c is not None:
-                    canvas[52:52 + c.shape[0], k * 325:k * 325 + c.shape[1]] = c
-            canvas[52 + 330:, :full.shape[1]] = full
-            COL = {"u": (0, 0, 255), "p": (0, 220, 255), "b": (255, 200, 0)}
+            canvas = np.zeros((52 + CW + 5 + full.shape[0], max(3 * (CW + 5), full.shape[1]), 3), np.uint8)
+            for pn in st["panels"]:
+                canvas[pn["y"]:pn["y"] + pn["h"], pn["x"]:pn["x"] + pn["w"]] = pn["img"]
+            COL = {"uav": (0, 0, 255), "airplane": (0, 220, 255), "bird": (255, 200, 0)}
             for m in e["manual"] + ([st["drawn"]] if st["drawn"] else []):
-                for pn in st["panels"]:
-                    if abs(pn["t"] - m["t"]) < 1e-6:
-                        bx = m["box"]
-                        cv2.rectangle(canvas, (int(pn["x"] + (bx[0] - pn["ox"]) * pn["z"]), int(pn["y"] + (bx[1] - pn["oy"]) * pn["z"])),
-                                      (int(pn["x"] + (bx[2] - pn["ox"]) * pn["z"]), int(pn["y"] + (bx[3] - pn["oy"]) * pn["z"])),
-                                      (0, 255, 0) if m is st["drawn"] else COL.get(m.get("cls"), (255, 255, 255)), 1)
+                pn = next((q for q in st["panels"] if q["id"] == m.get("panel")), None)     # only on the panel it was drawn on
+                if pn is None:
+                    continue
+                bx = m["box"]
+                cv2.rectangle(canvas, (int(pn["x"] + (bx[0] - pn["ox"]) * pn["z"]), int(pn["y"] + (bx[1] - pn["oy"]) * pn["z"])),
+                              (int(pn["x"] + (bx[2] - pn["ox"]) * pn["z"]), int(pn["y"] + (bx[3] - pn["oy"]) * pn["z"])),
+                              (0, 255, 0) if m is st["drawn"] else COL.get(m.get("cls"), (255, 255, 255)), 1)
             if st["down"] and st["cur"]:
                 cv2.rectangle(canvas, st["down"], st["cur"], (0, 255, 0), 1)
             done = sum(1 for x in eps if x["decision"])
