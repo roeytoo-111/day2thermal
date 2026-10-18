@@ -61,6 +61,7 @@ def main():
     ap.add_argument("--thermal-video", required=True); ap.add_argument("--day-video", required=True); ap.add_argument("--cache", required=True)
     ap.add_argument("--thermal", nargs=2, action="append", required=True, metavar=("NAME", "JSON"))
     ap.add_argument("--day", nargs=2, action="append", required=True, metavar=("NAME", "JSON"))
+    ap.add_argument("--th-every", type=int, default=1, help="the thermal JSONs keep one decoded frame in N (Arsuf: 5)")
     ap.add_argument("--th-thr", type=float, default=0.40); ap.add_argument("--day-thr", type=float, default=0.40)
     ap.add_argument("--day-tol", type=float, default=0.06); ap.add_argument("--tol", type=float, default=0.021)
     ap.add_argument("--shade-min", type=float, default=20.0); ap.add_argument("--out", default=None)
@@ -84,7 +85,7 @@ def main():
     # pixel tags (decode only the drone frames)
     # thermal: sequential decode by frame index (the thermal JSONs hold every frame, so index j <-> its t); the exact-pts
     # extractor missed ~2/3 of these thermal frames
-    want = {int(np.argmin(np.abs(tts0 - f[0]))): f[0] for f in frames if f[2] == "pos"}
+    want = {int(np.argmin(np.abs(tts0 - f[0]))) * a.th_every: f[0] for f in frames if f[2] == "pos"}
     thf, cap, i = {}, cv2.VideoCapture(a.thermal_video), 0
     while want and i <= max(want):
         ok, im = cap.read()
