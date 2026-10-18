@@ -7,20 +7,23 @@ drone frame away from the labelled drone, and lets you decide it once; it never 
   prepare   events -> object clusters (boxes of all models merged) -> episodes in time; first / middle / last crops
             and a whole-frame view per episode in <W>/crops
   review    one episode at a time (keys below); decisions saved to <W>/episodes.json, resumable
-  apply     writes a corrected GT folder <--out> (labels.csv + gt.json + decisions copy): u -> uav rows (difficult 0),
-            x -> uav rows with difficult = 1 (the frame drops out of the scoring); p / f / unreviewed -> unchanged
+  apply     writes a corrected GT folder <--out> (labels.csv + gt.json + decisions copy): episode u -> uav rows (difficult 0),
+            x -> uav rows with difficult = 1 (the frame drops out of the scoring), drawn uav boxes -> uav rows;
+            p / b / f / unreviewed -> unchanged
 
 Keys (review):  u  it IS our drone (add to GT)     p  manned plane / other aircraft     b  bird
                 f  nothing real (clutter, building, ground)               x  unsure (excluded from scoring)
                 p / b / f keep the box a false alarm for the drone task (the model called it uav); the decision file keeps the
                 type, so the false fires can be split into birds / manned aircraft / clutter.
-                drag  draw the box for a real drone the models missed, then u (applies to this episode's middle frame only)
+                drag  on ANY of the three crops or on the whole frame: draw a box, then u / p / b to say what it is (you can
+                      draw several; r removes the last; c clears an unlabelled drawing). Boxes labelled u become GT drones of that
+                      frame; p / b boxes are kept in the decision file only.
                 space skip   z back   q save and quit.   No Enter key.
 
     python3 src/eval/gt_episode_fix.py prepare --W ../data/gtfix/0858 --gt ../data/boson_work/cut0858/pipeline_gt/boson_0858 \
         --video ../data/boson_work/cut0858/2026-10-06T08_58_15_from_281.ts --cache ../data/gtfix/frame_cache \
         --model fw4 ../data/rgb_dets/day_fw4.json --model v5s_s0 ../data/rgb_dets/day_v5s_s0.json ...
-    python3 src/eval/gt_episode_fix.py review --W ../data/gtfix/0858
+    python3 src/eval/gt_episode_fix.py review --W ../data/gtfix/0858 [--reset]
     python3 src/eval/gt_episode_fix.py apply --W ../data/gtfix/0858 --out ../data/boson_work/cut0858/pipeline_gt/boson_0858_v2
 """
 import os
@@ -130,7 +133,19 @@ def cmd_prepare(a):
 def cmd_review(a):
     P = os.path.join(a.W, "episodes.json"); D = json.load(open(P)); eps = D["episodes"]
     FW, FH = D["frame_size"]
-    st = {"down": None, "cur": None, "drawn": None}
+    if a.reset and not os.path.exists(P + ".bak"):
+        shutil.copy2(P, P + ".bak")
+    if a.reset:
+        for e in eps:
+            e["decision"] = ""; e["manual"] = []
+        json.dump(D, open(P, "w"))
+    st = {"down": None, "cur": None, "drawn": None, "panels": []}
+
+    def panel_at(x, y):
+        for pn in st["panels"]:
+            if pn["x"] <= x < pn["x"] + pn["w"] and pn["y"] <= y < pn["y"] + pn["h"]:
+                return pn
+        return None
 
     def mouse(ev, x, y, flags, p):
         if ev == cv2.EVENT_LBUTTONDOWN:
@@ -138,56 +153,71 @@ def cmd_review(a):
         elif ev == cv2.EVENT_MOUSEMOVE and st["down"]:
             st["cur"] = (x, y)
         elif ev == cv2.EVENT_LBUTTONUP and st["down"]:
-            x0, y0 = st["down"]
-            if abs(x - x0) > 2 and abs(y - y0) > 2 and st["geo"]:
-                gx, gy, gw, gh, z, ox, oy = st["geo"]
-                if gx <= x0 < gx + gw and gy <= y0 < gy + gh and gx <= x < gx + gw and gy <= y < gy + gh:
-                    st["drawn"] = [ox + (min(x0, x) - gx) / z, oy + (min(y0, y) - gy) / z, ox + (max(x0, x) - gx) / z, oy + (max(y0, y) - gy) / z]
+            x0, y0 = st["down"]; pn = panel_at(x0, y0)
+            if pn and pn is panel_at(x, y) and abs(x - x0) > 2 and abs(y - y0) > 2:
+                f = lambda px, py: (pn["ox"] + (px - pn["x"]) / pn["z"], pn["oy"] + (py - pn["y"]) / pn["z"])
+                (ax, ay), (bx, by) = f(min(x0, x), min(y0, y)), f(max(x0, x), max(y0, y))
+                st["drawn"] = {"t": pn["t"], "box": [round(ax, 1), round(ay, 1), round(bx, 1), round(by, 1)]}
             st["down"] = None; st["cur"] = None
-    st["geo"] = None
+
     cv2.namedWindow("episodes"); cv2.setMouseCallback("episodes", mouse)
     todo = [i for i, e in enumerate(eps) if e["decision"] == ""]
     hist, j = [], 0
     while 0 <= j < len(todo):
-        e = eps[todo[j]]; st["drawn"] = None
+        e = eps[todo[j]]; st["drawn"] = None; e.setdefault("manual", [])
+        if not isinstance(e["manual"], list):
+            e["manual"] = []
         crops = [cv2.imread(os.path.join(a.W, "crops", f"ep{e['id']}_{k}.jpg")) for k in range(3)]
         full = cv2.imread(os.path.join(a.W, "crops", f"ep{e['id']}_full.jpg"))
         if full is None:
             full = np.zeros((720, 1280, 3), np.uint8)
+        zf = full.shape[1] / FW
+        st["panels"] = []
+        for k, c in enumerate(crops):
+            if c is not None:
+                x0, y0, z = e["crop_geo"][str(k)]
+                st["panels"].append({"x": k * 325, "y": 52, "w": c.shape[1], "h": c.shape[0], "t": e["shots"][k], "ox": x0, "oy": y0, "z": z})
+        st["panels"].append({"x": 0, "y": 52 + 330, "w": full.shape[1], "h": full.shape[0], "t": e["shots"][1], "ox": 0, "oy": 0, "z": zf})
         while True:
-            row = np.zeros((330, 3 * 325, 3), np.uint8)
+            canvas = np.zeros((52 + 330 + full.shape[0], max(3 * 325, full.shape[1]), 3), np.uint8)
             for k, c in enumerate(crops):
                 if c is not None:
-                    row[:c.shape[0], k * 325:k * 325 + c.shape[1]] = c
-            x0, y0, z = e["crop_geo"]["1"] if "crop_geo" in e and "1" in e["crop_geo"] else (0, 0, 1)
-            canvas = np.zeros((52 + 330 + full.shape[0], max(row.shape[1], full.shape[1]), 3), np.uint8)
-            canvas[52:52 + 330, :row.shape[1]] = row; canvas[52 + 330:, :full.shape[1]] = full
-            st["geo"] = (325, 52, 320, 320, z, x0, y0)            # the middle crop is the drawing surface
-            if st["drawn"]:
-                b = st["drawn"]; cv2.rectangle(canvas, (int(325 + (b[0] - x0) * z), int(52 + (b[1] - y0) * z)), (int(325 + (b[2] - x0) * z), int(52 + (b[3] - y0) * z)), (0, 255, 0), 1)
+                    canvas[52:52 + c.shape[0], k * 325:k * 325 + c.shape[1]] = c
+            canvas[52 + 330:, :full.shape[1]] = full
+            COL = {"u": (0, 0, 255), "p": (0, 220, 255), "b": (255, 200, 0)}
+            for m in e["manual"] + ([st["drawn"]] if st["drawn"] else []):
+                for pn in st["panels"]:
+                    if abs(pn["t"] - m["t"]) < 1e-6:
+                        bx = m["box"]
+                        cv2.rectangle(canvas, (int(pn["x"] + (bx[0] - pn["ox"]) * pn["z"]), int(pn["y"] + (bx[1] - pn["oy"]) * pn["z"])),
+                                      (int(pn["x"] + (bx[2] - pn["ox"]) * pn["z"]), int(pn["y"] + (bx[3] - pn["oy"]) * pn["z"])),
+                                      (0, 255, 0) if m is st["drawn"] else COL.get(m.get("cls"), (255, 255, 255)), 1)
             if st["down"] and st["cur"]:
                 cv2.rectangle(canvas, st["down"], st["cur"], (0, 255, 0), 1)
             done = sum(1 for x in eps if x["decision"])
-            cv2.putText(canvas, f"[{done}/{len(eps)}] ep {e['id']} {e['kind']} t={e['t0']:.1f}-{e['t1']:.1f}s {e['n_frames']} frames, max conf {e['max_conf']:.2f}, models: {','.join(e['models'])[:60]}",
+            cv2.putText(canvas, f"[{done}/{len(eps)}] ep {e['id']} {e['kind']} t={e['t0']:.1f}-{e['t1']:.1f}s {e['n_frames']} frames, max conf {e['max_conf']:.2f}, models: {','.join(e['models'])[:50]}  your boxes: {len(e['manual'])}",
                         (6, 18), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1, cv2.LINE_AA)
-            msg = "DRAWN: press u to add this box as our drone (c clears)" if st["drawn"] else "u=our DRONE  p=manned plane  b=bird  f=nothing real  x=unsure  drag in middle crop=draw  space=skip  z=back  q=quit"
-            cv2.putText(canvas, msg, (6, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255) if st["drawn"] else (200, 200, 200), 1, cv2.LINE_AA)
+            msg = ("BOX DRAWN: u=our drone  p=manned plane  b=bird  (labels this box)   c=clear" if st["drawn"] else
+                   "EPISODE: u=our DRONE p=manned plane b=bird f=nothing real x=unsure | drag on ANY panel=draw a box (then u/p/b) r=remove last box | space=skip z=back q=quit")
+            cv2.putText(canvas, msg, (6, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 255) if st["drawn"] else (200, 200, 200), 1, cv2.LINE_AA)
             cv2.imshow("episodes", canvas)
             c = cv2.waitKey(30) & 0xFF
             if c == 255:
                 continue
             if st["drawn"]:
-                if c == ord("u"):
-                    e["manual"] = st["drawn"]; e["decision"] = "u"; hist.append(j); j += 1; break
-                if c == ord("c"):
+                if c in (ord("u"), ord("p"), ord("b")):
+                    e["manual"].append({**st["drawn"], "cls": {ord("u"): "uav", ord("p"): "airplane", ord("b"): "bird"}[c]}); st["drawn"] = None
+                elif c == ord("c"):
                     st["drawn"] = None
                 continue
             if c in (ord("u"), ord("p"), ord("b"), ord("f"), ord("x")):
                 e["decision"] = chr(c); hist.append(j); j += 1; break
+            if c == ord("r") and e["manual"]:
+                e["manual"].pop()
             if c == ord(" "):
                 hist.append(j); j += 1; break
             if c == ord("z") and hist:
-                j = hist.pop(); eps[todo[j]]["decision"] = ""; eps[todo[j]]["manual"] = None; break
+                j = hist.pop(); eps[todo[j]]["decision"] = ""; break
             if c == ord("q"):
                 json.dump(D, open(P, "w")); print("saved"); return
         if len(hist) % 10 == 0:
@@ -200,16 +230,16 @@ def cmd_apply(a):
     lab = pd.read_csv(os.path.join(D["gt"], "labels.csv"), dtype={"class": str})
     rows = []
     for ep in D["episodes"]:
+        for m in ep.get("manual") or []:                         # boxes the reviewer drew: only drones enter the GT
+            if isinstance(m, dict) and m.get("cls") == "uav":
+                b = m["box"]
+                rows.append({"camera": "day", "t": m["t"], "class": "uav", "left": b[0], "top": b[1], "width": b[2] - b[0], "height": b[3] - b[1], "difficult": 0, "track_id": 9500 + ep["id"]})
         if ep["decision"] not in ("u", "x"):
             continue
         diff = 1 if ep["decision"] == "x" else 0
-        if ep.get("manual"):
-            b = ep["manual"]; mid = ep["shots"][1]
-            rows.append({"camera": "day", "t": mid, "class": "uav", "left": b[0], "top": b[1], "width": b[2] - b[0], "height": b[3] - b[1], "difficult": diff, "track_id": 9000 + ep["id"]})
-        else:
-            for e in ep["events"]:
-                b = e["box"]
-                rows.append({"camera": "day", "t": e["t"], "class": "uav", "left": b[0], "top": b[1], "width": b[2] - b[0], "height": b[3] - b[1], "difficult": diff, "track_id": 9000 + ep["id"]})
+        for e in ep["events"]:
+            b = e["box"]
+            rows.append({"camera": "day", "t": e["t"], "class": "uav", "left": b[0], "top": b[1], "width": b[2] - b[0], "height": b[3] - b[1], "difficult": diff, "track_id": 9000 + ep["id"]})
     new = pd.concat([lab, pd.DataFrame(rows)], ignore_index=True).sort_values(["camera", "t", "track_id"], kind="stable")
     os.makedirs(a.out, exist_ok=True)
     new.to_csv(os.path.join(a.out, "labels.csv"), index=False, float_format="%.6f")
@@ -229,6 +259,7 @@ def main():
     ap.add_argument("--model", nargs=2, action="append", metavar=("NAME", "JSON"))
     ap.add_argument("--fp-conf", type=float, default=0.25); ap.add_argument("--merge-s", type=float, default=1.0)
     ap.add_argument("--tol", type=float, default=0.021); ap.add_argument("--out")
+    ap.add_argument("--reset", action="store_true", help="review: forget all decisions (a backup episodes.json.bak is kept) and start again")
     a = ap.parse_args()
     os.makedirs(a.W, exist_ok=True)
     {"prepare": cmd_prepare, "review": cmd_review, "apply": cmd_apply}[a.cmd](a)
