@@ -82,7 +82,17 @@ def main():
             continue
         frames.append((float(t), float(dts0[k]), "pos" if gs else "neg", gs[0] if gs else None))
     # pixel tags (decode only the drone frames)
-    fth = Frames(a.thermal_video, a.cache, [f[0] for f in frames if f[2] == "pos"], keep=1000)   # small frames: keep all
+    # thermal: sequential decode by frame index (the thermal JSONs hold every frame, so index j <-> its t); the exact-pts
+    # extractor missed ~2/3 of these thermal frames
+    want = {int(np.argmin(np.abs(tts0 - f[0]))): f[0] for f in frames if f[2] == "pos"}
+    thf, cap, i = {}, cv2.VideoCapture(a.thermal_video), 0
+    while want and i <= max(want):
+        ok, im = cap.read()
+        if not ok:
+            break
+        if i in want:
+            thf[want[i]] = im
+        i += 1
     fdy = Frames(a.day_video, a.cache, [f[1] for f in frames if f[2] == "pos"], keep=80)    # a whole keyframe segment of 4K frames
     rows = []
     for t, td, kind, g in frames:
@@ -90,7 +100,7 @@ def main():
         if kind == "pos":
             bt = [g["left"], g["top"], g["left"] + g["width"], g["top"] + g["height"]]
             r["size"] = max(g["width"], g["height"])
-            im = fth.get(t)
+            im = thf.get(t)
             if im is not None:
                 r["th_shade"], _ = shade_of(cv2.cvtColor(im, cv2.COLOR_BGR2GRAY), bt, a.shade_min)
             dm = fdy.get(td)
